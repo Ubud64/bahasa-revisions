@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bahasa">
-<title>Bahasa</title>
+<title>Bahasa — V6.24</title>
 <style>
 :root{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#6e6e73;--line:#dedede;--soft:#efeff4;--good:#eaf7ee;--warn:#fff6e8;--accent:#111}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
@@ -17,7 +17,78 @@ input,select,textarea,button{font:inherit}input,select,textarea{width:100%;paddi
 .toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar input{flex:1;min-width:180px}.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#efefef;font-size:12px;margin:2px}.pill.target{background:#e9f1ff}.pill.fragile{background:#fff0ee}.progressTitle{font-size:20px;font-weight:750;margin-bottom:4px}.unitTitle{font-weight:650}.good{background:var(--good);padding:11px 12px;border-radius:12px}.warn{background:var(--warn);padding:11px 12px;border-radius:12px}
 .row{display:grid;grid-template-columns:1.2fr .75fr .8fr auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid #eee}.word{font-weight:700}.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#efefef;font-size:12px}
 .grammar details{border-bottom:1px solid #eee;padding:10px 0}.grammar summary{font-weight:700;cursor:pointer}.focusBox{border:1px solid #dcdce2;border-radius:14px;padding:12px;margin-top:10px}.focusBox h4{margin:0 0 8px}
-.gameCard{text-align:center;padding:20px 8px}.gamePrompt{font-size:28px;font-weight:760;margin:8px 0}.gameAnswer{font-size:26px;font-weight:760;margin:10px 0}.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.choices button{min-height:48px}.choiceGood{outline:3px solid #8bc79b}.choiceBad{outline:3px solid #e0a29c}.hidden{display:none!important}
+.gameCard{
+ text-align:center;padding:22px 14px;margin-top:12px;
+ border-radius:20px;
+ background:linear-gradient(145deg,#fff 0%,#f7f8ff 58%,#f2fbf7 100%);
+ border:1px solid #e5e7ef;
+ box-shadow:0 8px 26px rgba(33,38,55,.07)
+}
+.playHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.playTitle{display:flex;align-items:center;gap:9px;font-weight:800;font-size:19px}
+.playIcon{
+ display:inline-grid;place-items:center;width:38px;height:38px;border-radius:12px;
+ background:#111;color:#fff;font-size:20px
+}
+.gameHud{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin:8px 0 4px}
+.hudChip{
+ display:inline-flex;align-items:center;gap:5px;
+ background:#fff;border:1px solid #e2e3e8;border-radius:999px;
+ padding:6px 10px;font-size:12px;font-weight:700;
+ box-shadow:0 2px 8px rgba(0,0,0,.035)
+}
+.gamePrompt{font-size:30px;font-weight:800;line-height:1.14;margin:13px 0 9px}
+.gameAnswer{font-size:25px;font-weight:800;margin:12px 0;padding:10px 12px;border-radius:14px;background:#fff}
+.gameHint{font-size:13px;color:var(--muted);min-height:18px}
+.gameStatus{
+ min-height:34px;margin-top:10px;font-size:13px;font-weight:700;
+ display:flex;align-items:center;justify-content:center
+}
+.gameCard{overflow-anchor:none}
+.gamePrompt{min-height:70px;display:flex;align-items:center;justify-content:center}
+.gameAnswer{min-height:46px}
+#grammarGameExplain{min-height:58px}
+#gameChoices,#grammarGameChoices{min-height:132px;align-content:start}
+@media(max-width:430px){
+ .gamePrompt{min-height:82px}
+ #gameChoices,#grammarGameChoices{min-height:142px}
+}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+.choices button{
+ min-height:58px;font-size:17px;border-radius:15px;
+ background:#f0f1f5;color:#111;
+ box-shadow:0 2px 0 rgba(0,0,0,.05);
+ transition:transform .12s ease,box-shadow .12s ease,background .12s ease
+}
+.choices button:not(:disabled):active{transform:scale(.975);box-shadow:none}
+.playPrimary{
+ min-height:48px;padding:12px 20px!important;border-radius:15px!important;
+ font-size:16px!important;background:#111!important
+}
+.manualEval{display:inline-flex}
+.playPulse{animation:playPulse .36s ease}
+@keyframes playPulse{
+ 0%{transform:scale(1)}
+ 45%{transform:scale(1.015)}
+ 100%{transform:scale(1)}
+}.choiceGood{
+ outline:4px solid #198754!important;
+ background:#dff4e5!important;
+ color:#113d20!important;
+ opacity:1!important
+}
+.choiceBad{
+ outline:4px solid #c62828!important;
+ background:#ffd9d6!important;
+ color:#7a1111!important;
+ opacity:1!important;
+ font-weight:800!important
+}
+.choiceGood:disabled,.choiceBad:disabled{
+ opacity:1!important;
+ -webkit-text-fill-color:currentColor!important
+}
+.hidden{display:none!important}
 .sectionTag{font-size:12px;background:#111;color:#fff;padding:4px 7px;border-radius:8px;display:inline-block}.confidence{font-size:12px;margin-left:6px;color:var(--muted)}
 @media(max-width:680px){.grid,.grid3,.choices{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr 1fr}.row .actions{grid-column:1/-1}}
 </style>
@@ -63,16 +134,7 @@ input,select,textarea,button{font:inherit}input,select,textarea{width:100%;paddi
   <div id="masterySummary"></div>
   <p class="note">Bahasa ne confond plus « rencontré » et « maîtrisé ». La priorité dépend du niveau de solidité, des erreurs, de la date de dernière révision et de la leçon Duolingo actuelle.</p>
  </div>
- <div class="card">
-  <h3 style="margin-top:0">🎯 Charge pédagogique 80/20</h3>
-  <p class="note"><b>Environ 80 % de chaque phrase doit rester familier.</b> Les 20 % restants servent au mot cible, fragile, récent ou à la notion grammaticale du jour. Un mot fragile est normalement travaillé seul dans une phrase, entouré de vocabulaire confortable.</p>
-  <div class="grid3">
-   <div class="focusBox"><b>80 %</b><div class="small">terrain connu</div></div>
-   <div class="focusBox"><b>20 %</b><div class="small">difficulté active</div></div>
-   <div class="focusBox"><b>1–2</b><div class="small">mots difficiles / phrase</div></div>
-  </div>
- </div>
- <div class="card">
+  <div class="card">
   <h3 style="margin-top:0">Principe de la séance</h3>
   <p class="note">Les mots associés à la leçon Duolingo actuelle sont prioritaires. Les sous-leçons récentes reviennent souvent, les fragiles passent devant, et l’ancien vocabulaire revient lorsqu’il arrive à échéance. Les mots Duolingo futurs restent hors séance. Les mots oraux personnels déjà présents dans ta base restent autorisés.</p>
  </div>
@@ -82,7 +144,13 @@ input,select,textarea,button{font:inherit}input,select,textarea{width:100%;paddi
  <div class="card">
   <h3>Préparer ma séance ChatGPT</h3>
   <p class="note">Le niveau, les mots cibles et la règle du jour sont ajoutés automatiquement.</p>
-  <div class="grid"><select id="poolSize"><option value="80">Pool de 80</option><option value="120">Pool de 120</option><option value="180">Pool de 180</option><option value="250" selected>Pool de 250</option></select><select id="sessionMode"><option value="duo" selected>Suivre Duolingo</option><option value="free">Révision générale</option></select></div>
+  <div class="grid"><select id="poolSize" onchange="saveSessionSettings()"><option value="80">Pool de 80</option><option value="120">Pool de 120</option><option value="180">Pool de 180</option><option value="250" selected>Pool de 250</option></select><select id="sessionMode" onchange="saveSessionSettings()"><option value="duo" selected>Suivre Duolingo</option><option value="free">Révision générale</option></select></div>
+  <div class="grid" style="margin-top:9px"><select id="sessionLoad" onchange="saveSessionSettings();updateDifficultyPerPhrase()"><option value="light">Charge légère · 90/10</option><option value="normal" selected>Charge normale · 80/20</option><option value="sustained">Charge soutenue · 70/30</option></select><select id="sessionMinutes" onchange="saveSessionSettings()"><option value="free" selected>Durée libre · jusqu’à « Fin »</option><option value="5">Environ 5 min</option><option value="10">Environ 10 min</option><option value="15">Environ 15 min</option></select></div>
+  <div id="difficultyPerPhrase" class="focusBox" style="margin:12px 0 0">
+  <b>1–2 mots difficiles / phrase</b>
+  <div class="small">Charge normale · 80/20</div>
+ </div>
+ <p class="note">La charge et la durée modifient seulement la séance du moment. Elles ne changent pas ton niveau ni la solidité mémorisée des mots.</p>
   <div class="toolbar" style="margin-top:10px"><button onclick="preparePrompt()">Préparer</button><button class="secondary" onclick="copyPrompt()">Copier</button></div>
   <textarea id="promptOut" readonly></textarea><p id="rotationInfo" class="note"></p>
  </div>
@@ -90,37 +158,114 @@ input,select,textarea,button{font:inherit}input,select,textarea{width:100%;paddi
 
 <section id="review" class="panel">
  <div class="card"><h3>Priorités actuelles</h3><p class="note">Le moteur mémoire décide <b>quels mots doivent revenir</b>. Le moteur pédagogique décide <b>comment les intégrer</b> : environ 80 % de terrain connu et 20 % de difficulté, sans empiler les fragiles.</p><div id="priorities"></div></div>
- <div class="card"><h3>Importer le bilan ChatGPT</h3><textarea id="sessionImport" placeholder='{"reviewed":["makan"],"fragile":["akhirnya"]}'></textarea><div class="toolbar"><button onclick="importSession()">Mettre à jour</button></div><p class="note">Les mots fragiles sont séparés des mots révisés. Les mots hors référentiel sont ignorés et signalés.</p></div>
+ <div class="card"><h3>Importer le bilan ChatGPT</h3><textarea id="sessionImport" placeholder='{"reviewed":["makan"],"fragile":["di"],"used":{"makan":2},"discovered":[]}'></textarea><div class="toolbar"><button onclick="importSession()">Mettre à jour</button></div><p class="note">Le bilan enregistre aussi l’usage réel des mots pour améliorer le brassage. Un mot utile hors pool est dédupliqué contre toute la base ; s’il est vraiment nouveau, il rejoint automatiquement le vocabulaire personnel.</p></div>
 </section>
 
 <section id="grammar" class="panel">
- <div class="card grammar"><h3>Grammaire progressive</h3><p class="note">La notion de l’unité actuelle est mise en avant. Les notions déjà rencontrées restent consultables.</p><div id="grammarList"></div></div>
+ <div class="card grammar">
+  <h3>🧠 Grammaire progressive</h3>
+  <p class="note">Chaque notion est débloquée avec le parcours Duolingo. Une fiche = une idée centrale, un contraste utile, quelques exemples simples, puis le piège à éviter. Le vocabulaire des exemples reste volontairement facile.</p>
+  <div id="grammarList"></div>
+ </div>
 </section>
 
 <section id="games" class="panel">
  <div class="card">
-  <h3>🎮 Flash ciblé</h3><p class="note">Choisis ce que tu veux travailler. Une bonne ou mauvaise réponse alimente la même progression que les séances ChatGPT.</p>
+  <div class="playHeader">
+   <div class="playTitle"><span class="playIcon">⚡</span><span>Vocab Express</span></div>
+   <span class="small">Réflexe & mémoire</span>
+  </div>
+  <p class="note">Réponds au rythme qui te convient. Bonne réponse : ça enchaîne tout seul. Erreur : on s’arrête et on regarde pourquoi.</p>
   <div class="grid" style="margin-bottom:10px">
    <select id="gameMode"><option value="mix" selected>Mixte intelligent</option><option value="target">Leçon actuelle</option><option value="fragile">Fragiles uniquement</option></select>
    <select id="gameDirection"><option value="fr-id" selected>Français → indonésien</option><option value="id-fr">Indonésien → français</option></select>
   </div>
-  <div class="gameCard"><div id="gameMeta" class="small"></div><div id="gamePrompt" class="gamePrompt">Appuie sur Commencer</div><div id="gameAnswer" class="gameAnswer hidden"></div><div id="gameChoices" class="choices"></div></div>
-  <div class="toolbar" style="justify-content:center"><button id="gameStart" onclick="newGame()">Commencer / suivant</button><button id="showAnswerBtn" class="secondary" onclick="showGameAnswer()" disabled>Voir la réponse</button><button id="knewBtn" class="secondary" onclick="manualGameResult(true)" disabled>Je savais</button><button id="reviewBtn" class="danger" onclick="manualGameResult(false)" disabled>À revoir</button></div>
+  <div id="vocabPlayZone" class="gameCard">
+   <div class="gameHud">
+    <span id="gameScoreHud" class="hudChip">🎯 0 / 0</span>
+    <span id="gameStreakHud" class="hudChip">🔥 Série 0</span>
+   </div>
+   <div id="gameMeta" class="small"></div>
+   <div id="gamePrompt" class="gamePrompt">Prêt ?</div>
+   <div id="gameAnswer" class="gameAnswer hidden"></div>
+   <div id="gameChoices" class="choices"></div>
+   <div id="gameStatus" class="gameStatus">Appuie sur Jouer pour commencer.</div>
+  </div>
+  <div class="toolbar" style="justify-content:center;margin-top:12px">
+   <button id="gameStart" class="playPrimary" onclick="newGame()">▶ Jouer</button>
+   <button id="showAnswerBtn" class="secondary" onclick="showGameAnswer()" disabled>Voir la réponse</button>
+   <button id="knewBtn" class="secondary manualEval hidden" onclick="manualGameResult(true)" disabled>Je savais</button>
+   <button id="reviewBtn" class="danger manualEval hidden" onclick="manualGameResult(false)" disabled>À revoir</button>
+  </div>
+ </div>
+
+ <div class="card">
+  <div class="playHeader">
+   <div class="playTitle"><span class="playIcon">🧩</span><span>Grammaire en action</span></div>
+   <span class="small">Comprendre & produire</span>
+  </div>
+  <p class="note">Pas de récitation de règles. Tu choisis, tu répares, tu produis. Les anciennes notions reviennent naturellement dans le mélange.</p>
+  <div class="grid" style="margin-bottom:10px">
+   <select id="grammarGameMode">
+    <option value="mix" selected>Mixte intelligent</option>
+    <option value="current">Notion actuelle</option>
+    <option value="due">À revoir</option>
+   </select>
+   <select id="grammarGameStage">
+    <option value="all" selected>Toutes les étapes</option>
+    <option value="contrast">Comprendre / distinguer</option>
+    <option value="repair">Réparer</option>
+    <option value="produce">Produire</option>
+   </select>
+  </div>
+  <div id="grammarPlayZone" class="gameCard">
+   <div class="gameHud">
+    <span id="grammarScoreHud" class="hudChip">🎯 0 / 0</span>
+    <span id="grammarStreakHud" class="hudChip">🔥 Série 0</span>
+   </div>
+   <div id="grammarGameMeta" class="small"></div>
+   <div id="grammarGameHint" class="gameHint"></div>
+   <div id="grammarGamePrompt" class="gamePrompt">Prêt ?</div>
+   <div id="grammarGameAnswer" class="gameAnswer hidden"></div>
+   <div id="grammarGameChoices" class="choices"></div>
+   <div id="grammarGameExplain" class="note" style="margin-top:12px"></div>
+   <div id="grammarGameStatus" class="gameStatus">Appuie sur Jouer pour commencer.</div>
+  </div>
+  <div class="toolbar" style="justify-content:center;margin-top:12px">
+   <button id="grammarNextBtn" class="playPrimary" onclick="newGrammarGame()">▶ Jouer</button>
+   <button id="grammarRevealBtn" class="secondary" onclick="revealGrammarAnswer()" disabled>Voir le modèle</button>
+   <button id="grammarKnewBtn" class="secondary manualEval hidden" onclick="manualGrammarResult(true)" disabled>Je savais</button>
+   <button id="grammarReviewBtn" class="danger manualEval hidden" onclick="manualGrammarResult(false)" disabled>À revoir</button>
+  </div>
+  <div id="grammarGameProgress" class="focusBox" style="margin-top:12px"></div>
  </div>
 </section>
 
 <section id="vocab" class="panel">
- <div class="card"><div class="toolbar"><input id="search" placeholder="Rechercher un mot…" oninput="renderList()"><select id="statusFilter" onchange="renderList()"><option value="">Tous accessibles</option><option value="target">Cible actuelle</option><option value="fragile">Fragiles</option><option value="due">À revoir maintenant</option><option value="consolidate">À consolider</option><option value="progressing">En progrès</option><option value="solid">Solides</option><option value="seen">Déjà travaillés</option><option value="unseen">Jamais travaillés</option></select></div></div>
+ <div class="card"><h3>➕ Ajouter un mot personnel</h3><div class="grid"><input id="manualId" placeholder="Indonésien · ex. ngobrol"><input id="manualFr" placeholder="Français · ex. discuter"></div><div class="grid" style="margin-top:9px"><select id="manualStatus"><option value="new" selected>Nouveau</option><option value="fragile">Fragile</option><option value="seen">Déjà acquis</option></select><button onclick="addPersonalWord()">Ajouter</button></div><p class="note">Les mots personnels sont utilisables immédiatement dans les séances et les jeux, sans modifier la progression Duolingo.</p></div>
+ <div class="card">
+  <h3>➕ Ajouter plusieurs mots</h3>
+  <p class="note">Comme dans l’ancienne version : <b>une ligne = français; indonésien</b>. Exemple :<br>discuter; ngobrol<br>faire attention; hati-hati</p>
+  <input id="bulkUnit" placeholder="Origine / thème facultatif · ex. Conversation" value="Import groupé">
+  <textarea id="bulkWords" placeholder="discuter; ngobrol&#10;faire attention; hati-hati"></textarea>
+  <div class="grid" style="margin-top:9px">
+   <select id="bulkStatus"><option value="new" selected>Nouveau</option><option value="fragile">Fragile</option><option value="seen">Déjà acquis</option></select>
+   <button onclick="bulkAddPersonalWords()">Ajouter la liste</button>
+  </div>
+  <div id="bulkResult" class="note" style="margin-top:9px"></div>
+  <p class="note">Bahasa vérifie chaque mot contre toute la base. Un mot déjà présent n’est jamais dupliqué. S’il appartient au référentiel Duolingo, son entrée canonique est utilisée.</p>
+ </div>
+ <div class="card"><div class="toolbar"><input id="search" placeholder="Rechercher un mot…" oninput="renderList()"><select id="statusFilter" onchange="renderList()"><option value="">Tous accessibles</option><option value="personal">Vocabulaire personnel</option><option value="target">Cible actuelle</option><option value="fragile">Fragiles</option><option value="due">À revoir maintenant</option><option value="consolidate">À consolider</option><option value="progressing">En progrès</option><option value="solid">Solides</option><option value="seen">Déjà travaillés</option><option value="unseen">Jamais travaillés</option></select></div></div>
  <div class="card"><div id="list"></div></div>
 </section>
 
 <section id="backup" class="panel">
  <div class="card"><h3>Sauvegarde</h3><div class="toolbar"><button class="secondary" onclick="exportJSON()">Exporter la base V6</button><button class="secondary" onclick="exportLegacySnapshot()">Exporter la sauvegarde V5.1</button><button class="secondary" onclick="restoreLegacySnapshot()">Restaurer la copie V5.1</button><label style="padding:11px 13px;border-radius:12px;background:#e9e9ec;font-weight:650;cursor:pointer">Importer une base<input type="file" accept=".json" onchange="importBase(event)" hidden></label></div><p class="note">Au premier lancement de V6 sur le même site que V5.1, Bahasa crée automatiquement une copie intacte de la base existante avant toute migration. La progression V5.1 reste donc récupérable même si V6 ajoute ensuite son propre suivi.</p><div id="migrationInfo" class="focusBox"></div></div>
- <div class="card good"><b>V6.11 · migration sécurisée + parcours Duolingo réel</b><br><span class="note">69 unités · 310 sous-leçons · 1851 entrées Duolingo uniques. Les sous-leçons marquées « reconstituées » servent à pondérer la pratique sans prétendre reproduire au mot près l’ordre interne de Duolingo. Les frontières d’unité connues ont été corrigées à partir du référentiel canonique.</span></div>
+ <div class="card good"><b>V6.24 · jeux stables sans défilement</b><br><span class="note">69 unités · 310 sous-leçons · 1851 entrées Duolingo uniques. Les sous-leçons marquées « reconstituées » servent à pondérer la pratique sans prétendre reproduire au mot près l’ordre interne de Duolingo. Les frontières d’unité connues ont été corrigées à partir du référentiel canonique.</span></div>
 </section>
 </div>
 <script>
-// V6.11. Migration V5.1 sécurisée + progression Duolingo réelle + mémoire adaptative.
+// V6.24. Aucun auto-scroll pendant les jeux + zones visuelles stabilisées.
 const CURRICULUM=[{"s":1,"u":1,"title":"Utiliser des phrases de base","skill":"Basics 1","confidence":"Exacte (archive détaillée)","lessons":[["saya","makan","apel","suka","jeruk","mau"],["kamu","punya","itu","minum","air","susu"],["dia","kucing","merah","kuat","dan","hitam","putih"]],"grammar":"Ordre simple de la phrase. Le verbe ne se conjugue pas selon la personne.","corrected":false},{"s":1,"u":2,"title":"Se présenter","skill":"Intro","confidence":"Exacte (archive détaillée)","lessons":[["halo","apa kabar","andi","tini","siapa","nama"],["dari","bukan","mana","jakarta","jepang","bali"],["berapa","dua puluh","sepuluh","umur","tahun"]],"grammar":"Questions simples pour se présenter : siapa, mana, berapa ; bukan pour nier une identité.","corrected":false},{"s":1,"u":3,"title":"Utiliser des phrases courantes","skill":"Basics 2","confidence":"Exacte (archive détaillée)","lessons":[["aku","kita","menulis","buku","surat","kami"],["mereka","membaca","menu","koran","ini","anda"],["kalian","besar","gaun","kaya","ia","tidak"]],"grammar":"Pronoms aku/saya, kita/kami et négation avec tidak.","corrected":true},{"s":1,"u":4,"title":"Saluer les gens","skill":"Greetings","confidence":"Exacte (archive détaillée)","lessons":[["ya","terima kasih","maaf","selamat pagi","silakan"],["sama-sama","sampai jumpa","selamat datang","selamat jalan"],["assalamualaikum","selamat siang","waalaikumsalam","selamat tinggal","permisi"],["selamat malam","terima kasih banyak","selamat sore","sampai jumpa lagi","salam","selamat idul fitri"]],"grammar":"Salutations selon le moment et la situation ; registre poli courant.","corrected":true},{"s":1,"u":5,"title":"Commander à manger et à boire","skill":"Restaurant","confidence":"Exacte (archive détaillée)","lessons":[["nasi","goreng","ayam","dengan","restoran"],["pesan","minuman","sup","makanan","daging"],["tomat","tahu","jus","tempe","stroberi","telur"],["sarapan","teh","kopi","kue","enak","manis"],["roti","gula","cokelat","merica","garam","kacang","pisang"],["es","panas","minta","sambal","kecap","bayar","harga"]],"grammar":"Commander, demander et payer avec des phrases courtes ; nom + adjectif simple.","corrected":false},{"s":1,"u":6,"title":"Décrire des lieux","skill":"Places 1","confidence":"Exacte (archive détaillée)","lessons":[["di","ada","dapur","rumah","sini","sekolah"],["ke","pergi","gedung","pasar","hotel","sana"],["situ","pulang","bank","toko","toilet"]],"grammar":"di = position ; ke = direction. Ex. di pasar / ke pasar.","corrected":false},{"s":1,"u":7,"title":"Exprimer des actions","skill":"Base Verbs","confidence":"Exacte (archive détaillée)","lessons":[["datang","duduk","muncul","setuju"],["keluar","masuk","kembali","jatuh"],["tidur","lupa","ingat"],["tinggal","mulai","selesai","bisa"]],"grammar":"Verbes fréquents sans conjugaison personnelle ; ordre sujet-verbe-complément.","corrected":false},{"s":1,"u":8,"title":"Exprimer la possession","skill":"Possessive","confidence":"Exacte (archive détaillée)","lessons":[["bola","milik","nama orang"],["anjing"],["pensil"]],"grammar":"Possession : nom + possesseur, milik, et introduction progressive de -ku/-mu/-nya.","corrected":false},{"s":1,"u":9,"title":"Parler des vêtements","skill":"Clothing","confidence":"Exacte (archive détaillée)","lessons":[["tas","kantong","pakaian","membeli","celana","sepatu","dompet"],["payung","sabuk","kemeja","mantel","jaket","rok","membawa"],["sarung tangan","kaus kaki","topi","syal","dasi","memakai","kaus"]],"grammar":"Nom + adjectif ; verbes acheter, apporter et porter dans des phrases concrètes.","corrected":false},{"s":2,"u":1,"title":"Utiliser les conjonctions","skill":"Conj 1","confidence":"Exacte (archive détaillée)","lessons":[["tapi","yang","atau"],["ketika","karena","jadi","namun"]],"grammar":"Relier les idées avec tapi, yang, atau, ketika, karena, jadi, namun.","corrected":false},{"s":2,"u":2,"title":"Former le pluriel","skill":"Plurals","confidence":"Révision : aucun nouveau mot unique","lessons":[[],[]],"grammar":"Le pluriel dépend souvent du contexte ; la réduplication n’est pas automatique.","corrected":false},{"s":2,"u":3,"title":"Utiliser les verbes en ber-","skill":"Ber- Verbs","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["berhasil","berjalan","berhenti","berdiri","berada","bersaing"],["bertemu","berangkat","berubah","berbicara","berkembang"],["berkunjung","berkumpul","berlaku","bekerja","belajar","bermain"],["berpikir","bersama","berasal","berharap","bergerak"]],"grammar":"ber- exprime souvent une activité, un état ou une action sans objet direct.","corrected":false},{"s":2,"u":4,"title":"Poser des questions","skill":"Questions","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["apa","kenapa","bagaimana","kapan","di mana"],["benar","salah","kah","mengapa","pertanyaan"]],"grammar":"Questions avec apa, kapan, bagaimana, kenapa/mengapa ; -kah est plus soutenu.","corrected":false},{"s":2,"u":5,"title":"Nommer les couleurs","skill":"Colors","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["warna","biru","hijau","kuning"],["abu-abu","ungu","oranye","merah muda"]],"grammar":"L’adjectif suit généralement le nom : kemeja merah.","corrected":false},{"s":2,"u":6,"title":"Former des verbes en me-","skill":"Me- 1","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["meminum","melempar","melihat","meminta","memakan","memulai"],["membuat","membantu","membuka","memberi","membayar","membangun"],["mencoba","mencari","menjaga","mendengar","mendorong","menjadi"],["menjual","mendapat","memesan","memanggil","memilih","menarik"],["menunggu","menutup","menerima","menurut","menolak"]],"grammar":"meN- : verbes actifs standard ; comparer ponctuellement aux formes orales courantes.","corrected":false},{"s":2,"u":7,"title":"Utiliser les adjectifs","skill":"Adj 1","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["dingin","hangat","baru","banyak","betul","sedikit","kecil"],["panjang","pendek","tinggi","muda","tua","jelek"],["cantik","bersih","kotor","miskin","jauh","dekat","jelas"],["rusak","bodoh","sempurna","sulit","mudah","biasa"],["pintar","mirip","lain","bahagia","sedih","penuh"]],"grammar":"Adjectif après le nom ; très/sangat et comparaisons simples quand utile.","corrected":false},{"s":2,"u":8,"title":"Compter des choses","skill":"Numbers","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["nol","satu","dua","tiga","empat","nomor","tambah","sama"],["lima","enam","tujuh","delapan","sembilan","jumlah","kurang"],["sebelas","lusin","selusin","belas","puluh","kali","ratus","seratus"],["seribu","ribu","sejuta","juta","persen","semiliar","miliar"],["pertama","kedua","ketiga","sekali","ratusan","ribuan","puluhan"]],"grammar":"Nombres, dizaines, centaines et ordinaux ; ordre naturel des quantités.","corrected":false},{"s":2,"u":9,"title":"Former des verbes en me-","skill":"Me- 2","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["mengerti","mengambil","mengubah","mengingat","mengajar"],["mengisi","menggali","menghadap","menghilang","menggambar"],["mengganggu","mengganti","menyimpan","menyusun","menyentuh"],["menyewa","menyapa","menyapu","mengirim","mengejar"],["mengandung","merawat","merusak","menyala","menyanyi"]],"grammar":"Deuxième série de transformations meN- : meng-, meny-, menge- selon la racine.","corrected":false},{"s":2,"u":10,"title":"Utiliser les adjectifs","skill":"Adj 2","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["baik","buruk","indah","tampan","gelap","terang"],["berat","ringan","rumit","sederhana","ramah","nakal"],["ragu","mantap","cukup","lebih","khusus","umum"],["bagus","kering","basah","lucu","serius"],["jahat","utama","sakit","sehat","lama","sebentar"],["resmi","siap","sesuai","hilang","tutup","buka"],["lebar","keras","sempit","lembut","berbahaya"]],"grammar":"Adjectifs et intensité : très/sangat, assez/cukup, plus/lebih.","corrected":false},{"s":2,"u":11,"title":"Parler des membres de la famille","skill":"Family","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["ayah","orang tua","ibu","seorang","laki-laki","perempuan","anak"],["pasangan","suami","istri","keponakan","kakak","adik","adalah"],["menikah","sepupu","nenek","meninggal","kakek","cucu","orang"],["putra","putri","saudara","saudari","paman","tante","abang"],["keluarga","melahirkan","bayi","hamil","mertua","menantu","ipar"]],"grammar":"Relations familiales, possession et copule adalah quand elle est réellement utile.","corrected":false},{"s":2,"u":12,"title":"Parler de la cuisine","skill":"Kitchen","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["memasak","pisau","minyak","sayur","buah","kubis","wortel","labu","untuk"],["menggoreng","wajan","kangkung","mentega","bir","cabai","cuka","paprika","bayam"],["merebus","panci","selai","anggur","kulkas","mi","terung","bawang"],["seledri","memotong","bubur","piring","keju","pasta","permen","spageti","brokoli"],["lobak","mengiris","oven","kentang","bumbu","memanggang","kompor","ubi","selada"],["jahe","asam","pahit","tawar","asin","pedas","gurih","rasa"]],"grammar":"Instructions de cuisine : verbes d’action, pour/untuk et compléments d’objet.","corrected":false},{"s":2,"u":13,"title":"Former des phrases complexes","skill":"Conj 2","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["seperti","bahwa","tetapi","sehingga"],["jika","yaitu","agar","bahkan"],["tanpa","kalau","daripada"]],"grammar":"Phrases complexes avec bahwa, sehingga, jika, agar, tanpa, daripada.","corrected":false},{"s":2,"u":14,"title":"Parler des professions","skill":"Jobs","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["profesi","karier","dokter","guru","petani","nelayan","tukang","peneliti"],["raja","pangeran","ratu","polisi","pengacara","penjual","insinyur"],["profesor","hakim","pelayan","koki","pembeli","pemilik","jurnalis","wartawan"],["sekretaris","perawat","pegawai","pejabat","penyanyi","penari","pekerjaan"],["pekerja","penulis","pemimpin","prajurit","sopir","pemain","pemikir"]],"grammar":"Noms de professions et formation fréquente des noms de personnes en pe-/pen-/pem-.","corrected":false},{"s":2,"u":15,"title":"Parler des jours et des heures","skill":"Time","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["hari","senin","selasa","rabu","kamis","jumat","sabtu"],["minggu","detik","menit","jam","bulan","lalu","depan"],["pagi","siang","sore","petang","malam","kemarin","besok"],["lusa","kemarau","hujan","sekarang","musim","saat"]],"grammar":"Repères temporels, ordre des compléments de temps et emploi de lalu.","corrected":false},{"s":2,"u":16,"title":"Former des adverbes","skill":"Adverbs 1","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["juga","akan","sudah","masih","sangat","belum","pernah","langsung"],["paling","akhirnya","sering","biasanya","mungkin","segera","selalu"],["hampir","nanti","terlalu","sebaliknya","jangan","tentu","setidaknya"],["agak","tiba-tiba","lagi-lagi","kadang-kadang","rupanya","hanya","telah"]],"grammar":"Adverbes de temps, fréquence, degré et aspect : sudah, belum, masih, akan, pernah.","corrected":false},{"s":2,"u":17,"title":"Utiliser les verbes en di-","skill":"Di-","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["oleh","disebut","dianggap","dikenal","dibuat","dirilis","dimulai"],["diduga","dibangun","diberi","didukung","dipakai","diambil"],["dilarang","dibawa","ditulis","diterima","ditangkap","dipimpin","diperiksa"],["diproduksi","dinilai","dilihat","dibentuk","dijual","diangkat"],["dibuka","dipilih","ditutup","diminta","dibagi","ditambah"]],"grammar":"Passif en di- : l’objet devient le centre de la phrase ; oleh est souvent facultatif.","corrected":false},{"s":2,"u":18,"title":"Parler du corps","skill":"Body","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["tubuh","kepala","wajah","dahi","mata","alis","cium"],["rambut","telinga","hidung","mulut","bibir","bau","mencium"],["gigi","lidah","pipi","leher","tenggorokan","dada","perut"],["bahu","punggung","tangan","sikut","lengan","jari","pergelangan"],["kaki","paha","lutut","telapak","kuku","otot","kulit"],["jantung","paru","darah","otak","tulang","organ"]],"grammar":"Parties du corps ; possession naturelle avec -nya et structures simples avec sakit.","corrected":false},{"s":2,"u":19,"title":"Former des noms en -an","skill":"-an","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["bagian","catatan","hubungan","bangunan","serangan","lingkungan"],["tujuan","lapangan","bantuan","laporan","pimpinan"],["anggaran","layanan","dukungan","urutan","jabatan"],["dugaan","putaran","tambahan","pilihan","an"]],"grammar":"Suffixe -an : formation fréquente de noms de résultat, objet ou concept.","corrected":false},{"s":2,"u":20,"title":"Donner des directions","skill":"Direction","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["kanan","kiri","posisi","dalam","belok","arah"],["atas","bawah","samping","luar","balik","naik"],["turun","utara","selatan","timur","barat","menuju"],["belakang","barat daya","barat laut","timur laut","tenggara","kutub"],["terbang","lewat","tiba","jarak","kompas"]],"grammar":"Directions et localisation : di/ke/dari + posisi, atas, bawah, dalam, luar.","corrected":false},{"s":2,"u":21,"title":"Utiliser les impératifs","skill":"Command","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["lah","mohon","jaga","panggil","tanya","jawab","kan"],["tolong","serang","tembak","kumpul","lihat","mari"],["biar","lakukan","bantu","main","beri","ayo"],["coba","pasang","lepas","kerja","pikir","gambar","ganti"],["simpan","sapu","kirim","kejar","potong","nyanyi"],["sebut","pakai","ambil","bawa","buat","lempar"],["tulis","baca","jual","beli","angkat","pilih"]],"grammar":"Impératif : racine verbale, tolong/mohon pour adoucir, jangan pour interdire.","corrected":false},{"s":2,"u":22,"title":"Décrire la maison","skill":"House","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["meja","kursi","sendok","sofa","kamar","furnitur"],["garpu","gelas","botol","mangkuk","cangkir","langit-langit"],["jendela","tempat tidur","lampu","spons","kolam","kantor"],["pintu","dinding","cermin","atap","karpet"],["televisi","tangga","tirai","bak mandi","bantal","resep"],["sabun","handuk","pemanas","sampo","membersihkan","balkon"],["mainan","seprai","tempat sampah","pagar","gerbang"]],"grammar":"Localisation dans la maison : di, dalam, atas, bawah, samping et possession.","corrected":false},{"s":2,"u":23,"title":"Nommer les animaux","skill":"Animals","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["bebek","burung","hewan","lebah","ikan","gajah","beruang"],["sapi","kuda","babi","serigala","harimau","tikus"],["kupu-kupu","singa","kelinci","ular","laba-laba","hiu"],["monyet","lumba-lumba","serangga","semut","paus","jerapah"]],"grammar":"Animaux : noms, adjectifs et quantités simples ; pluriel par contexte.","corrected":false},{"s":2,"u":24,"title":"Exprimer les dates et les heures","skill":"Dates 2","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["januari","februari","maret","april","juni","mei","tanggal"],["juli","november","agustus","september","oktober","desember"],["akhir","windu","dekade","abad","awal","pertengahan","seperempat"],["gugur","pukul","setengah","lagi","semi","generasi"],["kalender","masa","tengah","libur","dahulu","zaman"]],"grammar":"Dates et heures : tanggal, pukul, setengah, awal/akhir et repères temporels.","corrected":false},{"s":2,"u":25,"title":"Former des adverbes","skill":"Adverbs 2","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["saja","dapat","harus","sedang","jarang"],["umumnya","sekitar","sendiri","begitu","tak"],["selamanya","perlu","boleh","tetap"]],"grammar":"Modalité et aspect : harus, boleh, perlu, sedang, dapat ; place des adverbes.","corrected":false},{"s":2,"u":26,"title":"Créer des noms en pe-an","skill":"Pe-an","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["pegunungan","pelabuhan","pelayanan","pemanasan","pertemuan","pengalaman","pemandangan"],["pemasukan","pemerintahan","pemilihan","pertumbuhan","perhatian","penciuman"],["pendengaran","pengadilan","pertandingan","penginapan","pendidikan","pengeluaran"],["penglihatan","penulisan","penyerangan","persaingan","perusahaan","pertarungan"],["peraturan","perbatasan","perbuatan","percakapan","persatuan","peralatan"],["perkembangan","perlawanan","perlombaan","permainan","persahabatan","pertahanan"]],"grammar":"Circonfixe pe-…-an : formation de noms de processus, lieu ou concept.","corrected":false},{"s":2,"u":27,"title":"Exprimer les émotions","skill":"Feelings","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["takut","merasa","menakutkan","senang","aneh","perasaan","berani"],["mengenang","bosan","membosankan","suasana","hati","damai"],["keinginan","marah","kaget","kejutan","kecewa","mengecewakan"],["lelah","iri","emosi","sabar","tegang","menegangkan"],["lapar","malu","cinta","haus","kalem","adil"],["memalukan","pikiran","imajinasi","gairah","jijik","menjijikkan"]],"grammar":"Exprimer les états et émotions ; merasa + adjectif/nom et causes avec karena.","corrected":false},{"s":2,"u":28,"title":"Utiliser les particules","skill":"Particles","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["tentang","kepada","pun","secara","hingga"],["terhadap","si","sang","antara"],["serta","aduh","astaga","astagfirullah"],["bagi","sementara","selain","pula"]],"grammar":"Particules et prépositions : kepada, tentang, terhadap, pun, secara, antara.","corrected":false},{"s":2,"u":29,"title":"Créer des verbes en ter-","skill":"Ter-","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["tersenyum","tertawa","terbuka","tertutup","tersebut","tertulis"],["terjatuh","terjadi","tertentu","terisi","teringat"],["terkirim","tersimpan","termasuk","terpaksa","terkenal","terletak"],["terkait","terdapat","terdiri","ternyata","terlibat"]],"grammar":"ter- : état résultant, événement involontaire, superlatif ou possibilité selon le mot.","corrected":false},{"s":2,"u":30,"title":"Parler de l'éducation","skill":"Education","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["kerjakan","kelas","tugas","siswa","bahasa","indonesia","jelaskan"],["pelajaran","ujian","teman","matematika","perpustakaan","papan"],["kantin","jadwal","seragam","fisika","contoh","teknik","mengerjakan"],["penjelasan","perguruan tinggi","bab","kimia","terlambat","istirahat"],["dihukum","dipanggil","halaman","kertas","kapur","sejarah","dikeluarkan"],["peringkat","pindah","wisuda","upacara","gelar","lulus"]],"grammar":"Langage de l’école : impératif, passif et noms dérivés déjà rencontrés.","corrected":false},{"s":3,"u":1,"title":"Utiliser les verbes en me-kan","skill":"Me-kan 1","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["melemparkan","memainkan","melakukan","melanjutkan","melupakan","memasukkan","memunculkan"],["memasakkan","membicarakan","membawakan","memberikan","membacakan","mendengarkan","mendirikan"],["menjatuhkan","menjadikan","mendatangkan","mendapatkan","menjelaskan","memutuskan","memecahkan"],["memisahkan","memuaskan","memerlukan","memerintahkan","memastikan","memikirkan","menemukan"],["menuliskan","menunjukkan","meninggalkan","menambahkan","menurunkan","menawarkan"]],"grammar":"meN-…-kan : action causative, bénéfactive ou centrée sur un résultat/objet.","corrected":false},{"s":3,"u":2,"title":"Faire des comparaisons","skill":"Superlative","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["terbesar","terakhir","terbaik","terutama","terkecil"],["kurus","gemuk","terkurus","tergemuk","semakin"],["luas","cepat","lambat","tercepat","terluas"],["murah","mahal","penting","termurah","terpenting"],["malas","sepi","ramai","rajin","termalas"],["tajam","tumpul","terkuat","terkaya","termerah"],["dangkal","terdangkal","terdalam","tertua","termuda"]],"grammar":"Superlatif avec ter-, paling ; comparaison avec lebih et semakin.","corrected":false},{"s":3,"u":3,"title":"Former des verbes en me-kan","skill":"Me-kan 2","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["mengambilkan","mengajarkan","mengingatkan","mengumumkan","menggantikan"],["menghilangkan","menggambarkan","menghasilkan","menghentikan","menggunakan"],["menyimpankan","menyewakan","menyelesaikan","menyambungkan","mengirimkan"],["mengembalikan","mengeluarkan","mengalahkan","mengatakan","mengembangkan"],["mengumpulkan","merusakkan","menyalakan","merupakan"]],"grammar":"Deuxième série meN-…-kan : causatif, transfert et action faite pour quelqu’un.","corrected":false},{"s":3,"u":4,"title":"Parler des voyages","skill":"Travel","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["mobil","taksi","bus","mengemudikan","tiket","penumpang","paspor"],["hati-hati","pilot","pesawat","bandara","terminal","jalan"],["motor","sepeda","pengendara","keterlambatan","membatalkan","masinis"],["kereta","mengendarai","stasiun","turis","kunjungan","mengunjungi"],["nakhoda","perahu","kapal","kendaraan","menginap","transportasi"],["alat","mesin","kecelakaan","sampai","ojek","koper"]],"grammar":"Voyage : verbes de déplacement, naik, sampai, ke/dari et séquences temporelles.","corrected":false},{"s":3,"u":5,"title":"Décrire des mesures","skill":"Measure","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["mengukur","timbangan","kilogram","gram","satuan","waktu","miligram"],["kedalaman","meter","ketinggian","diukur","sungai","kilometer","sentimeter"],["liter","ukuran","hasil","badan","belasan","volume"],["meteran","ditimbang","rupiah","hektar","lipat","kecepatan","per"],["inci","mil","ons","sisi","sepertiga","permukaan"]],"grammar":"Mesures et quantités : angka + unité, per, hasil, ukuran et comparaisons.","corrected":false},{"s":3,"u":6,"title":"Former des verbes en di-kan","skill":"Di-kan","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["dilakukan","digunakan","ditemukan","didirikan","diberikan","dibandingkan"],["diharapkan","dijadikan","disampaikan","ditetapkan","dilaksanakan"],["diadakan","disebabkan","dikatakan","dikembangkan","diterbitkan"],["diselenggarakan","dilaporkan","disebutkan","dinyatakan","dibutuhkan"],["diluncurkan","diumumkan","dilahirkan","digantikan","dihasilkan"]],"grammar":"Passif di-…-kan : correspondant fréquent des verbes actifs meN-…-kan.","corrected":false},{"s":3,"u":7,"title":"Exprimer les sentiments","skill":"Feelings 2","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["menertawakan","terkejut","mengejutkan","cemburu","sayang","tenang","berbeda"],["memimpikan","kesal","mimpi","ingin","senyuman","santai","merindukan"],["mengharapkan","tawa","harapan","mengantuk","kesan","aroma"],["cemas","humor","puas","ingatan","bebas","selera","dipercaya"],["karakter","pasti","peka","gugup","murung","respek","menaruh"],["sampah","benci","penasaran","bangga","kesepian","menangis"]],"grammar":"Sentiments : meN-, ter-, di- et adjectifs dans des situations conversationnelles.","corrected":false},{"s":3,"u":8,"title":"Parler de la santé","skill":"Medical","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["batuk","pilek","demam","penyakit","semoga","bengkak","sembuh"],["berobat","rumah sakit","apotek","gatal","klinik","obat","pasien"],["alergi","memeriksa","patah","imunisasi","disuntik","terkilir","manusia"],["luka","dibersihkan","diobati","parah","operasi","berdarah"]],"grammar":"Santé : sakit, symptômes, passif pour les soins et semoga pour exprimer un souhait.","corrected":false},{"s":3,"u":9,"title":"Parler de la nature","skill":"Nature","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["tanah","api","udara","angin","sumber","batu"],["bumi","matahari","laut","alam","bunga","polusi"],["rumput","mencemari","bintang","awan","salju","benih"],["langit","hutan","pohon","gunung","danau","mawar"],["lumpur","samudera","planet","tumbuhan","puncak","dasar"],["gempa","cuaca","iklim","asap","temperatur","badai"],["hidup","petir","gurun","listrik","lubang"]],"grammar":"Nature : descriptions, localisation et relations cause-conséquence.","corrected":false},{"s":3,"u":10,"title":"Communiquer avec les autres","skill":"Communication","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["komunikasi","informasi","pers","suara","selamat","huruf","media"],["massa","internet","berkata","kata","kalimat","teriak"],["merekam","perintah","diam","bertanya","pendapat","arti"],["pemberitahuan","situs","menjawab","diskusi","debat","argumen"],["judul","artikel","menerjemahkan","tema","wawancara","unduh"],["unggah","pengumuman","mengontak","berita","rahasia","komentar"]],"grammar":"Communication : berkata/bertanya/menjawab, citation simple et noms d’information.","corrected":false},{"s":3,"u":11,"title":"Former des verbes en me-i","skill":"Me-i","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["memasuki","meliputi","melayani","mewakili","melewati","melindungi","menikmati"],["memiliki","melalui","mengakhiri","mengikuti","mengatasi","mengakui"],["mengalami","menghadapi","menghindari","mengetahui","mengurangi","menguasai"],["mengenai","mempunyai","memenuhi","mempelajari","menyadari","memahami"],["menangani","mencapai","menjalani","menempati","menduduki","mendatangi"]],"grammar":"meN-…-i : action dirigée vers un lieu, une personne ou répétée sur une cible.","corrected":false},{"s":3,"u":12,"title":"Utiliser les prépositions","skill":"Prepositions 2","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["sebagai","pada","kecuali"],["selama","sebelum","setelah"],["sejak","kemudian","sesudah"],["walau","demi"]],"grammar":"Prépositions et liens temporels : sebagai, pada, selama, sebelum, setelah, sejak.","corrected":false},{"s":3,"u":13,"title":"Décrire les matériaux","skill":"Materials","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["bahan","uang","debu","emas","terbuat","tembaga"],["besi","katun","perak","kain","pasir"],["karet","wol","kayu","plastik","logam"]],"grammar":"Matières : terbuat dari pour « fait de », descriptions nominales et adjectivales.","corrected":false},{"s":3,"u":14,"title":"Nommer les objets courants","skill":"Objects","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["barang","senjata","kotak","palang","kabel","objek","peta"],["kacamata","radio","dokumen","kartu","nampan","memuat","pengecas"],["bendera","hadiah","kunci","foto","pedang","komputer"],["bubuk","album","adaptor","masalah","bentuk","tanda","kamus"],["majalah","roda","pulpen","robot","layar","jarum","benang"],["lilin","amplop","korek","nyala","cahaya","padam"]],"grammar":"Objets : possession, localisation, fonction et verbes usuels autour des objets.","corrected":false},{"s":3,"u":15,"title":"Parler de science","skill":"Science","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["titik","fungsi","material","pencarian","teori","jenis","dampak"],["energi","ilmu","metode","analisis","rumus","ide"],["penemuan","batas","suhu","skala","lingkaran","segitiga"],["atmosfer","sinar","derajat","ilmiah","pengetahuan","daftar"],["penelitian","membakar","reaksi","cara","teknologi","grafik"],["proses","perhitungan","persegi","sudut","hal","konsep"]],"grammar":"Science : phrases explicatives, cause-conséquence et passif fréquent.","corrected":false},{"s":3,"u":16,"title":"Former des verbes en di-i","skill":"Di-i","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["dihubungi","diketahui","diikuti","disertai","diakui","dimiliki","dilengkapi"],["ditemui","dialami","dihadiri","ditangani","dikelilingi","dinamai","dikurangi"],["didampingi","dipenuhi","ditandai","dilindungi","dipengaruhi","diyakini"],["dipahami","dikuasai","dicapai","dijumpai","disukai","disetujui","dimintai"],["dikunjungi","ditandatangani","diawali","dilayani","dihadapi","dibatasi"]],"grammar":"Passif di-…-i : correspondant fréquent des verbes actifs meN-…-i.","corrected":false},{"s":3,"u":17,"title":"Parler d'art et de musique","skill":"Art","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["seni","karya","musik","sastra","tari","film","sinetron","teater"],["lukisan","pertunjukan","bioskop","ritme","puisi","artis","lagu"],["museum","novel","cerpen","piano","konser","aktor","peran","gitar"],["musisi","lirik","wayang","aktris","biola","disutradarai","dibintangi"]],"grammar":"Art : descriptions, passif pour les œuvres et expressions d’opinion.","corrected":false},{"s":3,"u":18,"title":"Parler de spiritualité","skill":"Spiritual","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["tuhan","berdoa","agama","percaya","malaikat","setan","mati"],["islam","katolik","hindu","beragama","dewa","dewi","takdir"],["kristen","buddha","beribadah","masjid","gereja","wihara","pura"],["ulama","pendeta","pastor","neraka","surga","jiwa","candi"],["dukun","santet","hantu","sembahyang","khotbah","dosa","pahala"],["natal","lebaran","paskah","raya","merayakan","amal","sedekah"]],"grammar":"Spiritualité : ber-, meN-, noms abstraits et registre culturel.","corrected":false},{"s":3,"u":19,"title":"Utiliser les verbes en memper-","skill":"Memper-","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["memperkuat","memperlemah","memperpanjang","memperpendek","mempermudah","memperbanyak"],["memperbesar","mempersulit","memperkecil","mempercepat","memperlambat"],["memperbaiki","memperburuk","memperkaya","memperketat","memperluas"]],"grammar":"memper- : rendre plus / renforcer / modifier une propriété.","corrected":false},{"s":3,"u":20,"title":"Parler des affaires","skill":"Business","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["usaha","saham","produksi","pembelian","rekening","industri","pajak"],["bos","konsumsi","pariwisata","keuntungan","modal","kontrak","penjualan"],["kekayaan","kredit","tingkat","investasi","konsumen","pabrik","pengangguran"],["penawaran","iklan","biaya","sewa","bisnis","ekonomi"]],"grammar":"Affaires : nombres, pourcentages, comparaisons, passif et noms dérivés.","corrected":true},{"s":3,"u":21,"title":"Compter avec les classificateurs","skill":"Counters","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["pertanian","seekor","ekor","seseorang","segelas","sepucuk"],["secangkir","sepotong","sepiring","beberapa","sesuatu"],["masing-masing","butir","selembar","sebutir","semangkuk"],["lembar","semua","sehelai","sebatang","helai"],["batang","berbagai","sebuah","sejumlah","setiap"]],"grammar":"Classificateurs : se- + classificateur, beberapa, setiap, semua, masing-masing.","corrected":true},{"s":3,"u":22,"title":"Former des verbes en diper-","skill":"Diper-","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["diperkuat","diperoleh","diperlemah","diperpanjang","diperpendek","diperbanyak"],["dipermudah","dipersulit","diperkecil","dipercepat","diperbesar","diperlambat"],["diperburuk","diperluas","diperbaiki","diperketat","diperkaya"]],"grammar":"diper- : forme passive correspondant souvent à memper-.","corrected":false},{"s":3,"u":23,"title":"Parler du sport","skill":"Sports","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["stadion","tim","golf","juara","kompetisi","tenis"],["menendang","balapan","sepak bola","pelatih","berenang","gol"],["olahraga","bulu tangkis","aba-aba","senam","kalah","pemenang"],["latihan","memukul","melompat","menang","memenangkan","memenangi"]],"grammar":"Sport : verbes d’action, gagner/perdre et phrases de résultat.","corrected":false},{"s":3,"u":24,"title":"Parler de politique","skill":"Politics","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["perang","hak","kekuasaan","hukum","masyarakat","pembangunan","pemerintah"],["kewajiban","revolusi","kebebasan","partai","tentara","presiden"],["kesepakatan","keamanan","keadilan","krisis","politik","kementerian","kekerasan"],["konflik","mayoritas","oposisi","menteri","organisasi","wali kota"],["calon","hutang","balai kota","strategi","bangsa","majelis","peristiwa"],["kejahatan","parlemen","negara","demokrasi","berjuang","pemilih"],["senator","memimpin","sistem","pidato","mendukung"]],"grammar":"Politique : passif, noms abstraits en ke-an/pe-an et relations cause-conséquence.","corrected":true},{"s":3,"u":25,"title":"Indiquer sa localisation","skill":"Places 2","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["pusat","tempat","daerah","ruang","alamat","provinsi","tepi","kabupaten"],["kebun binatang","pantai","desa","bar","gua","taman","kecamatan"],["wilayah","rute","jawa","pulau","kota","penjara","swalayan"],["jembatan","apartemen","menara","lantai","lokasi","aula","garasi"]],"grammar":"Localisation avancée : tempat, daerah, wilayah, alamat et prépositions spatiales.","corrected":true},{"s":3,"u":26,"title":"Créer des noms en ke-an","skill":"Ke-an","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["kehidupan","kebutuhan","kematian","kesehatan","kekuatan","kesempatan","kebijakan","keadaan"],["kebaikan","keberuntungan","kebiasaan","kebenaran","kemajuan","keburukan","keindahan"]],"grammar":"ke-…-an : noms abstraits d’état, qualité ou concept.","corrected":false},{"s":3,"u":27,"title":"Former des verbes répétés","skill":"Reduplicated verbs","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["berjalan-jalan","melihat-lihat","bermain-main","berjaga-jaga"],["berhati-hati","berpura-pura","bersama-sama","berturut-turut"]],"grammar":"Réduplication verbale : activité répétée, détendue, prudente ou progressive selon le verbe.","corrected":false},{"s":3,"u":28,"title":"Décrire sa communauté","skill":"People","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["kelompok","penduduk","dewasa","pria","wanita","memperkenalkan","populasi"],["kerumunan","para","bapak","budaya","kenal","tetangga","rekan"],["tamu","pacar","mengenali","klien","remaja","gadis","tawanan"],["nona","pahlawan","nyonya","musuh","anggota","tuan","pejalan","pelajar","pelaku"]],"grammar":"Personnes et communauté : para, noms de personnes et relations sociales.","corrected":true},{"s":3,"u":29,"title":"Utiliser les noms en pe-","skill":"Pe-","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["pembaca","penyewa","pendiri","pendengar"],["pelukis","pemakai","pemberi","pencuci","pendatang","pembantu"],["pengirim","pengisi","pengunjung","pengembang","penggali","pembicara"],["pembuat","pembuka","penonton","penutup","pendukung","penerima"]],"grammar":"Préfixe pe- et variantes : nom de personne liée à une action ou une fonction.","corrected":true},{"s":3,"u":30,"title":"Nommer les pays","skill":"Countries","confidence":"Reconstituée (ordre archive + nombre de leçons)","lessons":[["perancis","amerika serikat","jerman","belanda","mesir","rusia","inggris"],["benua","asia","afrika","amerika","eropa","tiongkok","yunani"],["brasil","swiss","spanyol","dunia","tionghoa","australia"]],"grammar":"Pays et nationalités : di/dari/ke avec les lieux, origine et comparaisons.","corrected":false}];
 
 const FR={"saya":"je","makan":"manger","apel":"pomme","suka":"aimer","jeruk":"orange","mau":"vouloir","kamu":"tu","punya":"avoir","itu":"cela","minum":"boire","air":"eau","susu":"lait","dia":"il/elle","kucing":"chat","merah":"rouge","kuat":"fort","dan":"et","hitam":"noir","putih":"blanc","halo":"bonjour","apa kabar":"comment vas-tu ?","andi":"Andi","tini":"Tini","siapa":"qui","nama":"nom","dari":"de","bukan":"ne pas / ce n'est pas","mana":"où","jakarta":"Jakarta","jepang":"Japon","bali":"Bali","berapa":"combien","dua puluh":"vingt","sepuluh":"dix","umur":"âge","tahun":"année","aku":"je / moi","kita":"nous (toi inclus)","menulis":"écrire","buku":"livre","surat":"lettre","mereka":"ils/elles","membaca":"lire","menu":"menu","koran":"journal","ini":"ceci / ce","anda":"vous","kami":"nous (sans toi)","kalian":"vous (pluriel)","besar":"grand","gaun":"robe","kaya":"riche","ia":"il/elle","tidak":"ne pas","ya":"oui","terima kasih":"merci","maaf":"désolé / pardon","selamat pagi":"bonjour (matin)","silakan":"s'il vous plaît / je vous en prie","sama-sama":"de rien","sampai jumpa":"à plus tard","selamat datang":"bienvenue","selamat jalan":"bon voyage / au revoir","assalamualaikum":"assalamualaikum","selamat siang":"bonjour (midi)","waalaikumsalam":"waalaikumsalam","selamat tinggal":"au revoir","permisi":"excusez-moi","selamat malam":"bonne nuit","terima kasih banyak":"merci beaucoup","selamat sore":"bonjour / bonsoir (fin d'après-midi)","sampai jumpa lagi":"à bientôt / à la prochaine","salam":"salutations","selamat idul fitri":"bonne fête de l'Aïd el-Fitr","nasi":"riz","goreng":"frit","ayam":"poulet","dengan":"avec","restoran":"restaurant","pesan":"message / commande","minuman":"boisson","sup":"soupe","makanan":"nourriture","daging":"viande","tomat":"tomate","tahu":"tofu","jus":"jus","tempe":"tempeh","stroberi":"fraise","telur":"œuf","sarapan":"petit-déjeuner","teh":"thé","kopi":"café","kue":"gâteau","enak":"délicieux","manis":"sucré / doux","roti":"pain","gula":"sucre","cokelat":"chocolat","merica":"poivre","garam":"sel","kacang":"cacahuètes","pisang":"banane","es":"glace / glaçon","panas":"chaud","minta":"demander","sambal":"sauce pimentée","kecap":"sauce soja","bayar":"payer","harga":"prix","di":"à / dans","ada":"il y a","dapur":"cuisine","rumah":"maison","sini":"ici","sekolah":"école","ke":"à / vers","pergi":"aller","gedung":"bâtiment","pasar":"marché","hotel":"hôtel","sana":"là-bas","situ":"là","pulang":"rentrer","bank":"banque","toko":"magasin","toilet":"toilettes","datang":"venir","duduk":"s'asseoir","muncul":"apparaître","setuju":"être d'accord","keluar":"sortir","masuk":"entrer","kembali":"revenir / retour","jatuh":"tomber","tidur":"dormir","lupa":"oublier","ingat":"se souvenir","tinggal":"habiter / rester","mulai":"commencer","selesai":"fini","bisa":"pouvoir","bola":"ballon","milik":"appartenir à","nama orang":"nom de la personne","anjing":"chien","pensil":"crayon","tas":"sac","kantong":"sac / sachet","pakaian":"vêtements","membeli":"acheter","celana":"pantalon","sepatu":"chaussures","dompet":"portefeuille","payung":"parapluie","sabuk":"ceinture","kemeja":"chemise","mantel":"manteau","jaket":"veste","rok":"jupe","membawa":"apporter / emmener","sarung tangan":"gants","kaus kaki":"chaussettes","topi":"chapeau","syal":"écharpe","dasi":"cravate","memakai":"porter (un vêtement)","kaus":"t-shirt","tapi":"mais","yang":"qui / que","atau":"ou","ketika":"quand / lorsque","karena":"parce que","jadi":"donc","namun":"cependant","berhasil":"réussir / fonctionner","berjalan":"marcher","berhenti":"s'arrêter","berdiri":"se lever","berada":"se trouver","bersaing":"être en compétition","bertemu":"rencontrer","berangkat":"partir","berubah":"changer","berbicara":"parler","berkembang":"se développer","berkunjung":"visiter","berkumpul":"se rassembler","berlaku":"être en vigueur / s'appliquer","bekerja":"travailler","belajar":"apprendre","bermain":"jouer","berpikir":"penser","bersama":"ensemble","berasal":"provenir de","berharap":"espérer","bergerak":"bouger","apa":"quoi / quel","kenapa":"pourquoi","bagaimana":"comment","kapan":"quand","di mana":"où","benar":"correct / vrai","salah":"faux / incorrect","kah":"particule interrogative","mengapa":"pourquoi","pertanyaan":"question","warna":"couleur","biru":"bleu","hijau":"vert","kuning":"jaune","abu-abu":"gris","ungu":"violet","oranye":"orange (couleur)","merah muda":"rose","meminum":"boire","melempar":"jeter","melihat":"voir / regarder","meminta":"demander","memakan":"manger","memulai":"commencer","membuat":"faire / fabriquer","membantu":"aider","membuka":"ouvrir","memberi":"donner","membayar":"payer","membangun":"construire","mencoba":"essayer","mencari":"chercher","menjaga":"garder / protéger","mendengar":"entendre","mendorong":"pousser","menjadi":"devenir","menjual":"vendre","mendapat":"obtenir / recevoir","memesan":"commander","memanggil":"appeler","memilih":"choisir","menarik":"intéressant","menunggu":"attendre","menutup":"fermer","menerima":"recevoir","menurut":"selon","menolak":"refuser","dingin":"froid","hangat":"tiède / chaud","baru":"nouveau","banyak":"beaucoup","betul":"correct / exact","sedikit":"un peu","kecil":"petit","panjang":"long","pendek":"court","tinggi":"haut","muda":"jeune","tua":"vieux / âgé","jelek":"laid","cantik":"beau / belle","bersih":"propre","kotor":"sale","miskin":"pauvre","jauh":"loin","dekat":"près / proche","jelas":"clair","rusak":"cassé / abîmé","bodoh":"stupide","sempurna":"parfait","sulit":"difficile","mudah":"facile","biasa":"ordinaire / habituel","pintar":"intelligent","mirip":"semblable","lain":"autre","bahagia":"heureux","sedih":"triste","penuh":"plein","nol":"zéro","satu":"un","dua":"deux","tiga":"trois","empat":"quatre","nomor":"numéro","tambah":"plus / ajouter","sama":"même / identique","lima":"cinq","enam":"six","tujuh":"sept","delapan":"huit","sembilan":"neuf","jumlah":"total / quantité","kurang":"moins","sebelas":"onze","lusin":"douzaine","selusin":"une douzaine","belas":"pitié / compassion","puluh":"vingtaine / vingt","kali":"fois","ratus":"centaine / cent","seratus":"cent","seribu":"mille","ribu":"millier / mille","sejuta":"un million","juta":"million","persen":"pour cent","semiliar":"un milliard","miliar":"milliard","pertama":"premier","kedua":"deuxième","ketiga":"troisième","sekali":"une fois","ratusan":"des centaines","ribuan":"des milliers","puluhan":"des dizaines","mengerti":"comprendre","mengambil":"prendre","mengubah":"changer / modifier","mengingat":"se souvenir","mengajar":"enseigner","mengisi":"remplir","menggali":"creuser","menghadap":"faire face à","menghilang":"disparaître","menggambar":"dessiner","mengganggu":"déranger","mengganti":"remplacer","menyimpan":"sauvegarder / conserver","menyusun":"organiser / arranger","menyentuh":"toucher","menyewa":"louer","menyapa":"saluer","menyapu":"balayer","mengirim":"envoyer","mengejar":"poursuivre","mengandung":"contenir","merawat":"prendre soin de","merusak":"abîmer / détruire","menyala":"s'allumer","menyanyi":"chanter","baik":"bien / bon","buruk":"mauvais","indah":"beau / magnifique","tampan":"beau (homme)","gelap":"sombre","terang":"clair / lumineux","berat":"lourd","ringan":"léger","rumit":"compliqué","sederhana":"simple","ramah":"amical / sympathique","nakal":"vilain / désobéissant","ragu":"doute / hésiter","mantap":"super / excellent","cukup":"assez / suffisant","lebih":"plus","khusus":"spécial","umum":"général","bagus":"bien / joli","kering":"sec","basah":"mouillé","lucu":"drôle","serius":"sérieux","jahat":"méchant","utama":"principal","sakit":"malade","sehat":"en bonne santé","lama":"longtemps / long","sebentar":"un moment / brièvement","resmi":"officiel","siap":"prêt","sesuai":"conforme / approprié","hilang":"perdu","tutup":"couvercle / fermer","buka":"ouvrir / ouvert","lebar":"large","keras":"dur","sempit":"étroit","lembut":"doux / mou","berbahaya":"dangereux","ayah":"père","orang tua":"parents","ibu":"mère","seorang":"un / une (personne)","laki-laki":"homme / masculin","perempuan":"femme","anak":"enfant","pasangan":"couple / paire","suami":"mari","istri":"épouse / femme","keponakan":"nièce / neveu","kakak":"frère / sœur aîné(e)","adik":"frère / sœur cadet(te)","adalah":"être / est","menikah":"marié","sepupu":"cousin / cousine","nenek":"grand-mère","meninggal":"mourir / décédé","kakek":"grand-père","cucu":"petit-enfant","orang":"personne","putra":"fils","putri":"princesse / fille","saudara":"frère ou sœur","saudari":"sœur","paman":"oncle","tante":"tante","abang":"frère aîné","keluarga":"famille","melahirkan":"accoucher / donner naissance","bayi":"bébé","hamil":"enceinte","mertua":"beaux-parents","menantu":"gendre / belle-fille","ipar":"beau-frère / belle-sœur","memasak":"cuisiner","pisau":"couteau","minyak":"huile","sayur":"légume","buah":"fruit","kubis":"chou","wortel":"carotte","labu":"citrouille / courge","untuk":"pour","menggoreng":"faire frire","wajan":"poêle","kangkung":"chou kale / kangkung","mentega":"beurre","bir":"bière","cabai":"piment","cuka":"vinaigre","paprika":"paprika","bayam":"épinards","merebus":"faire bouillir","panci":"casserole","selai":"confiture","anggur":"raisin","kulkas":"réfrigérateur","mi":"nouilles","terung":"aubergine","bawang":"oignon","seledri":"céleri","memotong":"couper","bubur":"bouillie / porridge","piring":"assiette","keju":"fromage","pasta":"pâtes","permen":"bonbon","spageti":"spaghettis","brokoli":"brocoli","lobak":"radis","mengiris":"trancher / émincer","oven":"four","kentang":"pomme de terre","bumbu":"assaisonnement / épices","memanggang":"rôtir / griller","kompor":"cuisinière / réchaud","ubi":"patate douce","selada":"laitue","jahe":"gingembre","asam":"acide","pahit":"amer","tawar":"fade","asin":"salé","pedas":"épicé / pimenté","gurih":"savoureux / umami","rasa":"goût","seperti":"comme","bahwa":"que","tetapi":"mais","sehingga":"de sorte que","jika":"si","yaitu":"c'est-à-dire","agar":"afin que","bahkan":"même / voire","tanpa":"sans","kalau":"si","daripada":"que / plutôt que","profesi":"profession","karier":"carrière","dokter":"médecin","guru":"professeur / enseignant","petani":"agriculteur","nelayan":"pêcheur","tukang":"artisan / ouvrier","peneliti":"chercheur","raja":"roi","pangeran":"prince","ratu":"reine","polisi":"police","pengacara":"avocat","penjual":"vendeur","insinyur":"ingénieur","profesor":"professeur (université)","hakim":"juge","pelayan":"serveur","koki":"chef cuisinier","pembeli":"acheteur","pemilik":"propriétaire","jurnalis":"journaliste","wartawan":"reporter","sekretaris":"secrétaire","perawat":"infirmier / infirmière","pegawai":"employé","pejabat":"fonctionnaire / responsable","penyanyi":"chanteur / chanteuse","penari":"danseur / danseuse","pekerjaan":"métier / travail","pekerja":"travailleur / ouvrier","penulis":"auteur / écrivain","pemimpin":"dirigeant / chef","prajurit":"soldat","sopir":"chauffeur","pemain":"joueur","pemikir":"penseur","hari":"jour","senin":"lundi","selasa":"mardi","rabu":"mercredi","kamis":"jeudi","jumat":"vendredi","sabtu":"samedi","minggu":"dimanche","detik":"secondes","menit":"minute","jam":"heure","bulan":"mois","lalu":"puis / ensuite","depan":"devant / avant","pagi":"matin","siang":"midi","sore":"après-midi","petang":"soir","malam":"nuit","kemarin":"hier","besok":"demain","lusa":"après-demain","kemarau":"saison sèche","hujan":"pluie","sekarang":"maintenant","musim":"saison","saat":"quand / au moment où","juga":"aussi","akan":"futur / va","sudah":"déjà","masih":"encore / toujours","sangat":"très","belum":"pas encore","pernah":"déjà / avoir déjà","langsung":"directement / en direct","paling":"le plus","akhirnya":"finalement","sering":"souvent","biasanya":"habituellement","mungkin":"peut-être","segera":"bientôt / immédiatement","selalu":"toujours","hampir":"presque","nanti":"plus tard","terlalu":"trop","sebaliknya":"à l'inverse / sinon","jangan":"ne pas / interdiction","tentu":"bien sûr","setidaknya":"au moins","agak":"un peu / plutôt","tiba-tiba":"soudain","lagi-lagi":"encore et encore","kadang-kadang":"parfois","rupanya":"apparemment","hanya":"seulement","telah":"déjà / avait","oleh":"par","disebut":"appelé","dianggap":"considéré","dikenal":"connu","dibuat":"fait / fabriqué","dirilis":"sorti / publié","dimulai":"commencé","diduga":"soupçonné","dibangun":"construit","diberi":"donné","didukung":"soutenu","dipakai":"porté / utilisé","diambil":"pris","dilarang":"interdit","dibawa":"apporté / emmené","ditulis":"écrit","diterima":"reçu","ditangkap":"arrêté","dipimpin":"dirigé","diperiksa":"vérifié / examiné","diproduksi":"produit","dinilai":"évalué / noté","dilihat":"vu","dibentuk":"formé / créé","dijual":"vendu / en vente","diangkat":"nommé / désigné","dibuka":"ouvert","dipilih":"choisi / sélectionné","ditutup":"fermé","diminta":"demandé","dibagi":"divisé / partagé","ditambah":"ajouté","tubuh":"corps","kepala":"tête","wajah":"visage","dahi":"front","mata":"œil","alis":"sourcil","cium":"baiser / bisou","rambut":"cheveux","telinga":"oreille","hidung":"nez","mulut":"bouche","bibir":"lèvre","bau":"odeur","mencium":"embrasser / sentir","gigi":"dent","lidah":"langue","pipi":"joue","leher":"cou","tenggorokan":"gorge","dada":"poitrine","perut":"ventre / estomac","bahu":"épaule","punggung":"dos","tangan":"main","sikut":"coude","lengan":"bras","jari":"doigt","pergelangan":"poignet","kaki":"pied / jambe","paha":"cuisse","lutut":"genou","telapak":"paume / plante","kuku":"ongle","otot":"muscle","kulit":"peau","jantung":"cœur (organe)","paru":"poumon","darah":"sang","otak":"cerveau","tulang":"os","organ":"organe","bagian":"partie","catatan":"note","hubungan":"relation","bangunan":"bâtiment / construction","serangan":"attaque","lingkungan":"environnement","tujuan":"objectif","lapangan":"terrain / domaine","bantuan":"aide","laporan":"rapport","pimpinan":"direction / dirigeant","anggaran":"budget","layanan":"service","dukungan":"soutien","urutan":"ordre / séquence","jabatan":"poste / fonction","dugaan":"supposition","putaran":"tour / manche","tambahan":"supplémentaire","pilihan":"choix / sélection","an":"an","kanan":"droite","kiri":"gauche","posisi":"position","dalam":"dans / intérieur","belok":"tourner","arah":"direction","atas":"sur / dessus","bawah":"sous / dessous","samping":"côté","luar":"extérieur","balik":"derrière / envers","naik":"monter / prendre","turun":"descendre","utara":"nord","selatan":"sud","timur":"est","barat":"ouest","menuju":"se diriger vers","belakang":"derrière / arrière","barat daya":"sud-ouest","barat laut":"nord-ouest","timur laut":"nord-est","tenggara":"sud-est","kutub":"pôles","terbang":"voler","lewat":"par / via","tiba":"arriver","jarak":"distance","kompas":"boussole","lah":"particule d'insistance","mohon":"s'il vous plaît","jaga":"garde / garder","panggil":"appelle !","tanya":"demande !","jawab":"réponds !","kan":"n'est-ce pas ? / hein ?","tolong":"s'il te plaît / aide-moi","serang":"attaque !","tembak":"tire !","kumpul":"rassemblez-vous !","lihat":"regarde ! / vois !","mari":"allons / venez","biar":"laisser / que","lakukan":"fais-le !","bantu":"aide !","main":"jouer","beri":"donne !","ayo":"allez !","coba":"essaie !","pasang":"installer / poser","lepas":"détacher / libérer","kerja":"travail / travailler","pikir":"penser","gambar":"image / dessin","ganti":"changer / remplacer","simpan":"garder / sauvegarder","sapu":"balai","kirim":"envoyer","kejar":"poursuivre","potong":"couper","nyanyi":"chanter","sebut":"appeler / nommer","pakai":"utiliser / porter","ambil":"prendre","bawa":"apporter / emmener","buat":"pour / faire","lempar":"jeter","tulis":"écrire","baca":"lire","jual":"vendre","beli":"acheter","angkat":"soulever","pilih":"choisir","meja":"table","kursi":"chaise","sendok":"cuillère","sofa":"canapé","kamar":"chambre","furnitur":"meubles","garpu":"fourchette","gelas":"verre","botol":"bouteille","mangkuk":"bol","cangkir":"tasse","langit-langit":"plafond","jendela":"fenêtre","tempat tidur":"lit","lampu":"lampe","spons":"éponge","kolam":"piscine / bassin","kantor":"bureau","pintu":"porte","dinding":"mur","cermin":"miroir","atap":"toit","karpet":"tapis / moquette","televisi":"télévision","tangga":"escalier","tirai":"rideau","bak mandi":"baignoire","bantal":"oreiller","resep":"recette","sabun":"savon","handuk":"serviette","pemanas":"chauffage / chauffe-eau","sampo":"shampoing","membersihkan":"nettoyer","balkon":"balcon","mainan":"jouet","seprai":"draps","tempat sampah":"poubelle","pagar":"clôture","gerbang":"portail","bebek":"canard","burung":"oiseau","hewan":"animal","lebah":"abeille","ikan":"poisson","gajah":"éléphant","beruang":"ours","sapi":"vache","kuda":"cheval","babi":"cochon","serigala":"loup","harimau":"tigre","tikus":"souris / rat","kupu-kupu":"papillon","singa":"lion","kelinci":"lapin","ular":"serpent","laba-laba":"araignée","hiu":"requin","monyet":"singe","lumba-lumba":"dauphins","serangga":"insecte","semut":"fourmi","paus":"baleine","jerapah":"girafe","januari":"janvier","februari":"février","maret":"mars","april":"avril","juni":"juin","mei":"mai","tanggal":"date","juli":"juillet","november":"novembre","agustus":"août","september":"septembre","oktober":"octobre","desember":"décembre","akhir":"fin","windu":"cycle de huit ans / windu","dekade":"décennie","abad":"siècle","awal":"début / tôt","pertengahan":"milieu","seperempat":"un quart","gugur":"automne / tomber","pukul":"heure (à...)","setengah":"moitié / demi","lagi":"encore / de nouveau","semi":"semi-","generasi":"génération","kalender":"calendrier","masa":"époque / vraiment","tengah":"milieu","libur":"congé / vacances","dahulu":"autrefois / d'abord","zaman":"époque / ère","saja":"seulement","dapat":"pouvoir","harus":"devoir / il faut","sedang":"en train de","jarang":"rarement","umumnya":"généralement","sekitar":"environ / autour","sendiri":"seul","begitu":"ainsi / comme ça","tak":"ne... pas","selamanya":"pour toujours","perlu":"avoir besoin","boleh":"pouvoir / avoir le droit","tetap":"fixe / permanent","pegunungan":"montagnes","pelabuhan":"port","pelayanan":"service / prestation","pemanasan":"échauffement","pertemuan":"réunion / rencontre","pengalaman":"expérience","pemandangan":"paysage / vue","pemasukan":"revenu / entrée d'argent","pemerintahan":"gouvernement / administration","pemilihan":"élection","pertumbuhan":"croissance","perhatian":"attention","penciuman":"odorat","pendengaran":"ouïe","pengadilan":"tribunal","pertandingan":"match / compétition","penginapan":"hébergement","pendidikan":"éducation","pengeluaran":"dépenses","penglihatan":"vision","penulisan":"écriture / rédaction","penyerangan":"attaque / agression","persaingan":"concurrence","perusahaan":"entreprise","pertarungan":"combat","peraturan":"règles / règlement","perbatasan":"frontière","perbuatan":"action / acte","percakapan":"conversation","persatuan":"unité","peralatan":"équipement","perkembangan":"développement","perlawanan":"résistance","perlombaan":"course / compétition","permainan":"jeu","persahabatan":"amitié","pertahanan":"défense","takut":"avoir peur","merasa":"se sentir / ressentir","menakutkan":"effrayant","senang":"content / heureux","aneh":"étrange","perasaan":"sentiment","berani":"courageux","mengenang":"se souvenir avec nostalgie","bosan":"s'ennuyer","membosankan":"ennuyeux","suasana":"ambiance / atmosphère","hati":"cœur / sentiment","damai":"paix","keinginan":"désir / envie","marah":"en colère","kaget":"surpris","kejutan":"surprise","kecewa":"déçu","mengecewakan":"décevant","lelah":"fatigué","iri":"envie / jalousie","emosi":"émotion","sabar":"patient","tegang":"tendu","menegangkan":"stressant / palpitant","lapar":"affamé","malu":"honte / gêné","cinta":"amour","haus":"assoiffé","kalem":"calme","adil":"juste / équitable","memalukan":"embarrassant / honteux","pikiran":"pensée / esprit","imajinasi":"imagination","gairah":"passion","jijik":"dégoûté","menjijikkan":"dégoûtant","tentang":"à propos de","kepada":"à / envers","pun":"même / aussi (particule)","secara":"de manière / de façon","hingga":"jusqu'à","terhadap":"envers / à l'égard de","si":"particule devant un nom","sang":"le / noble (titre)","antara":"entre / parmi","serta":"et / ainsi que","aduh":"aïe !","astaga":"mon Dieu !","astagfirullah":"astagfirullah","bagi":"pour","sementara":"pendant ce temps / tandis que","selain":"en plus de / sauf","pula":"aussi / également","tersenyum":"sourire","tertawa":"rire","terbuka":"ouvert","tertutup":"fermé","tersebut":"ce / ledit","tertulis":"écrit","terjatuh":"tomber / être tombé","terjadi":"se produire / arriver","tertentu":"certain / particulier","terisi":"rempli","teringat":"se rappeler soudain","terkirim":"envoyé","tersimpan":"stocké / sauvegardé","termasuk":"y compris","terpaksa":"être obligé","terkenal":"célèbre","terletak":"situé","terkait":"lié à","terdapat":"il y a / se trouver","terdiri":"se composer de","ternyata":"il s'avère que / finalement","terlibat":"impliqué","kerjakan":"fais-le / travaille dessus","kelas":"classe","tugas":"devoir / tâche","siswa":"élève","bahasa":"langue","indonesia":"Indonésie","jelaskan":"explique !","pelajaran":"leçon","ujian":"examen","teman":"ami","matematika":"mathématiques","perpustakaan":"bibliothèque","papan":"tableau / planche","kantin":"cantine","jadwal":"emploi du temps / horaire","seragam":"uniforme","fisika":"physique","contoh":"exemple","teknik":"technique","mengerjakan":"faire / effectuer","penjelasan":"explication","perguruan tinggi":"enseignement supérieur / université","bab":"chapitre","kimia":"chimie","terlambat":"en retard","istirahat":"pause / repos","dihukum":"puni","dipanggil":"appelé / convoqué","halaman":"page","kertas":"papier","kapur":"craie","sejarah":"histoire","dikeluarkan":"émis / délivré / sorti","peringkat":"classement","pindah":"déménager / déplacer","wisuda":"remise de diplôme","upacara":"cérémonie","gelar":"diplôme / titre","lulus":"diplômé / réussir","melemparkan":"lancer / jeter","memainkan":"jouer","melakukan":"faire","melanjutkan":"continuer","melupakan":"oublier","memasukkan":"faire entrer / mettre dedans","memunculkan":"faire apparaître / susciter","memasakkan":"cuisiner pour quelqu'un","membicarakan":"parler de","membawakan":"apporter pour quelqu'un","memberikan":"donner / fournir","membacakan":"lire à quelqu'un / lire à voix haute","mendengarkan":"écouter","mendirikan":"fonder / établir","menjatuhkan":"faire tomber","menjadikan":"faire devenir / transformer en","mendatangkan":"faire venir / amener","mendapatkan":"obtenir","menjelaskan":"expliquer","memutuskan":"décider","memecahkan":"résoudre","memisahkan":"séparer","memuaskan":"satisfaisant","memerlukan":"avoir besoin de","memerintahkan":"ordonner / donner des instructions","memastikan":"s'assurer de","memikirkan":"penser à / réfléchir à","menemukan":"trouver","menuliskan":"écrire / noter","menunjukkan":"montrer","meninggalkan":"quitter / laisser","menambahkan":"ajouter","menurunkan":"faire descendre / réduire","menawarkan":"proposer / offrir","terbesar":"le plus grand","terakhir":"en dernier / dernier","terbaik":"le meilleur","terutama":"surtout / notamment","terkecil":"le plus petit","kurus":"mince","gemuk":"gros","terkurus":"le plus mince","tergemuk":"le plus gros","semakin":"de plus en plus","luas":"vaste / large","cepat":"rapide","lambat":"lent","tercepat":"le plus rapide","terluas":"le plus vaste / le plus large","murah":"bon marché","mahal":"cher","penting":"important / urgent","termurah":"le moins cher","terpenting":"le plus important","malas":"paresseux","sepi":"calme / peu fréquenté","ramai":"animé / bondé","rajin":"assidu / travailleur","termalas":"le plus paresseux","tajam":"tranchant","tumpul":"émoussé","terkuat":"le plus fort","terkaya":"le plus riche","termerah":"le plus rouge","dangkal":"peu profond","terdangkal":"le moins profond","terdalam":"le plus profond","tertua":"le plus âgé","termuda":"le plus jeune","mengambilkan":"aller chercher pour quelqu'un","mengajarkan":"enseigner à quelqu'un","mengingatkan":"rappeler","mengumumkan":"annoncer","menggantikan":"remplacer quelqu'un / quelque chose","menghilangkan":"faire disparaître / enlever","menggambarkan":"illustrer / décrire","menghasilkan":"produire","menghentikan":"arrêter","menggunakan":"utiliser","menyimpankan":"conserver / sauvegarder pour quelqu'un","menyewakan":"mettre en location / louer à quelqu'un","menyelesaikan":"terminer / achever","menyambungkan":"relier / connecter","mengirimkan":"envoyer","mengembalikan":"rendre / restaurer","mengeluarkan":"faire sortir / émettre","mengalahkan":"battre / vaincre","mengatakan":"dire","mengembangkan":"développer","mengumpulkan":"rassembler / collecter","merusakkan":"endommager","menyalakan":"allumer","merupakan":"être / constituer","mobil":"voiture","taksi":"taxi","bus":"bus","mengemudikan":"conduire","tiket":"billet / ticket","penumpang":"passager","paspor":"passeport","hati-hati":"attention ! / sois prudent","pilot":"pilote","pesawat":"avion","bandara":"aéroport","terminal":"terminal","jalan":"rue / route","motor":"moto","sepeda":"vélo","pengendara":"conducteur / usager de la route","keterlambatan":"retard","membatalkan":"annuler","masinis":"conducteur de train","kereta":"train","mengendarai":"conduire / monter sur","stasiun":"gare / station","turis":"touriste","kunjungan":"visite","mengunjungi":"visiter","nakhoda":"capitaine / patron de bateau","perahu":"bateau / barque","kapal":"navire / bateau","kendaraan":"véhicule","menginap":"passer la nuit / séjourner","transportasi":"transport","alat":"outil","mesin":"machine","kecelakaan":"accident","sampai":"jusqu'à / arriver à","ojek":"moto-taxi","koper":"valise","mengukur":"mesurer","timbangan":"balance","kilogram":"kilogramme","gram":"gramme","satuan":"unité","waktu":"temps","miligram":"milligrammes","kedalaman":"profondeur","meter":"mètres","ketinggian":"hauteur","diukur":"être mesuré","sungai":"rivière / fleuve","kilometer":"kilomètres","sentimeter":"centimètre","liter":"litre","ukuran":"taille / dimension","hasil":"résultats","badan":"corps","belasan":"une dizaine / entre 11 et 19","volume":"volume","meteran":"mètre ruban / compteur","ditimbang":"être pesé","rupiah":"roupie indonésienne","hektar":"hectare","lipat":"pliage / plié","kecepatan":"vitesse","per":"par","inci":"pouce","mil":"mille","ons":"once","sisi":"côté / face","sepertiga":"un tiers","permukaan":"surface","dilakukan":"fait / effectué","digunakan":"utilisé","ditemukan":"trouvé","didirikan":"fondé / établi","diberikan":"donné","dibandingkan":"comparé","diharapkan":"attendu / espéré","dijadikan":"fait / transformé en","disampaikan":"transmis / communiqué","ditetapkan":"fixé / établi","dilaksanakan":"mis en œuvre","diadakan":"organisé / tenu","disebabkan":"causé","dikatakan":"dit","dikembangkan":"développé","diterbitkan":"publié","diselenggarakan":"organisé / tenu","dilaporkan":"rapporté / signalé","disebutkan":"mentionné","dinyatakan":"déclaré / indiqué","dibutuhkan":"nécessaire / requis","diluncurkan":"lancé","diumumkan":"annoncé","dilahirkan":"né","digantikan":"remplacé","dihasilkan":"produit / généré","menertawakan":"se moquer de / rire de","terkejut":"surpris","mengejutkan":"choquant / surprenant","cemburu":"jaloux","sayang":"cher / chéri","tenang":"calme / tranquille","berbeda":"différent","memimpikan":"rêver de","kesal":"agacé / contrarié","mimpi":"rêve","ingin":"vouloir / désirer","senyuman":"sourire","santai":"se détendre","merindukan":"manquer à / regretter","mengharapkan":"espérer / s'attendre à","tawa":"rire / éclat de rire","harapan":"espoir","mengantuk":"somnolent / avoir sommeil","kesan":"impression","aroma":"parfum / arôme","cemas":"anxieux","humor":"humour","puas":"satisfait","ingatan":"souvenir / mémoire","bebas":"libre","selera":"goût / préférence","dipercaya":"de confiance / digne de confiance","karakter":"caractère","pasti":"certainement / sûr","peka":"sensible","gugup":"nerveux","murung":"morose / de mauvaise humeur","respek":"respect","menaruh":"poser / mettre","sampah":"déchets / ordures","benci":"détester","penasaran":"curieux","bangga":"fier","kesepian":"seul / isolé","menangis":"pleurer","batuk":"tousser / toux","pilek":"rhume","demam":"fièvre","penyakit":"maladie","semoga":"espérons que / pourvu que","bengkak":"gonflé / enflé","sembuh":"guérir / aller mieux","berobat":"se faire soigner","rumah sakit":"hôpital","apotek":"pharmacie","gatal":"qui démange","klinik":"clinique","obat":"médicament","pasien":"patient","alergi":"allergie","memeriksa":"examiner / vérifier","patah":"cassé / fracturé","imunisasi":"vaccination","disuntik":"injecté","terkilir":"foulé / entorsé","manusia":"être humain","luka":"blessure / plaie","dibersihkan":"nettoyé","diobati":"soigné / traité","parah":"grave / sévère","operasi":"opération","berdarah":"ensanglanté / sanglant","tanah":"terre / sol","api":"feu","udara":"air","angin":"vent","sumber":"source","batu":"pierre","bumi":"Terre / terre","matahari":"soleil","laut":"mer","alam":"nature / naturel","bunga":"fleur","polusi":"pollution","rumput":"herbe","mencemari":"polluer","bintang":"étoile","awan":"nuage","salju":"neige","benih":"graine","langit":"ciel","hutan":"forêt","pohon":"arbre","gunung":"montagne","danau":"lac","mawar":"rose","lumpur":"boue","samudera":"océan","planet":"planète","tumbuhan":"plante / végétal","puncak":"sommet / pic","dasar":"de base / fondamental","gempa":"tremblement de terre","cuaca":"temps / météo","iklim":"climat","asap":"fumée","temperatur":"température","badai":"tempête","hidup":"vie / vivre","petir":"éclair / foudre","gurun":"désert","listrik":"électricité","lubang":"trou","komunikasi":"communication","informasi":"information","pers":"presse","suara":"son / voix","selamat":"félicitations","huruf":"lettre / alphabet","media":"médias","massa":"masse","internet":"internet","berkata":"dire / a dit","kata":"mot","kalimat":"phrase","teriak":"crier / a crié","merekam":"enregistrer","perintah":"ordre / commande","diam":"tais-toi / silence","bertanya":"poser une question","pendapat":"opinion / avis","arti":"sens / signification","pemberitahuan":"avis / notification","situs":"site","menjawab":"répondre","diskusi":"discussion","debat":"débat","argumen":"argument","judul":"titre","artikel":"article","menerjemahkan":"traduire","tema":"thème","wawancara":"entretien / interview","unduh":"télécharger","unggah":"téléverser / envoyer en ligne","pengumuman":"annonce","mengontak":"contacter","berita":"nouvelles / actualités","rahasia":"secret","komentar":"commentaire","memasuki":"entrer dans / pénétrer","meliputi":"couvrir / englober","melayani":"servir / desservir","mewakili":"représenter","melewati":"traverser / dépasser","melindungi":"protéger","menikmati":"profiter de / apprécier","memiliki":"posséder / avoir","melalui":"à travers / par","mengakhiri":"terminer / mettre fin à","mengikuti":"suivre","mengatasi":"surmonter / résoudre","mengakui":"reconnaître / admettre","mengalami":"vivre / subir une expérience","menghadapi":"affronter / faire face à","menghindari":"éviter","mengetahui":"savoir / connaître","mengurangi":"réduire","menguasai":"maîtriser / dominer","mengenai":"au sujet de / concernant","mempunyai":"avoir / posséder","memenuhi":"remplir / satisfaire","mempelajari":"étudier / apprendre","menyadari":"se rendre compte de","memahami":"comprendre","menangani":"gérer / traiter","mencapai":"atteindre","menjalani":"vivre / suivre / subir","menempati":"occuper (un lieu)","menduduki":"occuper (un poste)","mendatangi":"venir voir / se rendre auprès de","sebagai":"comme / en tant que","pada":"à / sur / au","kecuali":"sauf / excepté","selama":"pendant","sebelum":"avant","setelah":"après","sejak":"depuis","kemudian":"puis / ensuite","sesudah":"après","walau":"bien que / même si","demi":"pour / au nom de","bahan":"ingrédient / matière","uang":"argent","debu":"poussière","emas":"or","terbuat":"fait de","tembaga":"cuivre","besi":"fer","katun":"coton","perak":"argent (métal)","kain":"tissu","pasir":"sable","karet":"caoutchouc","wol":"laine","kayu":"bois","plastik":"plastique","logam":"métal","barang":"marchandises / objets","senjata":"arme","kotak":"boîte","palang":"barre transversale","kabel":"câble","objek":"objet","peta":"carte / plan","kacamata":"lunettes","radio":"radio","dokumen":"document","kartu":"carte","nampan":"plateau","memuat":"charger / contenir","pengecas":"chargeur","bendera":"drapeau","hadiah":"cadeau","kunci":"clé","foto":"photo","pedang":"épée","komputer":"ordinateur","bubuk":"poudre","album":"album","adaptor":"adaptateur","masalah":"problème","bentuk":"forme","tanda":"signe / marque","kamus":"dictionnaire","majalah":"magazine","roda":"roue","pulpen":"stylo","robot":"robot","layar":"écran","jarum":"aiguille","benang":"fil / laine","lilin":"bougie","amplop":"enveloppe","korek":"allumette / briquet","nyala":"allumé","cahaya":"lumière","padam":"s'éteindre","titik":"point","fungsi":"fonction","material":"matériau / matériel","pencarian":"recherche","teori":"théorie","jenis":"type / genre","dampak":"impact","energi":"énergie","ilmu":"science / connaissance","metode":"méthode","analisis":"analyse","rumus":"formule","ide":"idée","penemuan":"invention / découverte","batas":"limite","suhu":"température","skala":"échelle","lingkaran":"cercle","segitiga":"triangle","atmosfer":"atmosphère","sinar":"rayons","derajat":"degré / niveau","ilmiah":"scientifique","pengetahuan":"connaissance","daftar":"liste","penelitian":"recherche / étude","membakar":"brûler","reaksi":"réaction","cara":"façon / manière","teknologi":"technologie","grafik":"graphique","proses":"processus","perhitungan":"calcul","persegi":"carré","sudut":"coin / angle","hal":"chose / fait","konsep":"concept","dihubungi":"contacté","diketahui":"connu / su","diikuti":"suivi","disertai":"accompagné de","diakui":"reconnu","dimiliki":"possédé","dilengkapi":"être équipé de","ditemui":"rencontré / trouvé","dialami":"vécu / subi","dihadiri":"assisté par / fréquenté par","ditangani":"pris en charge / traité","dikelilingi":"être entouré de","dinamai":"nommé d'après","dikurangi":"réduit","didampingi":"accompagné","dipenuhi":"rempli / satisfait","ditandai":"être marqué","dilindungi":"protégé","dipengaruhi":"influencé","diyakini":"considéré comme vrai / estimé","dipahami":"compris","dikuasai":"dominé / maîtrisé","dicapai":"atteint","dijumpai":"trouvé / rencontré","disukai":"préféré / aimé","disetujui":"approuvé","dimintai":"sollicité / demandé à","dikunjungi":"visité","ditandatangani":"signé","diawali":"commencé / ouvert par","dilayani":"servi / pris en charge","dihadapi":"confronté à","dibatasi":"limité / restreint","seni":"art","karya":"œuvre / création","musik":"musique","sastra":"littérature","tari":"danse","film":"film","sinetron":"feuilleton / série télévisée","teater":"théâtre","lukisan":"peinture / tableau","pertunjukan":"spectacle / représentation","bioskop":"cinéma","ritme":"rythme","puisi":"poésie","artis":"artiste","lagu":"chanson","museum":"musée","novel":"roman","cerpen":"nouvelle","piano":"piano","konser":"concert","aktor":"acteur","peran":"rôle","gitar":"guitare","musisi":"musicien","lirik":"paroles","wayang":"marionnette / wayang","aktris":"actrice","biola":"violon","disutradarai":"réalisé / mis en scène","dibintangi":"avec dans les rôles principaux / interprété par","tuhan":"Dieu","berdoa":"prier","agama":"religion","percaya":"croire","malaikat":"ange","setan":"démon / diable","mati":"mourir","islam":"islam","katolik":"catholique","hindu":"hindou","beragama":"être de religion / religieux","dewa":"dieu / divinité","dewi":"déesse","takdir":"destin","kristen":"chrétien","buddha":"Bouddha / bouddhisme","beribadah":"pratiquer un culte / adorer","masjid":"mosquée","gereja":"église","wihara":"temple bouddhiste","pura":"temple hindou","ulama":"ouléma / religieux musulman","pendeta":"pasteur / religieux","pastor":"prêtre / pasteur","neraka":"enfer","surga":"paradis","jiwa":"âme","candi":"temple / monument religieux","dukun":"chaman / guérisseur traditionnel","santet":"sorcellerie","hantu":"fantôme","sembahyang":"prière / culte","khotbah":"sermon","dosa":"péché","pahala":"mérite / récompense spirituelle","natal":"Noël","lebaran":"Aïd / Lebaran","paskah":"Pâques","raya":"route principale / grande route","merayakan":"célébrer","amal":"charité / œuvre caritative","sedekah":"aumône","memperkuat":"renforcer","memperlemah":"affaiblir","memperpanjang":"allonger / prolonger","memperpendek":"raccourcir","mempermudah":"simplifier / faciliter","memperbanyak":"multiplier / augmenter","memperbesar":"agrandir","mempersulit":"compliquer / rendre difficile","memperkecil":"réduire / rapetisser","mempercepat":"accélérer","memperlambat":"ralentir","memperbaiki":"réparer / améliorer","memperburuk":"aggraver / empirer","memperkaya":"enrichir","memperketat":"resserrer / renforcer","memperluas":"élargir / étendre","usaha":"effort / entreprise","saham":"action boursière","produksi":"production","pembelian":"achat","rekening":"compte bancaire","industri":"industrie","pajak":"impôt / taxe","bos":"patron","konsumsi":"consommation","pariwisata":"tourisme","keuntungan":"bénéfice / avantage","modal":"capital","kontrak":"contrat","penjualan":"vente","kekayaan":"richesse","kredit":"crédit","tingkat":"niveau","investasi":"investissement","konsumen":"consommateur","pabrik":"usine","pengangguran":"chômage","penawaran":"offre","iklan":"publicité","biaya":"coût / frais","sewa":"loyer / location","bisnis":"affaires / entreprise","ekonomi":"économie","pertanian":"agriculture","seekor":"un (animal)","ekor":"queue","seseorang":"quelqu'un","segelas":"un verre de","sepucuk":"une tige / un exemplaire","secangkir":"une tasse de","sepotong":"un morceau","sepiring":"une assiette de","beberapa":"quelques / plusieurs","sesuatu":"quelque chose","masing-masing":"chacun","butir":"élément / grain / unité","selembar":"une feuille","sebutir":"un grain / une unité","semangkuk":"un bol de","lembar":"feuille","semua":"tous / toutes","sehelai":"une pièce / une feuille fine","sebatang":"une tige / un bâton","helai":"feuille / brin","batang":"tige / tronc","berbagai":"divers / différents","sebuah":"un / une (objet)","sejumlah":"un certain nombre","setiap":"chaque","diperkuat":"renforcé","diperoleh":"obtenu","diperlemah":"affaibli","diperpanjang":"prolongé / allongé","diperpendek":"raccourci","diperbanyak":"multiplié / augmenté","dipermudah":"facilité / rendu plus facile","dipersulit":"rendu difficile / compliqué","diperkecil":"réduit / rapetissé","dipercepat":"accéléré","diperbesar":"agrandi","diperlambat":"ralenti","diperburuk":"aggravé / empiré","diperluas":"élargi / étendu","diperbaiki":"réparé / amélioré","diperketat":"resserré / renforcé","diperkaya":"enrichi","stadion":"stade","tim":"équipe","golf":"golf","juara":"champion","kompetisi":"compétition","tenis":"tennis","menendang":"donner un coup de pied","balapan":"course","sepak bola":"football","pelatih":"entraîneur","berenang":"nager / natation","gol":"but","olahraga":"sport","bulu tangkis":"badminton","aba-aba":"signal / ordre de départ","senam":"gymnastique","kalah":"perdre","pemenang":"gagnant / vainqueur","latihan":"entraînement / exercice","memukul":"frapper","melompat":"sauter","menang":"gagner","memenangkan":"gagner / remporter","memenangi":"gagner / remporter","perang":"guerre","hak":"droit","kekuasaan":"pouvoir / autorité","hukum":"loi / droit","masyarakat":"société / public","pembangunan":"développement / construction","pemerintah":"gouvernement","kewajiban":"obligation","revolusi":"révolution","kebebasan":"liberté","partai":"parti","tentara":"armée","presiden":"président","kesepakatan":"accord","keamanan":"sécurité","keadilan":"justice","krisis":"crise","politik":"politique","kementerian":"ministère","kekerasan":"violence","konflik":"conflit","mayoritas":"majorité","oposisi":"opposition","menteri":"ministre","organisasi":"organisation","wali kota":"maire","calon":"candidat","hutang":"dette","balai kota":"mairie","strategi":"stratégie","bangsa":"nation","majelis":"assemblée","peristiwa":"événement","kejahatan":"crime","parlemen":"parlement","negara":"pays","demokrasi":"démocratie","berjuang":"lutter / se battre","pemilih":"électeur","senator":"sénateur","memimpin":"diriger","sistem":"système","pidato":"discours","mendukung":"soutenir","pusat":"centre","tempat":"lieu / endroit","daerah":"région / zone","ruang":"espace / pièce","alamat":"adresse","provinsi":"province","tepi":"bord / rive","kabupaten":"district / département","kebun binatang":"zoo","pantai":"plage","desa":"village","bar":"bar","gua":"grotte","taman":"jardin / parc","kecamatan":"sous-district / canton","wilayah":"région / territoire","rute":"itinéraire / route","jawa":"Java","pulau":"île","kota":"ville","penjara":"prison","swalayan":"supermarché","jembatan":"pont","apartemen":"appartement","menara":"tour","lantai":"étage / sol","lokasi":"emplacement / localisation","aula":"salle / hall","garasi":"garage","kehidupan":"vie / existence","kebutuhan":"besoins","kematian":"mort / décès","kesehatan":"santé","kekuatan":"force / puissance","kesempatan":"occasion / chance","kebijakan":"politique / mesure","keadaan":"situation / état","kebaikan":"bonté / bien","keberuntungan":"chance / bonne fortune","kebiasaan":"habitude","kebenaran":"vérité","kemajuan":"progrès","keburukan":"mal / défaut","keindahan":"beauté","berjalan-jalan":"se promener","melihat-lihat":"regarder / jeter un coup d'œil","bermain-main":"jouer / s'amuser","berjaga-jaga":"monter la garde","berhati-hati":"faire attention / être prudent","berpura-pura":"faire semblant","bersama-sama":"ensemble","berturut-turut":"consécutif / successif","kelompok":"groupe","penduduk":"habitants / population","dewasa":"adulte","pria":"homme","wanita":"femme","memperkenalkan":"présenter / faire connaître","populasi":"population","kerumunan":"foule","para":"les / des (pluriel pour personnes)","bapak":"père / monsieur","budaya":"culture","kenal":"connaître","tetangga":"voisin","rekan":"collègue","tamu":"invité / client","pacar":"petit ami / petite amie","mengenali":"reconnaître","klien":"client","remaja":"adolescent","gadis":"fille / jeune fille","tawanan":"prisonnier / captif","nona":"mademoiselle","pahlawan":"héros","nyonya":"madame","musuh":"ennemi","anggota":"membre","tuan":"monsieur / seigneur","pejalan":"piéton","pelajar":"étudiant / élève","pelaku":"auteur / responsable d'un acte","pembaca":"lecteur","penyewa":"locataire","pendiri":"fondateur","pendengar":"auditeur / personne qui écoute","pelukis":"peintre","pemakai":"utilisateur","pemberi":"donneur","pencuci":"laveur / nettoyeur","pendatang":"nouvel arrivant / migrant","pembantu":"aide ménagère / assistant","pengirim":"expéditeur","pengisi":"remplisseur","pengunjung":"visiteur","pengembang":"développeur","penggali":"creuseur","pembicara":"orateur / locuteur","pembuat":"fabricant / créateur","pembuka":"ouverture / celui qui ouvre","penonton":"spectateur / public","penutup":"fermeture / conclusion","pendukung":"partisans / soutiens","penerima":"destinataire / récepteur","perancis":"France","amerika serikat":"États-Unis d'Amérique","jerman":"Allemagne / allemand","belanda":"Pays-Bas","mesir":"Égypte","rusia":"Russie","inggris":"Angleterre / anglais","benua":"continent","asia":"Asie","afrika":"Afrique","amerika":"Amérique","eropa":"Europe","tiongkok":"Chine","yunani":"Grèce","brasil":"Brésil","swiss":"Suisse / suisse","spanyol":"Espagne / espagnol","dunia":"monde","tionghoa":"chinois / Chinois","australia":"Australie"};
@@ -250,7 +395,10 @@ function normalize(){
    exportCount:Number(w.exportCount||0),gameRight:gr,gameWrong:gw,
    strength,
    goodStreak:Number(w.goodStreak||0),badStreak:Number(w.badStreak||0),
-   lastMistake:w.lastMistake||null
+   lastMistake:w.lastMistake||null,
+   actualUses:Number(w.actualUses||0),lastUsed:w.lastUsed||null,
+   lastSessionUses:Number(w.lastSessionUses||0),lastSessionAt:w.lastSessionAt||null,
+   unlockedByUse:!!w.unlockedByUse
   }
  }).filter(w=>w.id)
 }
@@ -326,7 +474,7 @@ function currentLessonWords(){let u=currentUnit(),bucket=vocabBucketForActualLes
 function curriculumIndex(){let m=new Map();CURRICULUM.forEach(u=>u.lessons.forEach((ls,li)=>ls.forEach(id=>m.set(clean(id),{s:u.s,u:u.u,l:li+1,unit:u,raw:id}))));return m}
 const CINDEX=curriculumIndex();
 function isAccessibleCurriculum(id){let m=CINDEX.get(clean(id));if(!m)return false;if(m.s<progress.s)return true;if(m.s>progress.s)return false;if(m.u<progress.u)return true;if(m.u>progress.u)return false;return m.l<=vocabBucketForActualLesson(currentUnit(),progress.l)}
-function isFutureCurriculumWord(w){let m=CINDEX.get(clean(w.id));return !!m&&w.source==='duolingo'&&!isAccessibleCurriculum(w.id)}
+function isFutureCurriculumWord(w){let m=CINDEX.get(clean(w.id));return !!m&&w.source==='duolingo'&&!w.unlockedByUse&&!isAccessibleCurriculum(w.id)}
 function accessibleWords(){return words.filter(w=>!isFutureCurriculumWord(w))}
 function targetSet(){return new Set(currentLessonWords().map(clean))}
 function fragileWords(){return accessibleWords().filter(w=>w.status==='fragile')}
@@ -342,7 +490,7 @@ function ensureAccessibleWords(){
   if(!isAccessibleCurriculum(id))return;
   let existing=words.find(w=>clean(w.id)===id);
   if(!existing){
-   words.push({fr:frenchFor(id),id:meta.raw||id,unit:`S${meta.s} U${meta.u} L${meta.l}`,source:'duolingo',status:target.has(id)?'new':'unseen',times:0,lastReviewed:null,lastExported:null,exportCount:0,gameRight:0,gameWrong:0,strength:0,goodStreak:0,badStreak:0,lastMistake:null});
+   words.push({fr:frenchFor(id),id:meta.raw||id,unit:`S${meta.s} U${meta.u} L${meta.l}`,source:'duolingo',status:target.has(id)?'new':'unseen',times:0,lastReviewed:null,lastExported:null,exportCount:0,gameRight:0,gameWrong:0,strength:0,goodStreak:0,badStreak:0,lastMistake:null,actualUses:0,lastUsed:null,lastSessionUses:0,lastSessionAt:null,unlockedByUse:false});
    added++;
   }else{
    if(!existing.fr&&frenchFor(id))existing.fr=frenchFor(id);
@@ -438,7 +586,8 @@ function renderList(){
  let q=clean(search?.value),f=statusFilter?.value||'',t=targetSet();
  let rows=accessibleWords().map(w=>({w,i:words.indexOf(w)}))
    .filter(x=>clean((x.w.fr||'')+' '+x.w.id+' '+x.w.unit).includes(q));
- if(f==='target')rows=rows.filter(x=>t.has(clean(x.w.id)));
+ if(f==='personal')rows=rows.filter(x=>x.w.source==='personal');
+ else if(f==='target')rows=rows.filter(x=>t.has(clean(x.w.id)));
  else if(f==='fragile')rows=rows.filter(x=>x.w.status==='fragile');
  else if(f==='due')rows=rows.filter(x=>isDue(x.w)&&x.w.times>0);
  else if(f==='consolidate')rows=rows.filter(x=>learningLabel(x.w)==='À consolider');
@@ -449,14 +598,85 @@ function renderList(){
  rows.sort((a,b)=>priorityScore(b.w)-priorityScore(a.w));
  list.innerHTML=rows.length?rows.map(x=>`<div class="row">
    <div><div class="word">${esc(x.w.id)}</div><div class="small">${esc(x.w.fr||frenchFor(x.w.id)||'')}</div></div>
-   <div><span class="badge">${t.has(clean(x.w.id))?'Cible':esc(x.w.unit)}</span></div>
+   <div><span class="badge">${x.w.source==='personal'?'Personnel':t.has(clean(x.w.id))?'Cible':esc(x.w.unit)}</span></div>
    <div><select onchange="setStatus(${x.i},this.value)">
      <option value="unseen" ${x.w.status==='unseen'?'selected':''}>Jamais vu</option>
      <option value="new" ${x.w.status==='new'?'selected':''}>Nouveau</option>
      <option value="fragile" ${x.w.status==='fragile'?'selected':''}>Fragile</option>
      <option value="seen" ${x.w.status==='seen'?'selected':''}>Révisé</option>
-   </select><div class="small">${x.w.times} révision(s) · ${learningLabel(x.w)} · ${dueLabel(x.w)}</div></div>
+   </select><div class="small">${x.w.times} révision(s) · ${learningLabel(x.w)} · ${dueLabel(x.w)}${x.w.actualUses?` · ${x.w.actualUses} usage(s) réel(s)`:''}${registerPairFor(x.w.id)?` · ${esc(registerPairFor(x.w.id).standard+' ↔ '+registerPairFor(x.w.id).oral)}`:''}</div></div>
  </div>`).join(''):'<p class="note">Aucun mot dans ce filtre.</p>'
+}
+
+function addPersonalWord(){
+ let id=String((document.getElementById('manualId')||{}).value||'').trim(),fr=String((document.getElementById('manualFr')||{}).value||'').trim(),status=(document.getElementById('manualStatus')||{}).value||'new';
+ if(!id||!fr)return alert('Indique le mot indonésien et sa traduction française.');
+ let key=clean(id),existing=words.find(w=>clean(w.id)===key);
+ if(existing)return alert(`« ${existing.id} » existe déjà dans la base (${existing.source==='personal'?'vocabulaire personnel':'référentiel Duolingo'}). Aucun doublon créé.`);
+ let now=todayISO(),seen=status==='seen',fragile=status==='fragile',meta=CINDEX.get(key),canonical=!!meta;
+ words.push({fr:canonical?(frenchFor(key)||fr):fr,id:canonical?(meta.raw||id):id,unit:canonical?`S${meta.s} U${meta.u} L${meta.l}`:'Personnel',source:canonical?'duolingo':'personal',status,times:(seen||fragile)?1:0,lastReviewed:(seen||fragile)?now:null,lastExported:null,exportCount:0,gameRight:0,gameWrong:0,strength:seen?45:fragile?18:0,goodStreak:0,badStreak:0,lastMistake:fragile?now:null,actualUses:0,lastUsed:null,lastSessionUses:0,lastSessionAt:null,unlockedByUse:canonical});
+ manualId.value='';manualFr.value='';manualStatus.value='new';saveWords();alert(canonical?`« ${id} » existe dans le référentiel Duolingo futur : entrée canonique activée maintenant, sans doublon.`:`« ${id} » ajouté au vocabulaire personnel.`)
+}
+
+
+function bulkAddPersonalWords(){
+ let raw=String((document.getElementById('bulkWords')||{}).value||'').trim();
+ let unit=String((document.getElementById('bulkUnit')||{}).value||'').trim()||'Import groupé';
+ let status=(document.getElementById('bulkStatus')||{}).value||'new';
+ let result=document.getElementById('bulkResult');
+ if(!raw){if(result)result.textContent='Colle d’abord une ou plusieurs lignes.';return}
+ let addedPersonal=0,addedCanonical=0,duplicates=0,invalid=0;
+ let now=todayISO();
+
+ for(let line of raw.split(/\r?\n/)){
+  line=line.trim();if(!line)continue;
+  let p=line.indexOf(';');
+  if(p<1){invalid++;continue}
+  let fr=line.slice(0,p).trim(),id=line.slice(p+1).trim();
+  if(!fr||!id){invalid++;continue}
+
+  let key=clean(id);
+  let existing=words.find(w=>clean(w.id)===key);
+  if(existing){duplicates++;continue}
+
+  let meta=CINDEX.get(key),canonical=!!meta;
+  let seen=status==='seen',fragile=status==='fragile';
+  words.push({
+   fr:canonical?(frenchFor(key)||fr):fr,
+   id:canonical?(meta.raw||id):id,
+   unit:canonical?`S${meta.s} U${meta.u} L${meta.l}`:unit,
+   source:canonical?'duolingo':'personal',
+   status,
+   times:(seen||fragile)?1:0,
+   lastReviewed:(seen||fragile)?now:null,
+   lastExported:null,
+   exportCount:0,
+   gameRight:0,
+   gameWrong:0,
+   strength:seen?45:fragile?18:0,
+   goodStreak:0,
+   badStreak:0,
+   lastMistake:fragile?now:null,
+   actualUses:0,
+   lastUsed:null,
+   lastSessionUses:0,
+   lastSessionAt:null,
+   unlockedByUse:canonical
+  });
+  canonical?addedCanonical++:addedPersonal++;
+ }
+
+ localStorage.setItem(WORDS_KEY,JSON.stringify(words));
+ renderAll();
+ if(result){
+  let parts=[`${addedPersonal+addedCanonical} ajouté(s)`];
+  if(addedPersonal)parts.push(`${addedPersonal} personnel(s)`);
+  if(addedCanonical)parts.push(`${addedCanonical} Duolingo activé(s)`);
+  if(duplicates)parts.push(`${duplicates} doublon(s) ignoré(s)`);
+  if(invalid)parts.push(`${invalid} ligne(s) invalide(s)`);
+  result.textContent=parts.join(' · ')+'.';
+ }
+ if(addedPersonal+addedCanonical)document.getElementById('bulkWords').value='';
 }
 
 function setStatus(i,s){
@@ -468,6 +688,60 @@ function setStatus(i,s){
 function priorityWords(n=30){return [...accessibleWords()].sort((a,b)=>priorityScore(b)-priorityScore(a)||String(a.lastReviewed||'').localeCompare(String(b.lastReviewed||''))).slice(0,n)}
 function renderPriorities(){priorities.innerHTML=priorityWords(30).map(w=>`<div style="padding:7px 0;border-bottom:1px solid #eee"><b>${esc(w.id)}</b> <span class="small">· ${esc(w.fr||frenchFor(w.id))} · ${learningLabel(w)} · ${dueLabel(w)}${targetSet().has(clean(w.id))?' · cible':''}</span></div>`).join('')}
 
+
+
+const SESSION_SETTINGS_KEY='bahasa_v6_session_settings';
+const REGISTER_PAIRS={
+ 'meminum':'minum','melihat':'lihat','meminta':'minta','memakan':'makan','memulai':'mulai',
+ 'membuat':'buat','membantu':'bantu','membuka':'buka','memberi':'kasih','membayar':'bayar',
+ 'mencoba':'coba','mencari':'cari','menjaga':'jaga','mendengar':'dengar','mendorong':'dorong',
+ 'menjual':'jual','mendapat':'dapat','memesan':'pesan','memanggil':'panggil','memilih':'pilih',
+ 'menarik':'tarik','menunggu':'tunggu','menutup':'tutup','menerima':'terima','menolak':'tolak',
+ 'menulis':'tulis','membaca':'baca','membeli':'beli','membawa':'bawa','memakai':'pakai'
+};
+const REGISTER_REVERSE=Object.fromEntries(Object.entries(REGISTER_PAIRS).map(([standard,oral])=>[oral,standard]));
+function registerPairFor(id){let k=clean(id);if(REGISTER_PAIRS[k])return {standard:k,oral:REGISTER_PAIRS[k]};if(REGISTER_REVERSE[k])return {standard:REGISTER_REVERSE[k],oral:k};return null}
+function registerPairsForPool(pool){
+ let seen=new Set(),out=[];
+ for(let w of pool){let p=registerPairFor(w.id);if(!p)continue;let key=p.standard+'|'+p.oral;if(seen.has(key))continue;seen.add(key);out.push(`${p.standard} ↔ ${p.oral}`)}
+ return out
+}
+function loadProfile(){
+ let v=(document.getElementById('sessionLoad')||{}).value||'normal';
+ if(v==='light')return {key:'light',label:'Légère',comfort:90,challenge:10,shortMax:1,longMax:1};
+ if(v==='sustained')return {key:'sustained',label:'Soutenue',comfort:70,challenge:30,shortMax:2,longMax:3};
+ return {key:'normal',label:'Normale',comfort:80,challenge:20,shortMax:1,longMax:2}
+}
+function sessionDurationProfile(){
+ let raw=String((document.getElementById('sessionMinutes')||{}).value||'free');
+ if(raw==='free')return {key:'free',minutes:null,phrases:'durée libre : continuer une phrase à la fois jusqu’à ce que l’utilisateur dise « Fin »'};
+ let m=Number(raw||10);
+ if(m<=5)return {key:'5',minutes:5,phrases:'environ 6 à 8 phrases'};
+ if(m>=15)return {key:'15',minutes:15,phrases:'environ 18 à 24 phrases'};
+ return {key:'10',minutes:10,phrases:'environ 12 à 16 phrases'}
+}
+
+function updateDifficultyPerPhrase(){
+ let el=document.getElementById('difficultyPerPhrase');if(!el)return;
+ let mode=String((document.getElementById('sessionLoad')||{}).value||'normal');
+ let title='1–2 mots difficiles / phrase',sub='Charge normale · 80/20';
+ if(mode==='light'){title='1 mot difficile max / phrase';sub='Charge légère · 90/10'}
+ else if(mode==='intense'){title='2–3 mots difficiles / phrase';sub='Charge soutenue · 70/30'}
+ el.innerHTML=`<b>${title}</b><div class="small">${sub}</div>`;
+}
+
+function saveSessionSettings(){
+ let d={pool:(document.getElementById('poolSize')||{}).value||'250',mode:(document.getElementById('sessionMode')||{}).value||'duo',load:(document.getElementById('sessionLoad')||{}).value||'normal',minutes:(document.getElementById('sessionMinutes')||{}).value||'free'};
+ localStorage.setItem(SESSION_SETTINGS_KEY,JSON.stringify(d))
+}
+function loadSessionSettings(){
+ let d={};try{d=JSON.parse(localStorage.getItem(SESSION_SETTINGS_KEY)||'{}')}catch(e){}
+ if(d.pool&&document.getElementById('poolSize'))poolSize.value=d.pool;
+ if(d.mode&&document.getElementById('sessionMode'))sessionMode.value=d.mode;
+ if(d.load&&document.getElementById('sessionLoad'))sessionLoad.value=d.load;
+ if(d.minutes&&document.getElementById('sessionMinutes'))sessionMinutes.value=d.minutes
+ updateDifficultyPerPhrase();
+}
 
 function curriculumMeta(w){return CINDEX.get(clean(w.id))||null}
 function isEarlierCurriculumWord(w){
@@ -505,17 +779,21 @@ function pedagogicalBuckets(pool){
  let neutral=pool.filter(w=>!challenge.includes(w)&&!support.includes(w));
  return {challenge,support,neutral}
 }
+function recentUsePenalty(w){
+ let c=Number(w.lastSessionUses||0),d=daysSince(w.lastUsed),p=Math.min(c,8)*110;
+ if(d===0)p+=120;else if(d===1)p+=70;else if(d<=3)p+=35;
+ return p
+}
 function supportRotationScore(w){
- let strength=Number(w.strength||0),times=Number(w.times||0),exports=Number(w.exportCount||0);
- let age=daysSince(w.lastReviewed);
- // Favorise un vocabulaire familier varié : solide, mais pas toujours les mêmes mots.
- return strength*2+Math.min(times,12)*5+Math.min(age,30)*2-exports*3
+ let times=Number(w.times||0),exports=Number(w.exportCount||0),uses=Number(w.actualUses||0);
+ let ageUse=Math.min(daysSince(w.lastUsed),45),ageReview=Math.min(daysSince(w.lastReviewed),30);
+ // Le support le plus utile est familier MAIS sous-utilisé. Les mots déjà sur-représentés
+ // descendent temporairement au lieu d'être récompensés parce qu'ils ont beaucoup servi.
+ return ageUse*10+ageReview*2-times*8-uses*5-exports*.7-recentUsePenalty(w)
 }
 function phraseLoadRule(u){
- let grammarActive=!!(u&&u.grammar&&u.grammar.trim());
- return grammarActive
-  ? "RÈGLE DE CHARGE : vise environ 80 % de mots familiers et 20 % de difficulté. Comme une notion grammaticale est déjà active, utilise normalement UN SEUL mot fragile/cible difficile par phrase. N'en mets deux que si la phrase reste immédiatement compréhensible."
-  : "RÈGLE DE CHARGE : vise environ 80 % de mots familiers et 20 % de difficulté. Utilise normalement UN mot fragile/cible par phrase courte, deux au maximum dans une phrase plus longue. Ne regroupe jamais plusieurs fragiles uniquement parce qu'ils sont prioritaires."
+ let p=loadProfile(),grammarActive=!!(u&&u.grammar&&u.grammar.trim());
+ return `RÈGLE DE CHARGE ${p.label.toUpperCase()} : vise environ ${p.comfort} % de vocabulaire familier et ${p.challenge} % de difficulté active. Phrase courte : ${p.shortMax} difficulté(s) lexicale(s) maximum. Phrase plus longue : ${grammarActive?Math.min(1,p.longMax):p.longMax} maximum${grammarActive?', car une notion grammaticale est déjà active':''}. Ne regroupe jamais plusieurs fragiles pour aller plus vite.`
 }
 
 function sessionPool(n,mode){
@@ -556,6 +834,7 @@ function sessionPool(n,mode){
  return picked.slice(0,goal)
 }
 function preparePrompt(){
+ saveSessionSettings();
  let u=currentUnit(),n=Number(poolSize.value),mode=sessionMode.value,pool=sessionPool(n,mode),
  frag=fragileWords().map(w=>w.id),targets=currentLessonWords(),a=accessibleWords(),
  worked=a.filter(w=>w.times>0).length,due=pool.filter(w=>isDue(w)&&w.times>0).map(w=>w.id),
@@ -566,6 +845,9 @@ function preparePrompt(){
  let challengeIds=[...new Set(buckets.challenge.map(w=>w.id))];
  let supportIds=[...new Set(buckets.support.map(w=>w.id))];
  let neutralIds=[...new Set(buckets.neutral.map(w=>w.id))];
+ let load=loadProfile(),duration=sessionDurationProfile(),pairs=registerPairsForPool(pool);
+ let rotationFocus=[...buckets.support].sort((x,y)=>supportRotationScore(y)-supportRotationScore(x)).slice(0,60).map(w=>w.id);
+ let saturated=[...buckets.support].filter(w=>Number(w.lastSessionUses||0)>=2||daysSince(w.lastUsed)<=1&&Number(w.actualUses||0)>=3).sort((x,y)=>recentUsePenalty(y)-recentUsePenalty(x)).slice(0,30).map(w=>w.id);
 
  let txt=`SESSION INDONÉSIENNE
 MODE : ${mode==='duo'?'Suivre Duolingo':'Révision générale'}
@@ -573,6 +855,7 @@ Niveau Duolingo réel : Section ${u.s} · Unité ${u.u} · Leçon ${progress.l}/
 Unité : ${u.title} [${u.skill}]
 Découpage vocabulaire interne : groupe ${vocabBucketForActualLesson(u,progress.l)}/${u.lessons.length} · ${u.confidence}${u.corrected?' ; frontière d’unité corrigée selon le référentiel canonique':''}
 Grammaire / objectif actif : ${u.grammar}
+Charge pédagogique choisie : ${load.label} (${load.comfort}/${load.challenge}). ${duration.key==='free'?'Durée : libre, sans nombre de phrases imposé ; continuer jusqu’à ce que je dise « Fin ».':`Durée visée : ${duration.minutes} min, ${duration.phrases}.`}
 IMPORTANT : le numéro de leçon Duolingo réel est la référence. Le groupe vocabulaire interne est seulement une reconstruction pédagogique.
 Mots cibles du groupe vocabulaire associé : ${targets.length?targets.join(', '):'aucun nouveau mot, révision de la notion'}.
 Vocabulaire accessible dans l'application : ${a.length}.
@@ -582,6 +865,9 @@ Mots déjà travaillés arrivés à échéance dans ce pool : ${due.length?due.s
 
 MOTS À TRAVAILLER / DIFFICULTÉ ACTIVE (${challengeIds.length}) : ${challengeIds.length?challengeIds.join(', '):'aucun'}.
 MOTS SUPPORT CONFORTABLES (${supportIds.length}) : ${supportIds.length?supportIds.join(', '):'aucun'}.
+SUPPORT À FAIRE TOURNER EN PRIORITÉ (${rotationFocus.length}) : ${rotationFocus.length?rotationFocus.join(', '):'aucun'}.
+SUPPORT RÉCEMMENT SURUTILISÉ À ÉVITER SAUF NÉCESSITÉ (${saturated.length}) : ${saturated.length?saturated.join(', '):'aucun'}.
+PAIRES STANDARD ↔ ORAL UTILES DANS CE POOL : ${pairs.length?pairs.join('; '):'aucune'}.
 AUTRES MOTS DISPONIBLES (${neutralIds.length}) : ${neutralIds.length?neutralIds.join(', '):'aucun'}.
 POOL DE SÉANCE (${pool.length}) : ${pool.map(w=>w.id).join(', ')}.
 
@@ -591,30 +877,542 @@ RÈGLES DE CONSTRUCTION DES PHRASES :
 - Une phrase doit rester majoritairement compréhensible immédiatement grâce au vocabulaire support.
 - N'utilise pas une phrase composée principalement de mots fragiles, nouveaux ou peu solides.
 - Répartis les fragiles entre différentes phrases : un fragile ne doit pas appeler automatiquement d'autres fragiles.
-- Phrase courte (environ 5 à 8 mots) : 1 difficulté lexicale active en règle générale.
-- Phrase moyenne/longue (environ 9 à 14 mots) : 1 à 2 difficultés lexicales actives maximum.
+- Phrase courte (environ 5 à 8 mots) : ${load.shortMax} difficulté(s) lexicale(s) active(s) maximum selon la charge choisie.
+- Phrase moyenne/longue (environ 9 à 14 mots) : ${load.longMax} difficulté(s) maximum, sauf si la grammaire active impose de réduire encore.
 - Si la phrase travaille déjà une construction grammaticale nouvelle ou délicate, réduis la difficulté lexicale : généralement 1 seul mot cible/fragile.
-- Les mots support peuvent être répétés souvent : leur rôle est de donner un contexte familier et de faciliter la mémorisation du mot travaillé. Un mot d'une sous-leçon Duolingo antérieure peut servir de support même s'il n'a pas encore été noté par Bahasa, sauf s'il est marqué fragile.
+- BRASSAGE OBLIGATOIRE DU SUPPORT : les mots cibles/fragiles peuvent revenir selon le besoin pédagogique, mais les mots de support doivent tourner largement. N'utilise normalement pas le même nom/adjectif/verbe support plus de 2 fois dans toute la séance et évite de le réutiliser dans les 5 phrases suivantes.
+- Privilégie d'abord la liste SUPPORT À FAIRE TOURNER EN PRIORITÉ. Évite la liste RÉCEMMENT SURUTILISÉ sauf si elle est indispensable à la phrase.
+- Varie volontairement les domaines : personnes, lieux, nourriture, objets, vêtements, transports, temps, actions et situations. Ne choisis pas toujours les combinaisons les plus faciles comme jaket/kemeja/sepatu/gaun.
+- Un mot d'une leçon Duolingo antérieure peut servir de support même s'il n'a pas encore été noté par Bahasa, sauf s'il est marqué fragile.
 - Ne cherche pas à placer tous les mots prioritaires rapidement. Il vaut mieux les distribuer sur davantage de phrases.
-- AVANT D'ENVOYER CHAQUE PHRASE, vérifie silencieusement qu'elle respecte cette charge : majorité de mots familiers, normalement 1 difficulté active, 2 maximum.
+- AVANT D'ENVOYER CHAQUE PHRASE, vérifie silencieusement qu'elle respecte la charge ${load.label.toLowerCase()} (${load.comfort}/${load.challenge}) et la limite de difficultés correspondante.
 
-Consigne générale : ${mode==='duo'?'fais travailler en priorité les mots de la sous-leçon actuelle, puis les mots fragiles, récents et arrivés à échéance, mais TOUJOURS entourés de vocabulaire confortable.':'brasse largement tout le vocabulaire accessible, avec priorité aux fragiles et aux mots arrivés à échéance, sans augmenter inutilement la difficulté des phrases.'} Indonésien oral, naturel et simple. Une phrase à la fois et attends ma réponse avant la suivante. Corrige immédiatement et brièvement. Travaille au maximum un petit point de grammaire à la fois, en lien avec l'objectif actif. Quand une forme orale naturelle existe (par exemple pakai/memakai, cari/mencari, kasih/memberi, buka/membuka), accepte-la et indique brièvement la forme standard si utile. N'introduis pas volontairement de vocabulaire Duolingo futur. Si un mot vraiment utile hors pool est nécessaire, signale-le clairement comme hors pool/nouveau. Varie les personnages, objets et situations.
+Consigne générale : ${mode==='duo'?'fais travailler en priorité les mots de la leçon actuelle, puis les mots fragiles, récents et arrivés à échéance, mais TOUJOURS entourés de vocabulaire confortable.':'brasse largement tout le vocabulaire accessible, avec priorité aux fragiles et aux mots arrivés à échéance, sans augmenter inutilement la difficulté des phrases.'} Indonésien oral, naturel et simple. Une phrase à la fois et attends ma réponse avant la suivante. Corrige immédiatement et brièvement. Travaille au maximum un petit point de grammaire à la fois, en lien avec l'objectif actif. REGISTRE : pour chaque paire standard ↔ orale pertinente, signale brièvement l'autre forme dans LES DEUX SENS : si j'emploie/rencontre menjual, rappelle « oral : jual » ; si j'emploie/rencontre jual, rappelle « standard : menjual ». Même logique pour les autres paires listées, sans prétendre que meN- disparaît toujours. N'introduis pas volontairement de vocabulaire Duolingo futur. Si un mot vraiment utile hors pool est nécessaire, signale-le clairement comme hors pool/nouveau.
+SI J'ACTIVE LA CONVERSATION VOCALE : parle lentement, naturellement, reste prioritairement dans le pool et respecte la charge choisie. N'introduis au maximum qu'UN seul véritable mot nouveau à la fois, en le signalant brièvement.
 
-IMPORTANT POUR LE BILAN : à la fin de la séance, "reviewed" doit contenir TOUS les mots ou expressions du référentiel/pool réellement utilisés ou travaillés pendant la séance, y compris dans les phrases proposées par ChatGPT et dans mes réponses. "fragile" contient uniquement les mots qui restent réellement fragiles à la fin. Un mot présent dans "fragile" ne doit pas être répété dans "reviewed". Réponds avec exactement un objet JSON, sans commentaire ni balise Markdown : {"reviewed":["mot1","mot2"],"fragile":["mot3"]}.`;
+IMPORTANT POUR LE BILAN :
+- "reviewed" contient TOUS les mots/expressions déjà présents dans la base qui ont été réellement utilisés ou travaillés, pas ceux simplement présents dans le pool.
+- "fragile" contient uniquement ceux qui restent réellement fragiles ; ils ne doivent pas aussi être dans "reviewed".
+- "used" est un objet {"mot":nombre} donnant le NOMBRE APPROXIMATIF D'OCCURRENCES réelles de chaque mot/ expression utilisé pendant la séance. Il sert au brassage futur, donc ne compte pas la simple présence dans le prompt.
+- "discovered" contient uniquement les mots/expressions UTILES et CORRECTS employés hors pool par moi ou par ChatGPT. Pour chacun : {"id":"...","fr":"...","origin":"user|chatgpt|both","count":1}. N'y mets pas fautes, coquilles, formes incorrectes, noms propres sans intérêt ni variantes accidentelles. Si le mot existe ailleurs dans le référentiel global, même dans une unité Duolingo future, indique-le quand même ici : Bahasa activera cette entrée canonique sans créer de doublon et enregistrera son usage.
+Réponds avec exactement un objet JSON, sans commentaire ni balise Markdown : {"reviewed":["mot1"],"fragile":["mot2"],"used":{"mot1":2},"discovered":[{"id":"waktu","fr":"temps","origin":"user","count":1}]}.`;
  promptOut.value=txt;
- rotationInfo.textContent=`${targets.length} cible(s) · ${frag.length} fragile(s) · ${due.length} échéance(s) · ${supportIds.length} support(s) confortables · pool ${pool.length}/${a.length}.`;
+ rotationInfo.textContent=`${targets.length} cible(s) · ${frag.length} fragile(s) · ${due.length} échéance(s) · ${supportIds.length} support(s · brassage renforcé) · charge ${load.label.toLowerCase()} ${load.comfort}/${load.challenge} · pool ${pool.length}/${a.length}.`;
  renderAll()
 }
 async function copyPrompt(){if(!promptOut.value)preparePrompt();try{await navigator.clipboard.writeText(promptOut.value);alert('Séance copiée.')}catch{promptOut.select();document.execCommand('copy');alert('Séance copiée.')}}
 
-function importSession(){let raw=String(sessionImport.value||'').trim(),d=null;function unique(a){return [...new Set((a||[]).map(clean).filter(Boolean))]}function quotedList(section){let m=raw.match(new RegExp('["“”]?'+section+'["“”]?\\s*:\\s*\\[([\\s\\S]*?)\\]','i'));if(!m)return[];let vals=[],r=/["“”']+\s*([^"“”'\n,\[\]{}:]+?)\s*["“”']+/g,x;while((x=r.exec(m[1])))vals.push(x[1]);if(!vals.length)vals=m[1].split(',').map(x=>x.replace(/^["“”'\s;]+|["“”'\s;]+$/g,'')).filter(Boolean);return vals}try{let s=raw.replace(/```(?:json)?/gi,'').replace(/```/g,'').replace(/[“”]/g,'"').trim(),a=s.indexOf('{'),b=s.lastIndexOf('}');if(a>=0&&b>a)s=s.slice(a,b+1);d=JSON.parse(s)}catch(e){let reviewed=quotedList('reviewed'),fragile=quotedList('fragile');if(reviewed.length||fragile.length)d={reviewed,fragile}}if(!d||!Array.isArray(d.reviewed)||!Array.isArray(d.fragile))return alert("Le bilan n'a pas pu être interprété.");let fragile=unique(d.fragile),fragSet=new Set(fragile),reviewed=unique(d.reviewed).filter(x=>!fragSet.has(x)),known=new Set(words.map(w=>clean(w.id))),reviewedKnown=reviewed.filter(x=>known.has(x)),fragileKnown=fragile.filter(x=>known.has(x)),today=new Date().toISOString().slice(0,10);words.forEach(w=>{let id=clean(w.id);if(reviewedKnown.includes(id))applySuccess(w,'chat');if(fragileKnown.includes(id))applyFailure(w,'chat')});saveWords();sessionImport.value='';let ignored=reviewed.length+fragile.length-reviewedKnown.length-fragileKnown.length;alert(`Bilan importé : ${reviewedKnown.length} révisé(s), ${fragileKnown.length} fragile(s)${ignored?`, ${ignored} hors référentiel ignoré(s)`:''}.`)}
+function importSession(){
+ let raw=String(sessionImport.value||'').trim(),d=null;
+ function unique(a){return [...new Set((a||[]).map(clean).filter(Boolean))]}
+ function quotedList(section){let m=raw.match(new RegExp('["“”]?'+section+'["“”]?\\s*:\\s*\\[([\\s\\S]*?)\\]','i'));if(!m)return[];let vals=[],r=/["“”']+\s*([^"“”'\n,\[\]{}:]+?)\s*["“”']+/g,x;while((x=r.exec(m[1])))vals.push(x[1]);if(!vals.length)vals=m[1].split(',').map(x=>x.replace(/^["“”'\s;]+|["“”'\s;]+$/g,'')).filter(Boolean);return vals}
+ try{let s=raw.replace(/```(?:json)?/gi,'').replace(/```/g,'').replace(/[“”]/g,'"').trim(),a=s.indexOf('{'),b=s.lastIndexOf('}');if(a>=0&&b>a)s=s.slice(a,b+1);d=JSON.parse(s)}
+ catch(e){let reviewed=quotedList('reviewed'),fragile=quotedList('fragile');if(reviewed.length||fragile.length)d={reviewed,fragile}}
+ if(!d||!Array.isArray(d.reviewed)||!Array.isArray(d.fragile))return alert("Le bilan n'a pas pu être interprété.");
+ let fragile=unique(d.fragile),fragSet=new Set(fragile),reviewed=unique(d.reviewed).filter(x=>!fragSet.has(x));
+ let usedRaw=(d.used&&typeof d.used==='object'&&!Array.isArray(d.used))?d.used:{},usedMap=new Map();
+ for(let [id,count] of Object.entries(usedRaw)){let k=clean(id);if(k)usedMap.set(k,Math.max(1,Math.min(50,Number(count||1))))}
+ let discovered=Array.isArray(d.discovered)?d.discovered:[],today=todayISO(),knownMap=new Map(words.map(w=>[clean(w.id),w]));
+ let personalAdded=0,canonicalUnlocked=0,deduped=0,ignored=0,discoveredKeys=new Set();
+ words.forEach(w=>{w.lastSessionUses=0});
+ function recordUsage(w,count){count=Math.max(1,Math.min(50,Number(count||1)));w.actualUses=Number(w.actualUses||0)+count;w.lastUsed=today;w.lastSessionUses=Number(w.lastSessionUses||0)+count;w.lastSessionAt=today}
+ function materializeCanonical(key,status='new'){
+  let existing=knownMap.get(key);if(existing)return existing;
+  let meta=CINDEX.get(key);if(!meta)return null;
+  let w={fr:frenchFor(key),id:meta.raw||key,unit:`S${meta.s} U${meta.u} L${meta.l}`,source:'duolingo',status,times:0,lastReviewed:null,lastExported:null,exportCount:0,gameRight:0,gameWrong:0,strength:0,goodStreak:0,badStreak:0,lastMistake:null,actualUses:0,lastUsed:null,lastSessionUses:0,lastSessionAt:null,unlockedByUse:true};
+  words.push(w);knownMap.set(key,w);canonicalUnlocked++;return w
+ }
+ // Tout mot canonique mentionné dans le bilan est matérialisé une seule fois, même s'il appartient à une unité future.
+ for(let key of [...reviewed,...fragile,...usedMap.keys()])if(!knownMap.has(key)&&CINDEX.has(key))materializeCanonical(key);
+ // Usage réel : sert uniquement au brassage, indépendamment de la maîtrise.
+ let pendingUnknownUsed=new Set();
+ for(let [key,count] of usedMap){let w=knownMap.get(key);if(w)recordUsage(w,count);else pendingUnknownUsed.add(key)}
+ // Mots utiles hors pool. Les entrées globales sont dédupliquées ; seuls les vrais inconnus deviennent personnels.
+ for(let item of discovered){
+  if(!item||typeof item!=='object')continue;
+  let id=String(item.id||'').trim(),fr=String(item.fr||'').trim(),origin=clean(item.origin||'chatgpt'),count=Math.max(1,Math.min(50,Number(item.count||1)));
+  if(!id||!fr){ignored++;continue}
+  let key=clean(id);discoveredKeys.add(key);
+  if(!['user','chatgpt','both'].includes(origin))origin='chatgpt';
+  let userSignal=origin==='user'||origin==='both',existing=knownMap.get(key);
+  if(!existing&&CINDEX.has(key))existing=materializeCanonical(key);
+  if(existing){
+   if(!usedMap.has(key))recordUsage(existing,count);
+   if(userSignal&&(existing.status==='new'||existing.status==='unseen')){existing.status='seen';existing.times=Math.max(1,Number(existing.times||0));existing.lastReviewed=today;existing.strength=Math.max(42,Number(existing.strength||0))}
+   deduped++;continue
+  }
+  let w={fr,id,unit:'Personnel · découvert en séance',source:'personal',status:userSignal?'seen':'new',times:userSignal?1:0,lastReviewed:userSignal?today:null,lastExported:null,exportCount:0,gameRight:0,gameWrong:0,strength:userSignal?42:0,goodStreak:0,badStreak:0,lastMistake:null,actualUses:0,lastUsed:null,lastSessionUses:0,lastSessionAt:null,unlockedByUse:false};
+  recordUsage(w,usedMap.get(key)||count);words.push(w);knownMap.set(key,w);personalAdded++
+ }
+ for(let key of pendingUnknownUsed)if(!discoveredKeys.has(key))ignored++;
+ let reviewedKnown=reviewed.filter(x=>knownMap.has(x)),fragileKnown=fragile.filter(x=>knownMap.has(x));
+ words.forEach(w=>{let id=clean(w.id);if(reviewedKnown.includes(id))applySuccess(w,'chat');if(fragileKnown.includes(id))applyFailure(w,'chat')});
+ saveWords();sessionImport.value='';
+ alert(`Bilan importé : ${reviewedKnown.length} révisé(s), ${fragileKnown.length} fragile(s), ${personalAdded} nouveau(x) mot(s) personnel(s), ${canonicalUnlocked} mot(s) Duolingo global(aux) activé(s), ${deduped} mot(s) hors pool dédupliqué(s)${ignored?`, ${ignored} élément(s) non exploité(s)`:''}.`)
+}
+
+
+const GRAMMAR_GUIDES={
+ "1-1":{
+  idea:"En indonésien, le verbe ne change pas avec la personne. Le squelette le plus simple est sujet + verbe + complément.",
+  contrast:"saya makan / dia makan : le verbe makan reste identique.",
+  examples:[
+   ["Saya makan nasi.","Je mange du riz."],
+   ["Dia minum air.","Il/elle boit de l’eau."],
+   ["Mereka membaca koran.","Ils/elles lisent le journal."]
+  ],
+  trap:"Ne cherche pas une terminaison équivalente à « je mange / il mange » : elle n’existe pas."
+ },
+ "1-2":{
+  idea:"Les mots interrogatifs remplacent directement l’information recherchée : siapa = qui, mana = où/lequel, berapa = combien.",
+  contrast:"Dia Andi. → Siapa dia ? / Umur dua puluh tahun. → Berapa umurmu ?",
+  examples:[
+   ["Siapa nama kamu?","Comment t’appelles-tu ?"],
+   ["Kamu dari mana?","Tu viens d’où ?"],
+   ["Berapa umur kamu?","Quel âge as-tu ?"]
+  ],
+  trap:"bukan nie surtout une identité ou une catégorie ; tidak nie plutôt une action ou une qualité."
+ },
+ "1-3":{
+  idea:"kita et kami veulent tous les deux dire « nous », mais kita inclut la personne à qui l’on parle ; kami l’exclut.",
+  contrast:"Kita pergi. = toi aussi. / Kami pergi. = pas toi.",
+  examples:[
+   ["Kita makan di restoran.","Nous mangeons au restaurant, toi compris."],
+   ["Kami pulang ke hotel.","Nous rentrons à l’hôtel, sans toi."],
+   ["Dia tidak makan.","Il/elle ne mange pas."]
+  ],
+  trap:"Pour nier une action, pense d’abord à tidak, pas à bukan."
+ },
+ "1-4":{
+  idea:"Les salutations changent surtout selon le moment et la situation, pas selon la personne.",
+  contrast:"selamat pagi = matin ; selamat siang = journée ; selamat sore = fin d’après-midi ; selamat malam = soir/nuit.",
+  examples:[
+   ["Selamat pagi.","Bonjour, le matin."],
+   ["Terima kasih banyak.","Merci beaucoup."],
+   ["Sampai jumpa lagi.","À bientôt / à la prochaine."]
+  ],
+  trap:"Ne traduis pas mot à mot chaque salutation française : apprends plutôt la situation où l’expression est naturelle."
+ },
+ "1-5":{
+  idea:"L’adjectif vient généralement après le nom.",
+  contrast:"thé chaud → teh panas ; poulet frit → ayam goreng.",
+  examples:[
+   ["teh panas","thé chaud"],
+   ["jus jeruk","jus d’orange"],
+   ["ayam goreng","poulet frit"]
+  ],
+  trap:"Évite de copier automatiquement l’ordre français adjectif + nom."
+ },
+ "1-6":{
+  idea:"di indique une position ; ke indique une direction ou une destination.",
+  contrast:"di hotel = à l’hôtel ; ke hotel = vers / à l’hôtel en mouvement.",
+  examples:[
+   ["Saya di hotel.","Je suis à l’hôtel."],
+   ["Saya pergi ke hotel.","Je vais à l’hôtel."],
+   ["Buku di meja.","Le livre est sur la table."]
+  ],
+  trap:"Demande-toi : est-ce que j’y suis, ou est-ce que j’y vais ?"
+ },
+ "1-7":{
+  idea:"Les verbes fréquents s’emploient sans conjugaison personnelle et l’ordre reste très stable.",
+  contrast:"saya tidur / mereka tidur : tidur ne change pas.",
+  examples:[
+   ["Saya duduk.","Je m’assois / je suis assis."],
+   ["Mereka keluar.","Ils/elles sortent."],
+   ["Dia ingat.","Il/elle se souvient."]
+  ],
+  trap:"N’ajoute pas de terminaison au verbe selon je/tu/il."
+ },
+ "1-8":{
+  idea:"La possession se place naturellement après le nom : tas saya = mon sac. Les suffixes -ku, -mu, -nya condensent ensuite cette relation.",
+  contrast:"tas saya = mon sac ; tasnya = son sac / le sac concerné.",
+  examples:[
+   ["tas saya","mon sac"],
+   ["buku kamu","ton livre"],
+   ["dompetnya","son portefeuille / le portefeuille en question"]
+  ],
+  trap:"-nya dépend beaucoup du contexte : il ne veut pas toujours dire uniquement « son/sa »."
+ },
+ "1-9":{
+  idea:"Pour décrire un vêtement, le nom vient d’abord puis la couleur ou la qualité.",
+  contrast:"jaket merah, pas merah jaket.",
+  examples:[
+   ["jaket merah","veste rouge"],
+   ["kemeja putih","chemise blanche"],
+   ["sepatu hitam","chaussures noires"]
+  ],
+  trap:"La structure nominale indonésienne aime placer l’information descriptive après le nom."
+ },
+ "2-1":{
+  idea:"Les conjonctions indiquent la relation entre deux idées : tapi = contraste, karena = cause, jadi = conséquence, ketika = moment.",
+  contrast:"karena hujan = parce qu’il pleut ; jadi kami tinggal = donc nous restons.",
+  examples:[
+   ["Saya lapar, jadi saya makan.","J’ai faim, donc je mange."],
+   ["Kami tinggal di hotel karena hujan.","Nous restons à l’hôtel parce qu’il pleut."],
+   ["Dia mau pergi, tapi belum siap.","Il/elle veut partir, mais n’est pas encore prêt(e)."]
+  ],
+  trap:"karena introduit la cause ; jadi introduit le résultat."
+ },
+ "2-2":{
+  idea:"Le pluriel est souvent compris grâce au contexte. On ne double pas automatiquement chaque nom.",
+  contrast:"dua buku suffit pour « deux livres » ; buku-buku insiste sur plusieurs livres de manière plus générale.",
+  examples:[
+   ["dua buku","deux livres"],
+   ["tiga apel","trois pommes"],
+   ["mereka punya buku","ils/elles ont des livres / un livre selon le contexte"]
+  ],
+  trap:"Ne transforme pas mécaniquement tous les pluriels français en réduplication."
+ },
+ "2-3":{
+  idea:"ber- forme souvent un verbe d’activité, d’état ou de participation, souvent sans objet direct.",
+  contrast:"kerja → bekerja ; jalan → berjalan ; main → bermain.",
+  examples:[
+   ["Bapak bekerja.","Bapak travaille."],
+   ["Tini berjalan.","Tini marche."],
+   ["Mereka bermain.","Ils/elles jouent."]
+  ],
+  trap:"ber- n’est pas simplement un équivalent mécanique de « faire » : apprends surtout les verbes complets."
+ },
+ "2-4":{
+  idea:"Choisis le mot interrogatif selon l’information recherchée.",
+  contrast:"apa = quoi ; kapan = quand ; bagaimana = comment ; kenapa/mengapa = pourquoi ; di mana = où.",
+  examples:[
+   ["Kamu makan apa?","Tu manges quoi ?"],
+   ["Kamu pergi kapan?","Tu pars quand ?"],
+   ["Hotel di mana?","Où est l’hôtel ?"]
+  ],
+  trap:"À l’oral, le mot interrogatif peut naturellement rester à la fin : kamu makan apa ?"
+ },
+ "2-5":{
+  idea:"La couleur vient après le nom.",
+  contrast:"gaun merah = robe rouge ; tas biru = sac bleu.",
+  examples:[
+   ["gaun merah","robe rouge"],
+   ["tas biru","sac bleu"],
+   ["jaket hitam","veste noire"]
+  ],
+  trap:"Même logique que les autres adjectifs : nom d’abord, description ensuite."
+ },
+ "2-6":{
+  idea:"meN- marque beaucoup de verbes actifs en registre standard. À l’oral, plusieurs verbes courants apparaissent souvent sous une forme plus courte.",
+  contrast:"menjual ↔ jual ; membayar ↔ bayar ; memakai ↔ pakai ; mencari ↔ cari ; membuka ↔ buka.",
+  examples:[
+   ["Tini menjual gaun.","Standard : Tini vend une robe."],
+   ["Tini jual gaun.","Oral courant : même idée."],
+   ["Bapak membayar di restoran.","Standard."],
+   ["Bapak bayar di restoran.","Oral courant."]
+  ],
+  trap:"Ne supprime pas meN- mécaniquement sur tous les verbes. Apprends les couples réellement courants dans les deux sens."
+ }
+};
+
+const GRAMMAR_STATE_KEY='bahasa_grammar_v1';
+let grammarState={};
+try{grammarState=JSON.parse(localStorage.getItem(GRAMMAR_STATE_KEY)||'{}')||{}}catch(e){grammarState={}}
+
+function grammarGuide(g){return GRAMMAR_GUIDES[`${g.s}-${g.u}`]||null}
+function grammarStateFor(key){
+ if(!grammarState[key])grammarState[key]={times:0,wrong:0,strength:0,lastReviewed:null};
+ return grammarState[key]
+}
+function saveGrammarState(){localStorage.setItem(GRAMMAR_STATE_KEY,JSON.stringify(grammarState))}
+function grammarInterval(st){
+ if(!st.times)return 0;
+ if(st.strength<30)return 1;
+ if(st.strength<50)return 3;
+ if(st.strength<70)return 7;
+ if(st.strength<85)return 14;
+ return 30
+}
+function grammarDue(key){
+ let st=grammarStateFor(key);
+ if(!st.times)return true;
+ return daysSince(st.lastReviewed)>=grammarInterval(st)
+}
+function grammarLabel(key){
+ let st=grammarStateFor(key);
+ if(!st.times)return 'Nouveau';
+ if(st.strength<35)return 'Fragile';
+ if(st.strength<65)return 'En progrès';
+ return 'Solide'
+}
+function recordGrammarResult(key,ok){
+ let st=grammarStateFor(key);
+ st.times=Number(st.times||0)+1;
+ st.lastReviewed=todayISO();
+ if(ok){st.strength=Math.min(100,Number(st.strength||0)+12)}
+ else{st.wrong=Number(st.wrong||0)+1;st.strength=Math.max(0,Number(st.strength||0)-20)}
+ saveGrammarState();renderGrammarGameProgress()
+}
+
+const GRAMMAR_QUESTIONS=[
+ {s:1,u:1,key:"1-1-order",stage:"contrast",hint:"Sens : Je mange du riz.",prompt:"Pilih kalimat yang alami :",choices:["Saya makan nasi.","Saya nasi makan.","Makan saya nasi."],answer:"Saya makan nasi.",explain:"Sujet + verbe + complément : saya + makan + nasi."},
+ {s:1,u:1,key:"1-1-conj",stage:"contrast",hint:"Sens : Il/elle mange du riz.",prompt:"Dia ___ nasi.",choices:["makan","makans","memange"],answer:"makan",explain:"Le verbe ne change pas selon la personne."},
+
+ {s:1,u:2,key:"1-2-siapa",stage:"contrast",hint:"Sens : Qui est-il / elle ?",prompt:"___ dia?",choices:["Siapa","Berapa","Mana"],answer:"Siapa",explain:"siapa demande une personne."},
+ {s:1,u:2,key:"1-2-bukan",stage:"repair",hint:"Sens : Ce n’est pas Andi.",prompt:"Perbaiki : Dia tidak Andi.",choices:["Dia bukan Andi.","Dia tidak Andi.","Dia belum Andi."],answer:"Dia bukan Andi.",explain:"bukan nie une identité : « ce n’est pas Andi »."},
+
+ {s:1,u:3,key:"1-3-kita-kami",stage:"contrast",hint:"Sens : Nous allons au marché, toi aussi.",prompt:"___ pergi ke pasar.",choices:["Kita","Kami"],answer:"Kita",explain:"kita inclut la personne à qui l’on parle."},
+ {s:1,u:3,key:"1-3-tidak",stage:"repair",hint:"Sens : Il/elle ne mange pas.",prompt:"Perbaiki : Dia bukan makan.",choices:["Dia tidak makan.","Dia bukan makan."],answer:"Dia tidak makan.",explain:"tidak nie une action."},
+
+ {s:1,u:5,key:"1-5-order",stage:"contrast",hint:"Sens : thé chaud",prompt:"Pilih urutan yang alami :",choices:["teh panas","panas teh"],answer:"teh panas",explain:"Le nom vient généralement avant l’adjectif."},
+
+ {s:1,u:6,key:"1-6-di-ke-1",stage:"contrast",hint:"Sens : Je suis à l’hôtel.",prompt:"Saya ___ hotel.",choices:["di","ke"],answer:"di",explain:"di = position."},
+ {s:1,u:6,key:"1-6-di-ke-2",stage:"contrast",hint:"Sens : Je vais à l’hôtel.",prompt:"Saya pergi ___ hotel.",choices:["ke","di"],answer:"ke",explain:"ke = direction / destination."},
+ {s:1,u:6,key:"1-6-di-ke-repair",stage:"repair",hint:"Sens : Le livre est sur la table.",prompt:"Perbaiki : Buku ke meja.",choices:["Buku di meja.","Buku ke meja."],answer:"Buku di meja.",explain:"Le livre est en position sur la table : di."},
+ {s:1,u:6,key:"1-6-di-ke-produce",stage:"produce",prompt:"Produis mentalement : « Tini est à l’hôtel puis elle va au marché. »",model:"Tini di hotel, lalu pergi ke pasar.",explain:"di pour la position, ke pour la destination."},
+
+ {s:1,u:8,key:"1-8-possession",stage:"contrast",hint:"Sens : mon sac",prompt:"Pilih bentuk yang alami :",choices:["tas saya","saya tas"],answer:"tas saya",explain:"Le possesseur vient après le nom."},
+
+ {s:1,u:9,key:"1-9-color",stage:"repair",hint:"Sens : veste rouge",prompt:"Perbaiki : merah jaket.",choices:["jaket merah","merah jaket"],answer:"jaket merah",explain:"Nom d’abord, couleur ensuite."},
+
+ {s:2,u:1,key:"2-1-karena-jadi",stage:"contrast",hint:"Sens : Il pleut, donc nous restons à l’hôtel.",prompt:"Hujan, ___ kami tinggal di hotel.",choices:["jadi","karena","ketika"],answer:"jadi",explain:"jadi introduit la conséquence."},
+ {s:2,u:1,key:"2-1-cause",stage:"contrast",hint:"Sens : Nous restons à l’hôtel parce qu’il pleut.",prompt:"Kami tinggal di hotel ___ hujan.",choices:["karena","jadi","tapi"],answer:"karena",explain:"karena introduit la cause."},
+ {s:2,u:1,key:"2-1-produce",stage:"produce",prompt:"Produis mentalement : « J’ai faim, donc je mange. »",model:"Saya lapar, jadi saya makan.",explain:"jadi relie une cause déjà connue à sa conséquence."},
+
+ {s:2,u:2,key:"2-2-plural",stage:"contrast",hint:"Sens : deux livres",prompt:"Pilih bentuk yang alami :",choices:["dua buku","dua buku-buku","buku dua-dua"],answer:"dua buku",explain:"Le nombre suffit déjà à marquer le pluriel."},
+
+ {s:2,u:3,key:"2-3-ber",stage:"contrast",hint:"Sens : Bapak travaille.",prompt:"Bapak ___.",choices:["bekerja","kerja-kan","mekerja"],answer:"bekerja",explain:"ber- forme ici un verbe d’activité : bekerja."},
+
+ {s:2,u:4,key:"2-4-question",stage:"contrast",hint:"Sens : Tu pars quand ?",prompt:"Kamu pergi ___?",choices:["kapan","apa","siapa"],answer:"kapan",explain:"kapan = quand."},
+ {s:2,u:4,key:"2-4-where",stage:"contrast",hint:"Sens : Où est l’hôtel ?",prompt:"Hotel ___?",choices:["di mana","kapan","siapa"],answer:"di mana",explain:"di mana = où."},
+
+ {s:2,u:5,key:"2-5-color",stage:"contrast",hint:"Sens : sac bleu",prompt:"Pilih bentuk yang alami :",choices:["tas biru","biru tas"],answer:"tas biru",explain:"Le nom précède la couleur."},
+
+ {s:2,u:6,key:"2-6-register-1",stage:"contrast",hint:"Registre : oral → standard",prompt:"jual → ___",choices:["menjual","memjual","berjual"],answer:"menjual",explain:"Couple utile : menjual ↔ jual."},
+ {s:2,u:6,key:"2-6-register-2",stage:"contrast",hint:"Registre : standard → oral",prompt:"membayar → ___",choices:["bayar","mbayar","berbayar"],answer:"bayar",explain:"Couple utile : membayar ↔ bayar."},
+ {s:2,u:6,key:"2-6-register-3",stage:"contrast",hint:"Registre : oral → standard",prompt:"pakai → ___",choices:["memakai","mempakai","berpakai"],answer:"memakai",explain:"Couple utile : memakai ↔ pakai."},
+ {s:2,u:6,key:"2-6-repair",stage:"repair",hint:"Deux registres possibles.",prompt:"Tini menjual gaun. / Tini jual gaun.",choices:["Les deux sont naturelles selon le registre.","Seule la première est correcte.","Seule la seconde est correcte."],answer:"Les deux sont naturelles selon le registre.",explain:"menjual est standard ; jual est très courant à l’oral. L’objectif est de reconnaître les deux."},
+ {s:2,u:6,key:"2-6-produce",stage:"produce",prompt:"Produis mentalement une version orale de : « Bapak paie au restaurant. »",model:"Bapak bayar di restoran.",explain:"Standard : Bapak membayar di restoran. Oral courant : Bapak bayar di restoran."}
+]
 
 const GRAMMAR=[{"s":1,"u":1,"t":"Utiliser des phrases de base","x":"Ordre simple de la phrase. Le verbe ne se conjugue pas selon la personne."},{"s":1,"u":2,"t":"Se présenter","x":"Questions simples pour se présenter : siapa, mana, berapa ; bukan pour nier une identité."},{"s":1,"u":3,"t":"Utiliser des phrases courantes","x":"Pronoms aku/saya, kita/kami et négation avec tidak."},{"s":1,"u":4,"t":"Saluer les gens","x":"Salutations selon le moment et la situation ; registre poli courant."},{"s":1,"u":5,"t":"Commander à manger et à boire","x":"Commander, demander et payer avec des phrases courtes ; nom + adjectif simple."},{"s":1,"u":6,"t":"Décrire des lieux","x":"di = position ; ke = direction. Ex. di pasar / ke pasar."},{"s":1,"u":7,"t":"Exprimer des actions","x":"Verbes fréquents sans conjugaison personnelle ; ordre sujet-verbe-complément."},{"s":1,"u":8,"t":"Exprimer la possession","x":"Possession : nom + possesseur, milik, et introduction progressive de -ku/-mu/-nya."},{"s":1,"u":9,"t":"Parler des vêtements","x":"Nom + adjectif ; verbes acheter, apporter et porter dans des phrases concrètes."},{"s":2,"u":1,"t":"Utiliser les conjonctions","x":"Relier les idées avec tapi, yang, atau, ketika, karena, jadi, namun."},{"s":2,"u":2,"t":"Former le pluriel","x":"Le pluriel dépend souvent du contexte ; la réduplication n’est pas automatique."},{"s":2,"u":3,"t":"Utiliser les verbes en ber-","x":"ber- exprime souvent une activité, un état ou une action sans objet direct."},{"s":2,"u":4,"t":"Poser des questions","x":"Questions avec apa, kapan, bagaimana, kenapa/mengapa ; -kah est plus soutenu."},{"s":2,"u":5,"t":"Nommer les couleurs","x":"L’adjectif suit généralement le nom : kemeja merah."},{"s":2,"u":6,"t":"Former des verbes en me-","x":"meN- : verbes actifs standard ; comparer ponctuellement aux formes orales courantes."},{"s":2,"u":7,"t":"Utiliser les adjectifs","x":"Adjectif après le nom ; très/sangat et comparaisons simples quand utile."},{"s":2,"u":8,"t":"Compter des choses","x":"Nombres, dizaines, centaines et ordinaux ; ordre naturel des quantités."},{"s":2,"u":9,"t":"Former des verbes en me-","x":"Deuxième série de transformations meN- : meng-, meny-, menge- selon la racine."},{"s":2,"u":10,"t":"Utiliser les adjectifs","x":"Adjectifs et intensité : très/sangat, assez/cukup, plus/lebih."},{"s":2,"u":11,"t":"Parler des membres de la famille","x":"Relations familiales, possession et copule adalah quand elle est réellement utile."},{"s":2,"u":12,"t":"Parler de la cuisine","x":"Instructions de cuisine : verbes d’action, pour/untuk et compléments d’objet."},{"s":2,"u":13,"t":"Former des phrases complexes","x":"Phrases complexes avec bahwa, sehingga, jika, agar, tanpa, daripada."},{"s":2,"u":14,"t":"Parler des professions","x":"Noms de professions et formation fréquente des noms de personnes en pe-/pen-/pem-."},{"s":2,"u":15,"t":"Parler des jours et des heures","x":"Repères temporels, ordre des compléments de temps et emploi de lalu."},{"s":2,"u":16,"t":"Former des adverbes","x":"Adverbes de temps, fréquence, degré et aspect : sudah, belum, masih, akan, pernah."},{"s":2,"u":17,"t":"Utiliser les verbes en di-","x":"Passif en di- : l’objet devient le centre de la phrase ; oleh est souvent facultatif."},{"s":2,"u":18,"t":"Parler du corps","x":"Parties du corps ; possession naturelle avec -nya et structures simples avec sakit."},{"s":2,"u":19,"t":"Former des noms en -an","x":"Suffixe -an : formation fréquente de noms de résultat, objet ou concept."},{"s":2,"u":20,"t":"Donner des directions","x":"Directions et localisation : di/ke/dari + posisi, atas, bawah, dalam, luar."},{"s":2,"u":21,"t":"Utiliser les impératifs","x":"Impératif : racine verbale, tolong/mohon pour adoucir, jangan pour interdire."},{"s":2,"u":22,"t":"Décrire la maison","x":"Localisation dans la maison : di, dalam, atas, bawah, samping et possession."},{"s":2,"u":23,"t":"Nommer les animaux","x":"Animaux : noms, adjectifs et quantités simples ; pluriel par contexte."},{"s":2,"u":24,"t":"Exprimer les dates et les heures","x":"Dates et heures : tanggal, pukul, setengah, awal/akhir et repères temporels."},{"s":2,"u":25,"t":"Former des adverbes","x":"Modalité et aspect : harus, boleh, perlu, sedang, dapat ; place des adverbes."},{"s":2,"u":26,"t":"Créer des noms en pe-an","x":"Circonfixe pe-…-an : formation de noms de processus, lieu ou concept."},{"s":2,"u":27,"t":"Exprimer les émotions","x":"Exprimer les états et émotions ; merasa + adjectif/nom et causes avec karena."},{"s":2,"u":28,"t":"Utiliser les particules","x":"Particules et prépositions : kepada, tentang, terhadap, pun, secara, antara."},{"s":2,"u":29,"t":"Créer des verbes en ter-","x":"ter- : état résultant, événement involontaire, superlatif ou possibilité selon le mot."},{"s":2,"u":30,"t":"Parler de l'éducation","x":"Langage de l’école : impératif, passif et noms dérivés déjà rencontrés."},{"s":3,"u":1,"t":"Utiliser les verbes en me-kan","x":"meN-…-kan : action causative, bénéfactive ou centrée sur un résultat/objet."},{"s":3,"u":2,"t":"Faire des comparaisons","x":"Superlatif avec ter-, paling ; comparaison avec lebih et semakin."},{"s":3,"u":3,"t":"Former des verbes en me-kan","x":"Deuxième série meN-…-kan : causatif, transfert et action faite pour quelqu’un."},{"s":3,"u":4,"t":"Parler des voyages","x":"Voyage : verbes de déplacement, naik, sampai, ke/dari et séquences temporelles."},{"s":3,"u":5,"t":"Décrire des mesures","x":"Mesures et quantités : angka + unité, per, hasil, ukuran et comparaisons."},{"s":3,"u":6,"t":"Former des verbes en di-kan","x":"Passif di-…-kan : correspondant fréquent des verbes actifs meN-…-kan."},{"s":3,"u":7,"t":"Exprimer les sentiments","x":"Sentiments : meN-, ter-, di- et adjectifs dans des situations conversationnelles."},{"s":3,"u":8,"t":"Parler de la santé","x":"Santé : sakit, symptômes, passif pour les soins et semoga pour exprimer un souhait."},{"s":3,"u":9,"t":"Parler de la nature","x":"Nature : descriptions, localisation et relations cause-conséquence."},{"s":3,"u":10,"t":"Communiquer avec les autres","x":"Communication : berkata/bertanya/menjawab, citation simple et noms d’information."},{"s":3,"u":11,"t":"Former des verbes en me-i","x":"meN-…-i : action dirigée vers un lieu, une personne ou répétée sur une cible."},{"s":3,"u":12,"t":"Utiliser les prépositions","x":"Prépositions et liens temporels : sebagai, pada, selama, sebelum, setelah, sejak."},{"s":3,"u":13,"t":"Décrire les matériaux","x":"Matières : terbuat dari pour « fait de », descriptions nominales et adjectivales."},{"s":3,"u":14,"t":"Nommer les objets courants","x":"Objets : possession, localisation, fonction et verbes usuels autour des objets."},{"s":3,"u":15,"t":"Parler de science","x":"Science : phrases explicatives, cause-conséquence et passif fréquent."},{"s":3,"u":16,"t":"Former des verbes en di-i","x":"Passif di-…-i : correspondant fréquent des verbes actifs meN-…-i."},{"s":3,"u":17,"t":"Parler d'art et de musique","x":"Art : descriptions, passif pour les œuvres et expressions d’opinion."},{"s":3,"u":18,"t":"Parler de spiritualité","x":"Spiritualité : ber-, meN-, noms abstraits et registre culturel."},{"s":3,"u":19,"t":"Utiliser les verbes en memper-","x":"memper- : rendre plus / renforcer / modifier une propriété."},{"s":3,"u":20,"t":"Parler des affaires","x":"Affaires : nombres, pourcentages, comparaisons, passif et noms dérivés."},{"s":3,"u":21,"t":"Compter avec les classificateurs","x":"Classificateurs : se- + classificateur, beberapa, setiap, semua, masing-masing."},{"s":3,"u":22,"t":"Former des verbes en diper-","x":"diper- : forme passive correspondant souvent à memper-."},{"s":3,"u":23,"t":"Parler du sport","x":"Sport : verbes d’action, gagner/perdre et phrases de résultat."},{"s":3,"u":24,"t":"Parler de politique","x":"Politique : passif, noms abstraits en ke-an/pe-an et relations cause-conséquence."},{"s":3,"u":25,"t":"Indiquer sa localisation","x":"Localisation avancée : tempat, daerah, wilayah, alamat et prépositions spatiales."},{"s":3,"u":26,"t":"Créer des noms en ke-an","x":"ke-…-an : noms abstraits d’état, qualité ou concept."},{"s":3,"u":27,"t":"Former des verbes répétés","x":"Réduplication verbale : activité répétée, détendue, prudente ou progressive selon le verbe."},{"s":3,"u":28,"t":"Décrire sa communauté","x":"Personnes et communauté : para, noms de personnes et relations sociales."},{"s":3,"u":29,"t":"Utiliser les noms en pe-","x":"Préfixe pe- et variantes : nom de personne liée à une action ou une fonction."},{"s":3,"u":30,"t":"Nommer les pays","x":"Pays et nationalités : di/dari/ke avec les lieux, origine et comparaisons."}]
 function isUnitReached(g){return g.s<progress.s||(g.s===progress.s&&g.u<=progress.u)}
 function recentGrammarFocus(){return GRAMMAR.filter(isUnitReached)}
-function renderGrammar(){let cur=currentUnit();grammarList.innerHTML=GRAMMAR.filter(isUnitReached).map(g=>`<details ${g.s===cur.s&&g.u===cur.u?'open':''}><summary>${g.s===cur.s&&g.u===cur.u?'▶ ':''}S${g.s} U${g.u} · ${esc(g.t)}</summary><p>${esc(g.x)}</p></details>`).join('')}
+function renderGrammar(){
+ let cur=currentUnit();
+ grammarList.innerHTML=GRAMMAR.filter(isUnitReached).map(g=>{
+  let guide=grammarGuide(g),key=`${g.s}-${g.u}`,active=g.s===cur.s&&g.u===cur.u;
+  if(!guide)return `<details ${active?'open':''}><summary>${active?'▶ ':''}S${g.s} U${g.u} · ${esc(g.t)}</summary><p>${esc(g.x)}</p><p class="note">Cette fiche sera enrichie quand cette notion deviendra active.</p></details>`;
+  let ex=guide.examples.map(e=>`<div class="focusBox"><b>${esc(e[0])}</b><div class="small">${esc(e[1])}</div></div>`).join('');
+  return `<details ${active?'open':''}>
+   <summary>${active?'▶ ':''}S${g.s} U${g.u} · ${esc(g.t)} · ${grammarLabel(key)}</summary>
+   <div class="focusBox"><b>💡 Idée clé</b><div>${esc(guide.idea)}</div></div>
+   <div class="focusBox"><b>↔️ Contraste</b><div>${esc(guide.contrast)}</div></div>
+   <div style="margin-top:10px"><b>Exemples qui font clic</b>${ex}</div>
+   <div class="focusBox"><b>⚠️ Piège</b><div>${esc(guide.trap)}</div></div>
+  </details>`
+ }).join('')
+}
 
-let gameWord=null,gameAnswered=false;
+
+let grammarGameQuestion=null,grammarGameAnswered=false,grammarAutoTimer=null;
+let grammarSession={correct:0,total:0,streak:0};
+function updateGrammarHud(){
+ let score=grammarEl('grammarScoreHud'),streak=grammarEl('grammarStreakHud');
+ if(score)score.textContent=`🎯 ${grammarSession.correct} / ${grammarSession.total}`;
+ if(streak)streak.textContent=`🔥 Série ${grammarSession.streak}`;
+}
+function pulsePlayZone(id){
+ let el=document.getElementById(id);if(!el)return;
+ el.classList.remove('playPulse');void el.offsetWidth;el.classList.add('playPulse')
+}
+function releaseGameFocus(){
+ let a=document.activeElement;
+ if(a && typeof a.blur==='function')a.blur()
+}
+
+function setManualEvalVisible(prefix,visible){
+ let ids=prefix==='grammar'?['grammarKnewBtn','grammarReviewBtn']:['knewBtn','reviewBtn'];
+ ids.forEach(id=>{let el=document.getElementById(id);if(el)el.classList.toggle('hidden',!visible)})
+}
+function cancelGrammarAuto(){
+ if(grammarAutoTimer){clearTimeout(grammarAutoTimer);grammarAutoTimer=null}
+}
+
+function grammarEl(id){return document.getElementById(id)}
+
+function grammarQuestionCandidates(){
+ let mode=(grammarEl('grammarGameMode')||{}).value||'mix';
+ let stage=(grammarEl('grammarGameStage')||{}).value||'all';
+ let cur=currentUnit();
+ let a=GRAMMAR_QUESTIONS.filter(q=>q.s<progress.s||(q.s===progress.s&&q.u<=progress.u));
+ if(mode==='current')a=a.filter(q=>q.s===cur.s&&q.u===cur.u);
+ if(mode==='due')a=a.filter(q=>grammarDue(q.key));
+ if(stage!=='all')a=a.filter(q=>q.stage===stage);
+ return a.sort((x,y)=>{
+  let sx=grammarStateFor(x.key),sy=grammarStateFor(y.key);
+  let px=(x.s===cur.s&&x.u===cur.u?700:0)+(grammarDue(x.key)?350:0)+(100-Number(sx.strength||0))*5+Number(sx.wrong||0)*80;
+  let py=(y.s===cur.s&&y.u===cur.u?700:0)+(grammarDue(y.key)?350:0)+(100-Number(sy.strength||0))*5+Number(sy.wrong||0)*80;
+  return py-px
+ })
+}
+function grammarStageLabel(stage){
+ return stage==='repair'?'Réparer':stage==='produce'?'Produire':'Comprendre / distinguer'
+}
+function setGrammarStatus(msg){
+ let el=grammarEl('grammarGameStatus');if(el)el.textContent=msg||''
+}
+
+function newGrammarGame(){
+ cancelGrammarAuto();
+ let nextBtn=grammarEl('grammarNextBtn');
+ if(nextBtn){nextBtn.disabled=false;nextBtn.textContent=grammarSession.total?'Suivant':'▶ Jouer'}
+ setManualEvalVisible('grammar',false);updateGrammarHud()
+ let cand=grammarQuestionCandidates();
+ if(!cand.length){
+  setGrammarStatus('Aucun exercice disponible avec ce filtre.');
+  alert('Aucun exercice disponible pour ce filtre.');
+  return
+ }
+ let top=cand.slice(0,Math.min(12,cand.length));
+ grammarGameQuestion=top[Math.floor(Math.random()*top.length)];
+ grammarGameAnswered=false;
+ let q=grammarGameQuestion;
+ if(nextBtn)nextBtn.textContent='Suivant';
+
+ let meta=grammarEl('grammarGameMeta'),
+     hint=grammarEl('grammarGameHint'),
+     prompt=grammarEl('grammarGamePrompt'),
+     answer=grammarEl('grammarGameAnswer'),
+     choices=grammarEl('grammarGameChoices'),
+     explain=grammarEl('grammarGameExplain'),
+     reveal=grammarEl('grammarRevealBtn'),
+     knew=grammarEl('grammarKnewBtn'),
+     review=grammarEl('grammarReviewBtn');
+
+ if(meta)meta.textContent=`${grammarStageLabel(q.stage)} · S${q.s} U${q.u} · ${grammarLabel(q.key)}`;
+ if(hint)hint.textContent=q.hint||'';
+ if(prompt)prompt.textContent=q.prompt;
+ if(answer){answer.classList.add('hidden');answer.textContent=''}
+ if(explain)explain.textContent='';
+ if(knew)knew.disabled=true;
+ if(review)review.disabled=true;
+
+ if(q.stage==='produce'){
+  if(choices)choices.innerHTML='';
+  if(reveal)reveal.disabled=false;
+  setGrammarStatus('Formule ta réponse mentalement ou à voix haute, puis touche « Voir le modèle ».')
+ }else{
+  if(reveal)reveal.disabled=true;
+  if(choices)choices.innerHTML=shuffle(q.choices).map(c=>`<button class="secondary" data-answer="${esc(c)}" onclick="chooseGrammarAnswer(this,this.dataset.answer)">${esc(c)}</button>`).join('');
+  setGrammarStatus('Choisis une réponse.')
+ }
+ renderGrammarGameProgress();
+}
+function chooseGrammarAnswer(btn,answer){
+ if(grammarGameAnswered||!grammarGameQuestion)return;
+ grammarGameAnswered=true;
+ let q=grammarGameQuestion,ok=answer===q.answer;
+ let choices=grammarEl('grammarGameChoices'),
+     answerEl=grammarEl('grammarGameAnswer'),
+     explain=grammarEl('grammarGameExplain'),
+     nextBtn=grammarEl('grammarNextBtn');
+
+ btn.classList.add(ok?'choiceGood':'choiceBad');
+ releaseGameFocus();
+
+ if(choices){
+  [...choices.querySelectorAll('button')].forEach(b=>{
+   b.disabled=true;
+   if(!ok && b.dataset.answer===q.answer)b.classList.add('choiceGood');
+  });
+ }
+
+ if(answerEl){
+  answerEl.textContent=(ok?'✓ ':'→ ')+q.answer;
+  answerEl.classList.remove('hidden')
+ }
+ if(explain)explain.textContent=q.explain||'';
+ recordGrammarResult(q.key,ok);
+ grammarSession.total++;
+ if(ok){grammarSession.correct++;grammarSession.streak++}else{grammarSession.streak=0}
+ updateGrammarHud();pulsePlayZone('grammarPlayZone');
+
+ if(ok){
+  setGrammarStatus(grammarSession.streak>=3?`✨ Bien vu ! Série ${grammarSession.streak} · suite dans 2 s…`:'✅ Exact · suite dans 2 s…');
+  if(nextBtn)nextBtn.disabled=true;
+  grammarAutoTimer=setTimeout(()=>{
+   grammarAutoTimer=null;
+   releaseGameFocus();
+   newGrammarGame();
+  },2000);
+ }else{
+  setGrammarStatus('👀 Pas cette fois. Ton choix reste en rouge : regarde la bonne réponse et l’explication, puis touche « Suivant ».');
+  if(nextBtn){nextBtn.disabled=false;nextBtn.textContent='Suivant'}
+  // Pas d’auto-scroll : on laisse la phrase, le choix rouge et l’explication exactement sous les yeux.
+ }
+}
+function revealGrammarAnswer(){
+ if(!grammarGameQuestion)return;
+ let q=grammarGameQuestion;
+ let answer=grammarEl('grammarGameAnswer'),
+     explain=grammarEl('grammarGameExplain'),
+     reveal=grammarEl('grammarRevealBtn'),
+     knew=grammarEl('grammarKnewBtn'),
+     review=grammarEl('grammarReviewBtn');
+
+ if(answer){
+  answer.textContent=q.model||q.answer||'';
+  answer.classList.remove('hidden')
+ }
+ if(explain)explain.textContent=q.explain||'';
+ if(reveal)reveal.disabled=true;
+ setManualEvalVisible('grammar',true);
+ if(knew)knew.disabled=false;
+ if(review)review.disabled=false;
+ setGrammarStatus('Compare avec ta réponse, puis indique si tu savais.');
+}
+function manualGrammarResult(ok){
+ if(!grammarGameQuestion||grammarGameAnswered)return;
+ grammarGameAnswered=true;
+ recordGrammarResult(grammarGameQuestion.key,ok);
+ grammarSession.total++;
+ if(ok){grammarSession.correct++;grammarSession.streak++}else{grammarSession.streak=0}
+ updateGrammarHud();pulsePlayZone('grammarPlayZone');
+ let knew=grammarEl('grammarKnewBtn'),
+     review=grammarEl('grammarReviewBtn'),
+     nextBtn=grammarEl('grammarNextBtn');
+ if(knew)knew.disabled=true;
+ if(review)review.disabled=true;
+
+ if(ok){
+  setGrammarStatus('Validé ✅ · question suivante dans 2 secondes…');
+  if(nextBtn)nextBtn.disabled=true;
+  cancelGrammarAuto();
+  grammarAutoTimer=setTimeout(()=>{
+   grammarAutoTimer=null;
+   releaseGameFocus();
+   newGrammarGame();
+  },2000);
+ }else{
+  setGrammarStatus('Noté à revoir 🔁 · analyse le modèle, puis touche « Suivant ».');
+  if(nextBtn){nextBtn.disabled=false;nextBtn.textContent='Suivant'}
+ }
+}
+function renderGrammarGameProgress(){
+ let el=grammarEl('grammarGameProgress');if(!el)return;
+ let reached=GRAMMAR_QUESTIONS.filter(q=>q.s<progress.s||(q.s===progress.s&&q.u<=progress.u));
+ let keys=[...new Set(reached.map(q=>q.key))];
+ let due=keys.filter(grammarDue).length,
+     solid=keys.filter(k=>grammarLabel(k)==='Solide').length,
+     fragile=keys.filter(k=>grammarLabel(k)==='Fragile').length;
+ el.innerHTML=`<b>Mémoire grammaticale</b><br><span class="small">${keys.length} mécanisme(s) disponibles · ${due} à revoir · ${fragile} fragile(s) · ${solid} solide(s)</span>`;
+}
+
+let gameWord=null,gameAnswered=false,gameAutoTimer=null;
+let gameSession={correct:0,total:0,streak:0};
+function updateGameHud(){
+ let score=document.getElementById('gameScoreHud'),streak=document.getElementById('gameStreakHud');
+ if(score)score.textContent=`🎯 ${gameSession.correct} / ${gameSession.total}`;
+ if(streak)streak.textContent=`🔥 Série ${gameSession.streak}`;
+}
+function setGameStatus(msg){
+ let el=document.getElementById('gameStatus');if(el)el.textContent=msg||''
+}
+function cancelGameAuto(){
+ if(gameAutoTimer){clearTimeout(gameAutoTimer);gameAutoTimer=null}
+}
 function gameCandidates(){
  let a=accessibleWords().filter(w=>(w.fr||frenchFor(w.id))&&w.id),t=targetSet(),mode=(document.getElementById('gameMode')||{}).value||'mix';
  if(mode==='target')a=a.filter(w=>t.has(clean(w.id)));
@@ -645,9 +1443,13 @@ function isTrivialGameWord(w){
  return clean(gameText(w,'fr'))===clean(gameText(w,'id'))
 }
 function newGame(){
+ cancelGameAuto();
+ let startBtn=document.getElementById('gameStart');
+ if(startBtn){startBtn.disabled=false;startBtn.textContent=gameSession.total?'Suivant':'▶ Jouer'}
+ setManualEvalVisible('vocab',false);updateGameHud();setGameStatus('Choisis la bonne réponse.');
  let cand=gameCandidates(),mode=(document.getElementById('gameMode')||{}).value||'mix',dir=(document.getElementById('gameDirection')||{}).value||'fr-id';
  if(!cand.length)return alert(mode==='fragile'?'Aucun mot fragile pour le moment.':mode==='target'?'Cette leçon n’a pas de nouveau mot à jouer.':"Pas encore assez de mots avec traduction française dans la base.");
- let top=cand.slice(0,Math.min(24,cand.length));gameWord=top[Math.floor(Math.random()*top.length)];gameAnswered=false;
+ let top=cand.slice(0,Math.min(24,cand.length));gameWord=top[Math.floor(Math.random()*top.length)];gameAnswered=false;if(startBtn)startBtn.textContent='Suivant';
  let promptSide=dir==='fr-id'?'fr':'id',answerSide=dir==='fr-id'?'id':'fr';
  gamePrompt.textContent=gameText(gameWord,promptSide);
  let modeLabel=mode==='target'?'Leçon actuelle':mode==='fragile'?'Fragiles uniquement':gameWord.status==='fragile'?'Mixte · fragile':targetSet().has(clean(gameWord.id))?'Mixte · cible':'Mixte · révision';
@@ -659,12 +1461,78 @@ function newGame(){
  let choices=shuffle([gameWord,...others]);
  gameChoices.innerHTML=choices.length>=3?choices.map(w=>`<button class="secondary" data-game-id="${esc(w.id)}" onclick="chooseGame(this,this.dataset.gameId)">${esc(gameText(w,answerSide))}</button>`).join(''):'';
 }
-function chooseGame(btn,id){if(gameAnswered||!gameWord)return;gameAnswered=true;let ok=clean(id)===clean(gameWord.id);btn.classList.add(ok?'choiceGood':'choiceBad');[...gameChoices.querySelectorAll('button')].forEach(b=>b.disabled=true);recordGame(ok);let dir=(document.getElementById('gameDirection')||{}).value||'fr-id',answerSide=dir==='fr-id'?'id':'fr';gameAnswer.textContent=(ok?'✓ ':'→ ')+gameText(gameWord,answerSide);gameAnswer.classList.remove('hidden');showAnswerBtn.disabled=true;knewBtn.disabled=true;reviewBtn.disabled=true}
-function showGameAnswer(){if(!gameWord)return;gameAnswer.classList.remove('hidden');gameChoices.innerHTML='';showAnswerBtn.disabled=true;knewBtn.disabled=false;reviewBtn.disabled=false}
-function manualGameResult(ok){if(!gameWord||gameAnswered)return;gameAnswered=true;recordGame(ok);knewBtn.disabled=true;reviewBtn.disabled=true}
+function chooseGame(btn,id){
+ if(gameAnswered||!gameWord)return;
+ gameAnswered=true;
+ let ok=clean(id)===clean(gameWord.id),
+     startBtn=document.getElementById('gameStart');
+
+ btn.classList.add(ok?'choiceGood':'choiceBad');
+ releaseGameFocus();
+
+ [...gameChoices.querySelectorAll('button')].forEach(b=>{
+  b.disabled=true;
+  if(!ok && clean(b.dataset.gameId)===clean(gameWord.id))b.classList.add('choiceGood');
+ });
+
+ recordGame(ok);
+ gameSession.total++;
+ if(ok){gameSession.correct++;gameSession.streak++}else{gameSession.streak=0}
+ updateGameHud();pulsePlayZone('vocabPlayZone');
+
+ let dir=(document.getElementById('gameDirection')||{}).value||'fr-id',
+     answerSide=dir==='fr-id'?'id':'fr';
+
+ gameAnswer.textContent=(ok?'✓ ':'→ ')+gameText(gameWord,answerSide);
+ gameAnswer.classList.remove('hidden');
+ showAnswerBtn.disabled=true;knewBtn.disabled=true;reviewBtn.disabled=true;
+
+ if(ok){
+  setGameStatus(gameSession.streak>=3?`✨ Bien joué ! Série ${gameSession.streak} · suite dans 2 s…`:'✅ Exact · suite dans 2 s…');
+  if(startBtn)startBtn.disabled=true;
+  gameAutoTimer=setTimeout(()=>{
+   gameAutoTimer=null;
+   releaseGameFocus();
+   newGame();
+  },2000);
+ }else{
+  setGameStatus('👀 Regarde tranquillement la correction, puis touche « Suivant ».');
+  if(startBtn){startBtn.disabled=false;startBtn.textContent='Suivant'}
+  // Erreur : aucune avance automatique. Le choix rouge et la bonne réponse restent affichés.
+ }
+}
+function showGameAnswer(){
+ if(!gameWord)return;
+ gameAnswer.classList.remove('hidden');gameChoices.innerHTML='';showAnswerBtn.disabled=true;
+ setManualEvalVisible('vocab',true);
+ knewBtn.disabled=false;reviewBtn.disabled=false;
+ setGameStatus('Compare avec ta réponse, puis indique si tu savais.')
+}
+function manualGameResult(ok){
+ if(!gameWord||gameAnswered)return;
+ gameAnswered=true;recordGame(ok);
+ gameSession.total++;
+ if(ok){gameSession.correct++;gameSession.streak++}else{gameSession.streak=0}
+ updateGameHud();pulsePlayZone('vocabPlayZone');
+ knewBtn.disabled=true;reviewBtn.disabled=true;
+ let startBtn=document.getElementById('gameStart');
+ if(ok){
+  setGameStatus('✅ Validé · suite dans 2 s…');
+  if(startBtn)startBtn.disabled=true;
+  cancelGameAuto();
+  gameAutoTimer=setTimeout(()=>{
+   gameAutoTimer=null;
+   releaseGameFocus();
+   newGame();
+  },2000);
+ }else{
+  setGameStatus('🔁 Noté à revoir · touche « Suivant » quand tu es prêt.');
+  if(startBtn){startBtn.disabled=false;startBtn.textContent='Suivant'}
+ }
+}
 function recordGame(ok){let i=words.indexOf(gameWord);if(i<0)return;if(ok){words[i].gameRight=Number(words[i].gameRight||0)+1;applySuccess(words[i],'game')}else{words[i].gameWrong=Number(words[i].gameWrong||0)+1;applyFailure(words[i],'game')}saveWords()}
 
-function exportJSON(){let payload={version:'6.13',words,progress,exportedAt:new Date().toISOString()};let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));a.download='bahasa_v6_13_backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+function exportJSON(){let payload={version:'6.24',words,progress,exportedAt:new Date().toISOString()};let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));a.download='bahasa_v6_24_backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
 function importBase(e){
  let f=e.target.files[0];if(!f)return;let r=new FileReader();
  r.onload=()=>{
@@ -724,7 +1592,7 @@ function dataHealth(){
  }
  return {units,lessons,words:ids.length,missingFrench:missingFr.length};
 }
-function renderAll(){stats();renderHome();renderMasterySummary();renderPriorities();renderGrammar();renderList();renderMigrationInfo()}
+function renderAll(){stats();renderHome();renderMasterySummary();renderPriorities();renderGrammar();renderGrammarGameProgress();renderList();renderMigrationInfo()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));document.getElementById(b.dataset.tab).classList.add('active');renderAll()});
-initSelectors();ensureAccessibleWords();renderAll();
+initSelectors();ensureAccessibleWords();loadSessionSettings();renderAll();
 </script></body></html>
