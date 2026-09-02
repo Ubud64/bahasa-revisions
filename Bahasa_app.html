@@ -533,6 +533,7 @@ body{
 <style>
 /* V6.54 · deux corrections ciblées */
 /* V6.56 · V6.55 + parseur BILAN tolérant aux variantes de ponctuation */
+/* V6.57 · parcours de séance intuitif + Immersion 1 min par défaut */
 #grammarGameHint.gameHint{
  font-size:18px;
  line-height:1.35;
@@ -545,6 +546,21 @@ body{
  touch-action:manipulation;
  -webkit-tap-highlight-color:rgba(0,0,0,.06);
 }
+.sessionPath{
+ display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:12px 0 14px
+}
+.sessionPath .pathStep{
+ padding:8px 10px;border-radius:12px;background:#f2f3f5;color:#62656b;font-size:13px;font-weight:750;border:1px solid #e5e7ea
+}
+.sessionPath .pathArrow{color:#9da1a7;font-weight:800}
+.sessionPath .pathStep.active{background:#eef6ff;color:#2d638e;border-color:#cfe4f7}
+#review .sessionPath .pathStep.active{background:#fff0ec;color:#b94f42;border-color:#f0d4cd}
+.pendingHomeCard{
+ background:linear-gradient(180deg,#eef6ff 0,#fff 100%)!important;border:2px solid #cfe4f7!important
+}
+.pendingHomeTitle{font-size:20px;font-weight:850;margin-bottom:5px;color:#275f89}
+.pendingHomeCard .toolbar{margin-top:11px}
+.pendingHomeCard button{background:#275f89}
 </style>
 </head>
 <body><div class="wrap">
@@ -559,7 +575,7 @@ body{
  <button class="tab active" data-tab="home" type="button" onclick="activateTab('home')">Accueil</button>
  <button class="tab" data-tab="chat" type="button" onclick="activateTab('chat')">ChatGPT</button>
  <button class="tab" data-tab="immersion" type="button" onclick="activateTab('immersion')">📖 Immersion</button>
- <button class="tab" data-tab="review" type="button" onclick="activateTab('review')">Révisions</button>
+ <button class="tab" data-tab="review" type="button" onclick="activateTab('review')">📥 Bilan</button>
  <button class="tab" data-tab="grammar" type="button" onclick="activateTab('grammar')">Grammaire</button>
  <button class="tab" data-tab="games" type="button" onclick="activateTab('games')">Jeux</button>
  <button class="tab" data-tab="vocab" type="button" onclick="activateTab('vocab')">Vocabulaire</button>
@@ -567,6 +583,11 @@ body{
 </div>
 
 <section id="home" class="panel active">
+ <div id="pendingHomeCard" class="card pendingHomeCard hidden">
+  <div class="pendingHomeTitle">📥 Séance à enregistrer</div>
+  <div id="pendingHomeText" class="note">Tu as une séance en cours. Une fois terminée dans ChatGPT, reviens ici pour coller son bilan.</div>
+  <div class="toolbar"><button type="button" onclick="openSessionImport()">Enregistrer le bilan →</button></div>
+ </div>
  <div class="card">
   <div class="sectionTag">MODE DUOLINGO</div>
   <div id="progressTitle" class="progressTitle"></div>
@@ -600,6 +621,9 @@ body{
   <h3>💬 Séance Duolingo avec ChatGPT</h3>
   <p class="note">Bahasa envoie une consigne courte et autonome. Elle contient uniquement les règles indispensables et les données utiles de la séance.</p>
   <div class="projectModeNote">🧠 Consigne autonome · paquet court · retour stabilisé</div>
+  <div class="sessionPath" aria-label="Parcours de séance">
+   <span class="pathStep active">① Copier</span><span class="pathArrow">›</span><span class="pathStep">② ChatGPT</span><span class="pathArrow">›</span><span class="pathStep">③ Bilan</span>
+  </div>
 
   <div>
    <label class="small">Charge pédagogique</label>
@@ -657,6 +681,9 @@ body{
     <div id="immersionLevelBadge" class="immersionLevel">🇮🇩 Niveau actuel</div>
    </div>
   </div>
+  <div class="sessionPath" aria-label="Parcours de séance">
+   <span class="pathStep active">① Copier</span><span class="pathArrow">›</span><span class="pathStep">② ChatGPT</span><span class="pathArrow">›</span><span class="pathStep">③ Bilan</span>
+  </div>
 
   <div class="topicLabel">Dans quel univers veux-tu partir ?</div>
 
@@ -705,9 +732,9 @@ body{
     <div>
      <label class="small">⏱️ Durée de lecture</label>
      <select id="immersionMinutes" onchange="saveImmersionSettings()">
-    <option value="1">1 min</option>
+      <option value="1" selected>1 min</option>
       <option value="3">Environ 3 min</option>
-      <option value="5" selected>Environ 5 min</option>
+      <option value="5">Environ 5 min</option>
       <option value="8">Environ 8 min</option>
       <option value="10">Environ 10 min</option>
      </select>
@@ -766,8 +793,11 @@ body{
    <b>👋 De retour de ta séance</b>
    <div id="returnSessionText" class="small" style="margin-top:3px">Colle maintenant le bilan copié depuis ChatGPT.</div>
   </div>
-  <h3>📥 Enregistrer ma séance</h3>
-  <p class="note">Après avoir écrit « Fin » dans ChatGPT, copie le bloc <b>« Bilan à importer dans Bahasa »</b>, puis reviens ici.</p>
+  <div class="sessionPath" aria-label="Parcours de séance">
+   <span class="pathStep">① Copier</span><span class="pathArrow">›</span><span class="pathStep">② ChatGPT</span><span class="pathArrow">›</span><span class="pathStep active">③ Bilan</span>
+  </div>
+  <h3>📥 Enregistrer le bilan de ma séance</h3>
+  <p class="note">Après avoir écrit « Fin » dans ChatGPT, copie le bloc <b>« Bilan à importer dans Bahasa »</b>. Au retour, Bahasa te ramène automatiquement ici.</p>
 
   <div class="simpleImportBox">
    <div class="simpleImportStep"><b>1.</b> Touche la zone ci-dessous et choisis <b>Coller</b>.</div>
@@ -1652,46 +1682,72 @@ function readPendingChatSession(){
 function savePendingChatSession(kind){
  let d={active:true,kind:kind||'duolingo',launchedAt:Date.now(),left:false,returned:false};
  localStorage.setItem(CHAT_SESSION_KEY,JSON.stringify(d));
+ updateReturnSessionBanner();
  return d
 }
 function markChatSessionLeft(){
  let d=readPendingChatSession();
- if(!d||!d.active||d.returned)return;
- // On n'arme le retour que juste après un vrai lancement ChatGPT.
- // Cela évite qu'un partage, un verrouillage écran ou un changement d'app
- // beaucoup plus tard soit interprété comme un retour de séance.
- if(Date.now()-Number(d.launchedAt||0)>15000)return;
+ if(!d||!d.active)return;
+ // Dès qu'une consigne a été copiée, la séance reste "à enregistrer" jusqu'au bilan.
+ // Peu importe que l'utilisateur revienne 2 minutes ou 3 semaines plus tard.
  d.left=true;d.leftAt=Date.now();
- localStorage.setItem(CHAT_SESSION_KEY,JSON.stringify(d))
+ localStorage.setItem(CHAT_SESSION_KEY,JSON.stringify(d));
+ updateReturnSessionBanner()
 }
 function clearPendingChatSession(){
  localStorage.removeItem(CHAT_SESSION_KEY);
  updateReturnSessionBanner()
 }
+function pendingSessionLabel(d){
+ return d&&d.kind==='immersion'?'Immersion':'Duolingo'
+}
 function updateReturnSessionBanner(){
  let d=readPendingChatSession(),
      banner=document.getElementById('returnSessionBanner'),
-     txt=document.getElementById('returnSessionText');
- if(!banner)return;
- let show=!!(d&&d.active&&d.returned);
- banner.classList.toggle('hidden',!show);
- if(show&&txt){
-  txt.textContent=d.kind==='immersion'
-   ?'Ta séance Immersion est terminée ? Colle maintenant le bilan copié depuis ChatGPT.'
-   :'Ta séance Duolingo est terminée ? Colle maintenant le bilan copié depuis ChatGPT.'
- }
+     txt=document.getElementById('returnSessionText'),
+     home=document.getElementById('pendingHomeCard'),
+     homeTxt=document.getElementById('pendingHomeText'),
+     show=!!(d&&d.active),
+     label=pendingSessionLabel(d);
+ if(banner)banner.classList.toggle('hidden',!show);
+ if(home)home.classList.toggle('hidden',!show);
+ if(show&&txt)txt.textContent=`Séance ${label} en attente : colle maintenant le bilan copié depuis ChatGPT.`;
+ if(show&&homeTxt)homeTxt.textContent=`Une séance ${label} est en attente. Quand elle est terminée dans ChatGPT, touche le bouton ci-dessous pour coller son bilan.`
+}
+function openSessionImport(){
+ activateTab('review');
+ requestAnimationFrame(()=>{
+  let panel=document.getElementById('review');
+  if(panel)panel.scrollIntoView({behavior:'smooth',block:'start'})
+ });
+ return true
 }
 function returnFromChatIfNeeded(){
  let d=readPendingChatSession();
- // Une séance ne peut déclencher qu'un seul basculement automatique.
- if(!d||!d.active||!d.left||d.returned)return false;
- if(Date.now()-Number(d.launchedAt||0)<3000)return false;
- d.returned=true;
- d.returnedAt=Date.now();
- localStorage.setItem(CHAT_SESSION_KEY,JSON.stringify(d));
- activateTab('review');
+ if(!d||!d.active||!d.left)return false;
+ if(Date.now()-Number(d.launchedAt||0)<1500)return false;
+ if(!d.returned){
+  d.returned=true;
+  d.returnedAt=Date.now();
+  localStorage.setItem(CHAT_SESSION_KEY,JSON.stringify(d));
+ }
+ openSessionImport();
  updateReturnSessionBanner();
  return true
+}
+function resumePendingSessionOnLaunch(){
+ let d=readPendingChatSession();
+ if(!d||!d.active)return false;
+ // Si l'app a été fermée ou laissée de côté, on ne demande pas à l'utilisateur
+ // de se souvenir de l'onglet : la zone Bilan redevient le point d'entrée.
+ if(d.left||Date.now()-Number(d.launchedAt||0)>60000){
+  if(!d.returned){d.returned=true;d.returnedAt=Date.now();localStorage.setItem(CHAT_SESSION_KEY,JSON.stringify(d))}
+  openSessionImport();
+  updateReturnSessionBanner();
+  return true
+ }
+ updateReturnSessionBanner();
+ return false
 }
 function openChatGPT(kind){
  savePendingChatSession(kind||'duolingo');
@@ -1737,7 +1793,7 @@ function saveImmersionSettings(){
  let d={
   topic:(document.getElementById('immersionTopic')||{}).value||'Vie quotidienne',
   custom:(document.getElementById('immersionTopicCustom')||{}).value||'',
-  minutes:(document.getElementById('immersionMinutes')||{}).value||'5',
+  minutes:(document.getElementById('immersionMinutes')||{}).value||'1',
   questions:(document.getElementById('immersionQuestions')||{}).value||'3',
   known:(document.getElementById('immersionKnownRatio')||{}).value||'80'
  };
@@ -1773,7 +1829,7 @@ function immersionKnownVocabulary(){
 function prepareImmersionPrompt(){
  saveImmersionSettings();
  let topic=immersionTopicValue(),
-     minutes=Number((document.getElementById('immersionMinutes')||{}).value||5),
+     minutes=Number((document.getElementById('immersionMinutes')||{}).value||1),
      questions=Number((document.getElementById('immersionQuestions')||{}).value||3),
      knownPct=Number((document.getElementById('immersionKnownRatio')||{}).value||80),
      newPct=100-knownPct,
@@ -3101,4 +3157,5 @@ window.addEventListener('pageshow',()=>setTimeout(returnFromChatIfNeeded,150));
 window.addEventListener('focus',()=>setTimeout(returnFromChatIfNeeded,180));
 
 initSelectors();ensureAccessibleWords();loadSessionSettings();loadImmersionSettings();renderAll();
+setTimeout(resumePendingSessionOnLaunch,220);
 </script></body></html>
