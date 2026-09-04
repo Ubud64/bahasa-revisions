@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bahasa">
-<title>Bahasa — V6.56 test</title>
+<title>Bahasa — V6.58 sync</title>
 <style>
 :root{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#6e6e73;--line:#dedede;--soft:#efeff4;--good:#eaf7ee;--warn:#fff6e8;--accent:#111}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
@@ -407,6 +407,8 @@ body.immersionMode .topSubline{display:none}
  font-size:17px;font-weight:800;border-radius:16px
 }
 
+
+.syncOk{background:#eaf7ee;border:1px solid #b9e3c5}.syncWarn{background:#fff6e8;border:1px solid #f0d19d}.syncErr{background:#fdecec;border:1px solid #efb7b7}.syncMuted{background:#f2f2f4;border:1px solid #dedee3}
 </style>
 <link rel="apple-touch-icon" sizes="180x180" href="bahasa_icon.png">
 <link rel="icon" type="image/png" href="bahasa_icon.png">
@@ -928,7 +930,25 @@ body{
 
 <section id="backup" class="panel">
  <div class="card"><h3>Sauvegarde</h3><div class="toolbar"><button class="secondary" onclick="exportJSON()">Exporter la base V6</button><button class="secondary" onclick="exportLegacySnapshot()">Exporter la sauvegarde V5.1</button><button class="secondary" onclick="restoreLegacySnapshot()">Restaurer la copie V5.1</button><label style="padding:11px 13px;border-radius:12px;background:#e9e9ec;font-weight:650;cursor:pointer">Importer une base<input type="file" accept=".json" onchange="importBase(event)" hidden></label></div><p class="note">Au premier lancement de V6 sur le même site que V5.1, Bahasa crée automatiquement une copie intacte de la base existante avant toute migration. La progression V5.1 reste donc récupérable même si V6 ajoute ensuite son propre suivi.</p><div id="migrationInfo" class="focusBox"></div></div>
- <div class="card good"><b>V6.56 · brassage + import fiabilisé</b><br><span class="note">69 unités · 310 sous-leçons · 1851 entrées Duolingo uniques. La rotation privilégie désormais les mots jamais ou peu retravaillés. L’import accepte aussi les variantes de bilan parfois émises par ChatGPT, par exemple « mot (2) » ou « (Utilisateur, 1) ».</span></div>
+ <div class="card" id="syncCard">
+  <h3>☁️ Synchronisation entre appareils</h3>
+  <p class="note">Une fois configurée, Bahasa récupère les changements au démarrage et les envoie automatiquement après chaque modification importante. Le dépôt de synchronisation doit être <b>privé</b>.</p>
+  <div id="syncSetup">
+   <div class="grid">
+    <input id="syncOwner" placeholder="Compte GitHub" value="Ubud64" autocomplete="off">
+    <input id="syncRepo" placeholder="Dépôt privé · ex. bahasa-sync" value="bahasa-sync" autocomplete="off">
+   </div>
+   <input id="syncToken" type="password" placeholder="Jeton GitHub restreint au dépôt de synchronisation" autocomplete="off" style="margin-top:9px;width:100%">
+   <div class="toolbar" style="margin-top:9px">
+    <button onclick="configureCloudSync()">Activer la synchronisation</button>
+    <button class="secondary" onclick="syncNowManual()">Synchroniser maintenant</button>
+    <button class="secondary" onclick="disableCloudSync()">Désactiver</button>
+   </div>
+  </div>
+  <div id="syncStatus" class="focusBox" style="margin-top:10px">Synchronisation non configurée.</div>
+  <p class="note">Le jeton reste uniquement dans le stockage local de cet appareil. Il n’est jamais inclus dans la base synchronisée ni dans l’export JSON.</p>
+ </div>
+ <div class="card good"><b>V6.58 · synchronisation multi-appareils prête</b><br><span class="note">69 unités · 310 sous-leçons · 1851 entrées Duolingo uniques. Le brassage et l’import fiabilisé restent inchangés. La synchronisation peut désormais garder les mêmes données sur plusieurs iPhone via un dépôt GitHub privé dédié.</span></div>
 </section>
 </div>
 <script>
@@ -958,6 +978,182 @@ const MIGRATION_CHECK_KEY='bahasa_v6_migration_check_v1';
 const PROGRESS_LOCK_KEY='bahasa_v6_progress_lock';
 const PROGRESS_SEED_KEY='bahasa_v6_13_progress_seeded';
 const COURSE_COMPLETE_KEY='bahasa_v6_course_complete';
+
+const SYNC_CONFIG_KEY='bahasa_sync_github_config_v1';
+const SYNC_META_KEY='bahasa_sync_github_meta_v1';
+const SYNC_FILE_PATH='bahasa_state.json';
+const SYNC_STATE_KEYS=[
+ WORDS_KEY,PROGRESS_KEY,PROGRESS_LOCK_KEY,PROGRESS_SEED_KEY,COURSE_COMPLETE_KEY,
+ 'bahasa_v6_session_settings','bahasa_pending_chat_session','bahasa_v6_immersion_settings','bahasa_grammar_v1'
+];
+let syncPushTimer=null,syncBusy=false,syncApplyingRemote=false;
+
+function readSyncConfig(){
+ try{return JSON.parse(localStorage.getItem(SYNC_CONFIG_KEY)||'null')}catch(e){return null}
+}
+function readSyncMeta(){
+ try{return JSON.parse(localStorage.getItem(SYNC_META_KEY)||'{}')||{}}catch(e){return {}}
+}
+function writeSyncMeta(patch){
+ let m={...readSyncMeta(),...patch};
+ localStorage.setItem(SYNC_META_KEY,JSON.stringify(m));
+ return m
+}
+function ensureSyncDeviceId(){
+ let m=readSyncMeta();
+ if(!m.deviceId){
+  let id='ios-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
+  m=writeSyncMeta({deviceId:id});
+ }
+ return m.deviceId
+}
+function syncConfigured(){let c=readSyncConfig();return !!(c&&c.owner&&c.repo&&c.token)}
+function syncStatusText(txt,kind='muted'){
+ let el=document.getElementById('syncStatus');if(!el)return;
+ el.className='focusBox '+({ok:'syncOk',warn:'syncWarn',err:'syncErr',muted:'syncMuted'}[kind]||'syncMuted');
+ el.textContent=txt
+}
+function syncUiFromConfig(){
+ let c=readSyncConfig(),o=document.getElementById('syncOwner'),r=document.getElementById('syncRepo'),t=document.getElementById('syncToken');
+ if(o)o.value=(c&&c.owner)||'Ubud64';if(r)r.value=(c&&c.repo)||'bahasa-sync';if(t)t.value=(c&&c.token)||'';
+ let m=readSyncMeta();
+ if(!c||!c.token){syncStatusText('Synchronisation non configurée.','muted');return}
+ if(m.conflict){syncStatusText('⚠️ Conflit détecté entre deux appareils. Touche « Synchroniser maintenant » pour choisir la version à conserver.','warn');return}
+ if(m.lastSyncAt){syncStatusText('✓ Synchronisé · '+new Date(m.lastSyncAt).toLocaleString('fr-FR'),'ok');return}
+ syncStatusText('Synchronisation configurée · premier échange en attente.','muted')
+}
+function captureSyncState(){
+ let state={};
+ for(const k of SYNC_STATE_KEYS){let v=localStorage.getItem(k);if(v!==null)state[k]=v}
+ return state
+}
+function syncLocalSummary(){
+ let a=parseArray(localStorage.getItem(WORDS_KEY))||[];
+ let worked=a.filter(w=>Number(w.times||0)>0).length,fragile=a.filter(w=>w.status==='fragile').length;
+ return {entries:a.length,worked,fragile,progress:JSON.parse(localStorage.getItem(PROGRESS_KEY)||'null')}
+}
+function applySyncState(state){
+ if(!state||typeof state!=='object')throw new Error('État distant invalide');
+ syncApplyingRemote=true;
+ try{
+  for(const k of SYNC_STATE_KEYS){
+   if(Object.prototype.hasOwnProperty.call(state,k))localStorage.setItem(k,String(state[k]));
+   else localStorage.removeItem(k)
+  }
+  words=parseArray(localStorage.getItem(WORDS_KEY))||[];
+  progress=JSON.parse(localStorage.getItem(PROGRESS_KEY)||'null')||{...DEFAULT_PROGRESS};
+  normalize();
+  try{grammarState=JSON.parse(localStorage.getItem('bahasa_grammar_v1')||'{}')||{}}catch(e){grammarState={}}
+  initSelectors();ensureAccessibleWords();loadSessionSettings();loadImmersionSettings();renderAll();
+ }finally{syncApplyingRemote=false}
+}
+function utf8ToBase64(str){
+ let bytes=new TextEncoder().encode(str),bin='',step=0x8000;
+ for(let i=0;i<bytes.length;i+=step)bin+=String.fromCharCode(...bytes.subarray(i,i+step));
+ return btoa(bin)
+}
+function base64ToUtf8(b64){
+ let bin=atob(String(b64||'').replace(/\n/g,'')),bytes=new Uint8Array(bin.length);
+ for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+ return new TextDecoder().decode(bytes)
+}
+function githubHeaders(c){return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+c.token,'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'}}
+function githubFileUrl(c){return `https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${SYNC_FILE_PATH}`}
+async function cloudRead(){
+ let c=readSyncConfig();if(!c||!c.token)throw new Error('Synchronisation non configurée');
+ let res=await fetch(githubFileUrl(c),{headers:githubHeaders(c),cache:'no-store'});
+ if(res.status===404)return null;
+ if(!res.ok){let msg='';try{msg=(await res.json()).message||''}catch(e){};throw new Error(`GitHub ${res.status}${msg?' · '+msg:''}`)}
+ let j=await res.json(),payload=JSON.parse(base64ToUtf8(j.content));
+ return {sha:j.sha,payload}
+}
+async function cloudWrite(existingSha=null,reason='Synchronisation Bahasa'){
+ let c=readSyncConfig();if(!c||!c.token)throw new Error('Synchronisation non configurée');
+ let now=new Date().toISOString(),payload={schema:1,updatedAt:now,deviceId:ensureSyncDeviceId(),summary:syncLocalSummary(),state:captureSyncState()};
+ let body={message:reason,content:utf8ToBase64(JSON.stringify(payload)),branch:'main'};
+ if(existingSha)body.sha=existingSha;
+ let res=await fetch(githubFileUrl(c),{method:'PUT',headers:githubHeaders(c),body:JSON.stringify(body)});
+ if(!res.ok){let msg='';try{msg=(await res.json()).message||''}catch(e){};throw new Error(`GitHub ${res.status}${msg?' · '+msg:''}`)}
+ writeSyncMeta({dirty:false,conflict:false,lastSyncAt:Date.now(),lastRemoteUpdatedAt:now,lastRemoteDeviceId:payload.deviceId});
+ syncStatusText('✓ Synchronisé · '+new Date().toLocaleString('fr-FR'),'ok');
+ return payload
+}
+function markSyncDirty(){
+ if(syncApplyingRemote)return;
+ writeSyncMeta({dirty:true,lastLocalChangeAt:Date.now()});
+ if(!syncConfigured())return;
+ clearTimeout(syncPushTimer);
+ syncPushTimer=setTimeout(()=>autoPushCloud(),1800)
+}
+async function autoPushCloud(){
+ if(syncBusy||!syncConfigured())return;
+ syncBusy=true;
+ try{
+  let remote=await cloudRead(),m=readSyncMeta(),device=ensureSyncDeviceId();
+  if(remote&&remote.payload){
+   let remoteTs=Date.parse(remote.payload.updatedAt||0)||0,lastSeen=Date.parse(m.lastRemoteUpdatedAt||0)||0;
+   if(remote.payload.deviceId!==device&&remoteTs>lastSeen&&m.dirty){
+    writeSyncMeta({conflict:true});syncStatusText('⚠️ L’autre iPhone a aussi changé. Touche « Synchroniser maintenant » pour choisir la version.','warn');return
+   }
+  }
+  await cloudWrite(remote&&remote.sha||null,'Bahasa · sauvegarde automatique');
+ }catch(e){syncStatusText('⚠️ Synchronisation différée · '+e.message,'warn')}
+ finally{syncBusy=false}
+}
+async function pullCloudIfNewer(){
+ if(syncBusy||!syncConfigured())return;
+ let m=readSyncMeta();if(m.dirty)return;
+ syncBusy=true;
+ try{
+  let remote=await cloudRead();if(!remote||!remote.payload)return;
+  let rt=Date.parse(remote.payload.updatedAt||0)||0,lt=Date.parse(m.lastRemoteUpdatedAt||0)||0;
+  if(rt>lt){applySyncState(remote.payload.state);writeSyncMeta({dirty:false,conflict:false,lastSyncAt:Date.now(),lastRemoteUpdatedAt:remote.payload.updatedAt,lastRemoteDeviceId:remote.payload.deviceId});syncStatusText('✓ Données récupérées de l’autre appareil · '+new Date().toLocaleString('fr-FR'),'ok')}
+ }catch(e){syncStatusText('⚠️ Impossible de vérifier la synchronisation · '+e.message,'warn')}
+ finally{syncBusy=false}
+}
+async function configureCloudSync(){
+ let owner=String((document.getElementById('syncOwner')||{}).value||'').trim(),repo=String((document.getElementById('syncRepo')||{}).value||'').trim(),token=String((document.getElementById('syncToken')||{}).value||'').trim();
+ if(!owner||!repo||!token){syncStatusText('Renseigne le compte GitHub, le dépôt privé et le jeton.','err');return}
+ localStorage.setItem(SYNC_CONFIG_KEY,JSON.stringify({owner,repo,token}));ensureSyncDeviceId();syncStatusText('Connexion au dépôt privé…','muted');
+ syncBusy=true;
+ try{
+  let remote=await cloudRead();
+  if(!remote){await cloudWrite(null,'Bahasa · création de la synchronisation');alert('Synchronisation activée. La base de cet iPhone est maintenant la base en ligne.');return}
+  let rs=remote.payload&&remote.payload.summary||{},when=remote.payload&&remote.payload.updatedAt?new Date(remote.payload.updatedAt).toLocaleString('fr-FR'):'date inconnue';
+  let getRemote=confirm(`Une base Bahasa existe déjà en ligne (${when}).\n${rs.worked!==undefined?rs.worked+' mot(s) travaillé(s) · '+rs.fragile+' fragile(s).\n':''}\nOK = récupérer cette base sur cet iPhone.\nAnnuler = conserver la base de cet iPhone et l’envoyer en ligne.`);
+  if(getRemote){applySyncState(remote.payload.state);writeSyncMeta({dirty:false,conflict:false,lastSyncAt:Date.now(),lastRemoteUpdatedAt:remote.payload.updatedAt,lastRemoteDeviceId:remote.payload.deviceId});syncStatusText('✓ Base en ligne récupérée.','ok');alert('Cet iPhone est maintenant synchronisé.');}
+  else{await cloudWrite(remote.sha,'Bahasa · activation depuis cet appareil');alert('La base de cet iPhone est maintenant la base de référence en ligne.');}
+ }catch(e){syncStatusText('❌ Activation impossible · '+e.message,'err')}
+ finally{syncBusy=false;syncUiFromConfig()}
+}
+async function syncNowManual(){
+ if(!syncConfigured()){syncStatusText('Configure d’abord la synchronisation.','err');return}
+ if(syncBusy)return;syncBusy=true;syncStatusText('Synchronisation en cours…','muted');
+ try{
+  let remote=await cloudRead(),m=readSyncMeta(),device=ensureSyncDeviceId();
+  if(!remote){await cloudWrite(null,'Bahasa · synchronisation manuelle');return}
+  let rt=Date.parse(remote.payload.updatedAt||0)||0,lastSeen=Date.parse(m.lastRemoteUpdatedAt||0)||0;
+  if((m.conflict||m.dirty)&&remote.payload.deviceId!==device&&rt>lastSeen){
+   let rs=remote.payload.summary||{},getRemote=confirm(`Les deux appareils ont des changements.\nBase en ligne : ${rs.worked??'?'} travaillé(s) · ${rs.fragile??'?'} fragile(s).\n\nOK = récupérer la version en ligne sur cet iPhone.\nAnnuler = conserver cet iPhone et remplacer la version en ligne.`);
+   if(getRemote){applySyncState(remote.payload.state);writeSyncMeta({dirty:false,conflict:false,lastSyncAt:Date.now(),lastRemoteUpdatedAt:remote.payload.updatedAt,lastRemoteDeviceId:remote.payload.deviceId});syncStatusText('✓ Version en ligne récupérée.','ok')}
+   else await cloudWrite(remote.sha,'Bahasa · résolution de conflit');
+  }else if(m.dirty){await cloudWrite(remote.sha,'Bahasa · synchronisation manuelle')}
+  else if(rt>lastSeen){applySyncState(remote.payload.state);writeSyncMeta({dirty:false,conflict:false,lastSyncAt:Date.now(),lastRemoteUpdatedAt:remote.payload.updatedAt,lastRemoteDeviceId:remote.payload.deviceId});syncStatusText('✓ Dernière version récupérée.','ok')}
+  else syncStatusText('✓ Déjà à jour · '+new Date().toLocaleString('fr-FR'),'ok');
+ }catch(e){syncStatusText('❌ Synchronisation impossible · '+e.message,'err')}
+ finally{syncBusy=false}
+}
+function disableCloudSync(){
+ if(!syncConfigured()){syncUiFromConfig();return}
+ if(!confirm('Désactiver la synchronisation sur cet appareil ? La copie en ligne ne sera pas supprimée.'))return;
+ localStorage.removeItem(SYNC_CONFIG_KEY);clearTimeout(syncPushTimer);syncUiFromConfig()
+}
+function setupCloudSyncLifecycle(){
+ ensureSyncDeviceId();syncUiFromConfig();
+ if(syncConfigured())setTimeout(()=>pullCloudIfNewer(),700);
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(()=>pullCloudIfNewer(),250)});
+ window.addEventListener('pageshow',()=>{if(syncConfigured())setTimeout(()=>pullCloudIfNewer(),400)});
+}
 
 function parseArray(raw){
  try{const x=JSON.parse(raw||'null');return Array.isArray(x)?x:null}catch(e){return null}
@@ -1145,7 +1341,7 @@ function curriculumUnit(s,u){return CURRICULUM.find(x=>x.s===Number(s)&&x.u===Nu
 function unitOrder(x){return x.s*100+x.u}
 function currentUnit(){return curriculumUnit(progress.s,progress.u)||CURRICULUM[0]}
 function courseComplete(){return localStorage.getItem(COURSE_COMPLETE_KEY)==='1'}
-function setCourseComplete(v){if(v)localStorage.setItem(COURSE_COMPLETE_KEY,'1');else localStorage.removeItem(COURSE_COMPLETE_KEY)}
+function setCourseComplete(v){if(v)localStorage.setItem(COURSE_COMPLETE_KEY,'1');else localStorage.removeItem(COURSE_COMPLETE_KEY);markSyncDirty()}
 function currentLessonWords(){let u=currentUnit(),bucket=vocabBucketForActualLesson(u,progress.l);return u.lessons[bucket-1]||[]}
 function curriculumIndex(){let m=new Map();CURRICULUM.forEach(u=>u.lessons.forEach((ls,li)=>ls.forEach(id=>m.set(clean(id),{s:u.s,u:u.u,l:li+1,unit:u,raw:id}))));return m}
 const CINDEX=curriculumIndex();
@@ -1189,12 +1385,14 @@ function saveWords(){
  restoreLockedProgress();
  localStorage.setItem(WORDS_KEY,JSON.stringify(words));
  localStorage.setItem(PROGRESS_KEY,JSON.stringify(progress));
+ markSyncDirty();
  renderAll()
 }
 function saveProgress(){
  localStorage.setItem(PROGRESS_KEY,JSON.stringify(progress));
  localStorage.setItem(PROGRESS_LOCK_KEY,JSON.stringify(progress));
  ensureAccessibleWords();
+ markSyncDirty();
  renderAll()
 }
 
@@ -1349,6 +1547,7 @@ function bulkAddPersonalWords(){
  }
 
  localStorage.setItem(WORDS_KEY,JSON.stringify(words));
+ markSyncDirty();
  renderAll();
  if(result){
   let parts=[`${addedPersonal+addedCanonical} ajouté(s)`];
@@ -1414,7 +1613,7 @@ function updateDifficultyPerPhrase(){
 
 function saveSessionSettings(){
  let d={pool:(document.getElementById('poolSize')||{}).value||'250',mode:(document.getElementById('sessionMode')||{}).value||'duo',load:(document.getElementById('sessionLoad')||{}).value||'normal',minutes:(document.getElementById('sessionMinutes')||{}).value||'free'};
- localStorage.setItem(SESSION_SETTINGS_KEY,JSON.stringify(d))
+ localStorage.setItem(SESSION_SETTINGS_KEY,JSON.stringify(d));markSyncDirty()
 }
 function loadSessionSettings(){
  let d={};try{d=JSON.parse(localStorage.getItem(SESSION_SETTINGS_KEY)||'{}')}catch(e){}
@@ -1495,6 +1694,7 @@ function markWordsExported(ids){
   w.lastExported=today;
  });
  localStorage.setItem(WORDS_KEY,JSON.stringify(words));
+ markSyncDirty();
 }
 function phraseLoadRule(u){
  let p=loadProfile(),grammarActive=!!(u&&u.grammar&&u.grammar.trim());
@@ -1681,7 +1881,7 @@ function readPendingChatSession(){
 }
 function savePendingChatSession(kind){
  let d={active:true,kind:kind||'duolingo',launchedAt:Date.now(),left:false,returned:false};
- localStorage.setItem(CHAT_SESSION_KEY,JSON.stringify(d));
+ localStorage.setItem(CHAT_SESSION_KEY,JSON.stringify(d));markSyncDirty();
  updateReturnSessionBanner();
  return d
 }
@@ -1691,11 +1891,11 @@ function markChatSessionLeft(){
  // Dès qu'une consigne a été copiée, la séance reste "à enregistrer" jusqu'au bilan.
  // Peu importe que l'utilisateur revienne 2 minutes ou 3 semaines plus tard.
  d.left=true;d.leftAt=Date.now();
- localStorage.setItem(CHAT_SESSION_KEY,JSON.stringify(d));
+ localStorage.setItem(CHAT_SESSION_KEY,JSON.stringify(d));markSyncDirty();
  updateReturnSessionBanner()
 }
 function clearPendingChatSession(){
- localStorage.removeItem(CHAT_SESSION_KEY);
+ localStorage.removeItem(CHAT_SESSION_KEY);markSyncDirty();
  updateReturnSessionBanner()
 }
 function pendingSessionLabel(d){
@@ -1797,7 +1997,7 @@ function saveImmersionSettings(){
   questions:(document.getElementById('immersionQuestions')||{}).value||'3',
   known:(document.getElementById('immersionKnownRatio')||{}).value||'80'
  };
- localStorage.setItem(IMMERSION_SETTINGS_KEY,JSON.stringify(d))
+ localStorage.setItem(IMMERSION_SETTINGS_KEY,JSON.stringify(d));markSyncDirty()
 }
 function loadImmersionSettings(){
  let d={};try{d=JSON.parse(localStorage.getItem(IMMERSION_SETTINGS_KEY)||'{}')}catch(e){}
@@ -2068,6 +2268,7 @@ function importSession(rawOverride){
  // Persistance transactionnelle : ne pas lancer renderAll() au milieu de l'import.
  localStorage.setItem(WORDS_KEY,JSON.stringify(words));
  localStorage.setItem(PROGRESS_KEY,JSON.stringify(progress));
+ markSyncDirty();
  if(inputEl)inputEl.value='';
  let st=document.getElementById('sessionImportStatus');
  if(st){
@@ -2431,7 +2632,7 @@ function grammarStateFor(key){
  if(!grammarState[key])grammarState[key]={times:0,wrong:0,strength:0,lastReviewed:null};
  return grammarState[key]
 }
-function saveGrammarState(){localStorage.setItem(GRAMMAR_STATE_KEY,JSON.stringify(grammarState))}
+function saveGrammarState(){localStorage.setItem(GRAMMAR_STATE_KEY,JSON.stringify(grammarState));markSyncDirty()}
 function grammarInterval(st){
  if(!st.times)return 0;
  if(st.strength<30)return 1;
@@ -3057,19 +3258,21 @@ function manualGameResult(ok){
 }
 function recordGame(ok){let i=words.indexOf(gameWord);if(i<0)return;if(ok){words[i].gameRight=Number(words[i].gameRight||0)+1;applySuccess(words[i],'game')}else{words[i].gameWrong=Number(words[i].gameWrong||0)+1;applyFailure(words[i],'game')}saveWords()}
 
-function exportJSON(){let payload={version:'6.52',words,progress,exportedAt:new Date().toISOString()};let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));a.download='bahasa_v6_52_backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+function exportJSON(){let payload={version:'6.58',words,progress,state:captureSyncState(),exportedAt:new Date().toISOString()};let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));a.download='bahasa_v6_58_backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
 function importBase(e){
  let f=e.target.files[0];if(!f)return;let r=new FileReader();
  r.onload=()=>{
   try{
    let d=JSON.parse(r.result),isLegacyArray=Array.isArray(d);
    if(isLegacyArray){captureLegacySnapshotFromImport(r.result);words=d}
+   else if(d&&d.state&&typeof d.state==='object'){applySyncState(d.state);words=parseArray(localStorage.getItem(WORDS_KEY))||d.words||[];progress=JSON.parse(localStorage.getItem(PROGRESS_KEY)||'null')||d.progress||{...DEFAULT_PROGRESS};localStorage.setItem(PROGRESS_LOCK_KEY,JSON.stringify(progress))}
    else if(d&&Array.isArray(d.words)){words=d.words;if(d.progress){progress=d.progress;localStorage.setItem(PROGRESS_LOCK_KEY,JSON.stringify(progress))}}
    else throw 0;
    normalize();
    if(isLegacyArray){localStorage.removeItem(MIGRATION_CHECK_KEY);storeMigrationCheck()}
    localStorage.setItem(WORDS_KEY,JSON.stringify(words));
    localStorage.setItem(PROGRESS_KEY,JSON.stringify(progress));
+   markSyncDirty();
    initSelectors();ensureAccessibleWords();dataHealth();renderAll();
    alert('Base importée.')
   }catch{alert('Fichier invalide.')}
@@ -3104,7 +3307,7 @@ function restoreLegacySnapshot(){
  let original=parseArray(LEGACY_SNAPSHOT.raw);
  if(!original)return alert("La copie V5.1 est illisible.");
  words=original;normalize();
- localStorage.setItem(WORDS_KEY,JSON.stringify(words));
+ localStorage.setItem(WORDS_KEY,JSON.stringify(words));markSyncDirty();
  renderAll();
  alert("Copie V5.1 restaurée. Les données historiques d'origine sont de nouveau actives.");
 }
@@ -3117,7 +3320,7 @@ function dataHealth(){
  }
  return {units,lessons,words:ids.length,missingFrench:missingFr.length};
 }
-function renderAll(){stats();renderHome();renderMasterySummary();renderPriorities();renderGrammar();renderGrammarGameProgress();renderList();renderMigrationInfo();updateReturnSessionBanner()}
+function renderAll(){stats();renderHome();renderMasterySummary();renderPriorities();renderGrammar();renderGrammarGameProgress();renderList();renderMigrationInfo();updateReturnSessionBanner();syncUiFromConfig()}
 function activateTab(name){
  let panel=document.getElementById(name);
  if(!panel)return false;
@@ -3158,4 +3361,6 @@ window.addEventListener('focus',()=>setTimeout(returnFromChatIfNeeded,180));
 
 initSelectors();ensureAccessibleWords();loadSessionSettings();loadImmersionSettings();renderAll();
 setTimeout(resumePendingSessionOnLaunch,220);
+
+setupCloudSyncLifecycle();
 </script></body></html>
