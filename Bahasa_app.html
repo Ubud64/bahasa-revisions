@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bahasa">
-<title>Bahasa — V6.61</title>
+<title>Bahasa — V6.62</title>
 <style>
 :root{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#6e6e73;--line:#dedede;--soft:#efeff4;--good:#eaf7ee;--warn:#fff6e8;--accent:#111}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
@@ -930,7 +930,7 @@ body{
 
 <section id="backup" class="panel">
  <div class="card"><h3>Sauvegarde</h3><div class="toolbar"><button class="secondary" onclick="exportJSON()">Exporter la base V6</button><button class="secondary" onclick="exportLegacySnapshot()">Exporter la sauvegarde V5.1</button><button class="secondary" onclick="restoreLegacySnapshot()">Restaurer la copie V5.1</button><label style="padding:11px 13px;border-radius:12px;background:#e9e9ec;font-weight:650;cursor:pointer">Importer une base<input type="file" accept=".json" onchange="importBase(event)" hidden></label></div><p class="note">Au premier lancement de V6 sur le même site que V5.1, Bahasa crée automatiquement une copie intacte de la base existante avant toute migration. La progression V5.1 reste donc récupérable même si V6 ajoute ensuite son propre suivi.</p><div id="migrationInfo" class="focusBox"></div></div>
- <div class="card"><h3>🛟 Copies de sécurité de synchronisation</h3><p class="note">Avant chaque fusion, Bahasa conserve les deux états. Exporte-les avant toute tentative de récupération.</p><button class="secondary" onclick="exportSyncRecoveries()">Exporter les copies de sécurité</button></div>
+ <div class="card"><h3>🛟 Copie de sécurité de synchronisation</h3><p class="note">Avant une fusion qui peut modifier cet appareil, Bahasa conserve une seule copie locale roulante. L’état distant précédent reste dans l’historique GitHub, ce qui évite de saturer le stockage de l’iPhone.</p><button class="secondary" onclick="exportSyncRecoveries()">Exporter la copie de sécurité</button></div>
  <div class="card" id="syncCard">
   <h3>☁️ Synchronisation entre appareils</h3>
   <p class="note">Une fois configurée, Bahasa récupère les changements au démarrage et les envoie automatiquement après chaque modification importante. Le dépôt de synchronisation doit être <b>privé</b>.</p>
@@ -949,7 +949,7 @@ body{
   <div id="syncStatus" class="focusBox" style="margin-top:10px">Synchronisation non configurée.</div>
   <p class="note">Le jeton reste uniquement dans le stockage local de cet appareil. Il n’est jamais inclus dans la base synchronisée ni dans l’export JSON.</p>
  </div>
- <div class="card good"><b>V6.61 · synchronisation fusionnée et sauvegardée</b><br><span class="note">Les mots et les progrès des deux appareils sont réunis sans remplacement aveugle. Sauvegarde locale avant fusion et synchronisation au retour dans l’application.</span></div>
+ <div class="card good"><b>V6.62 · synchronisation fusionnée sans accumulation</b><br><span class="note">Les mots et les progrès des deux appareils sont réunis sans remplacement aveugle. Une seule copie locale roulante est conservée avant fusion ; l’état GitHub précédent reste récupérable dans l’historique du dépôt.</span></div>
 </section>
 </div>
 <script>
@@ -983,8 +983,13 @@ const COURSE_COMPLETE_KEY='bahasa_v6_course_complete';
 const SYNC_CONFIG_KEY='bahasa_sync_github_config_v1';
 const SYNC_META_KEY='bahasa_sync_github_meta_v1';
 const SYNC_FILE_PATH='bahasa_state.json';
+// Compatibilité : on conserve la même clé de base commune afin de ne pas casser
+// la fusion à trois voies lors du passage de V6.61 à V6.62.
 const SYNC_BASE_KEY='bahasa_sync_v6_61_common_base';
-const SYNC_RECOVERY_PREFIX='bahasa_sync_v6_61_recovery_';
+// V6.61 créait une nouvelle clé à chaque fusion et finissait par saturer localStorage.
+// V6.62 purge ces anciennes copies et ne conserve qu'une seule copie roulante locale.
+const SYNC_LEGACY_RECOVERY_PREFIX='bahasa_sync_v6_61_recovery_';
+const SYNC_RECOVERY_KEY='bahasa_sync_v6_62_recovery_latest';
 const SYNC_STATE_KEYS=[
  WORDS_KEY,PROGRESS_KEY,PROGRESS_LOCK_KEY,PROGRESS_SEED_KEY,COURSE_COMPLETE_KEY,
  'bahasa_v6_session_settings','bahasa_pending_chat_session','bahasa_v6_immersion_settings','bahasa_grammar_v1'
@@ -1035,12 +1040,33 @@ function syncLocalSummary(){
 function safeParse(raw,fallback=null){try{return JSON.parse(raw)}catch(e){return fallback}}
 function syncBase(){return safeParse(localStorage.getItem(SYNC_BASE_KEY),null)}
 function saveSyncBase(state){localStorage.setItem(SYNC_BASE_KEY,JSON.stringify(state))}
-function protectSyncCopy(state,reason){
- // Never allow a failed backup to turn a synchronization into a destructive operation.
- let key=SYNC_RECOVERY_PREFIX+Date.now()+'_'+Math.random().toString(36).slice(2,6);
- let payload={at:new Date().toISOString(),reason,state};
- try{localStorage.setItem(key,JSON.stringify(payload))}catch(e){throw new Error('Sauvegarde locale impossible : synchronisation interrompue. '+e.message)}
- return key
+function legacySyncRecoveryKeys(){
+ let keys=[];
+ for(let i=0;i<localStorage.length;i++){
+  let k=localStorage.key(i);
+  if(k&&k.startsWith(SYNC_LEGACY_RECOVERY_PREFIX))keys.push(k)
+ }
+ return keys
+}
+function cleanupLegacySyncRecoveries(){
+ let keys=legacySyncRecoveryKeys();
+ for(const k of keys)localStorage.removeItem(k);
+ return keys.length
+}
+function protectSyncCopy(state,reason,remoteSha=null){
+ // V6.62 : une seule copie locale roulante. L'ancien état distant reste dans
+ // l'historique GitHub, donc il n'est plus dupliqué dans localStorage.
+ cleanupLegacySyncRecoveries();
+ let payload={version:'6.62',at:new Date().toISOString(),reason,remoteSha:remoteSha||null,state};
+ try{
+  // Retirer d'abord l'ancienne copie libère sa place avant d'écrire la nouvelle.
+  localStorage.removeItem(SYNC_RECOVERY_KEY);
+  localStorage.setItem(SYNC_RECOVERY_KEY,JSON.stringify(payload))
+ }catch(e){
+  localStorage.removeItem(SYNC_RECOVERY_KEY);
+  throw new Error('Sauvegarde locale impossible : synchronisation interrompue. '+e.message)
+ }
+ return SYNC_RECOVERY_KEY
 }
 function progressRank(p){return (Number(p.s)||0)*10000+(Number(p.u)||0)*100+(Number(p.l)||0)}
 function chooseProgress(local,remote){
@@ -1166,13 +1192,16 @@ function markSyncDirty(){
 }
 async function reconcileCloud(reason='Bahasa · fusion des appareils'){
  let remote=await cloudRead(),local=captureSyncState();
- if(!remote){protectSyncCopy(local,'Avant première synchronisation');await cloudWrite(null,reason,local);return}
+ // Première synchronisation : aucune donnée locale n'est remplacée, donc aucune
+ // copie de récupération supplémentaire n'est nécessaire.
+ if(!remote){await cloudWrite(null,reason,local);return}
  let base=syncBase(),merged=mergeSyncStates(local,remote.payload.state,base);
  let differsLocal=JSON.stringify(merged)!==JSON.stringify(local);
  let differsRemote=JSON.stringify(merged)!==JSON.stringify(remote.payload.state);
  if(differsLocal||differsRemote||!base){
-  protectSyncCopy(local,'Avant fusion · base locale');
-  protectSyncCopy(remote.payload.state,'Avant fusion · base en ligne');
+  // Une seule copie locale suffit : la version distante précédente reste dans
+  // l'historique GitHub grâce au commit déjà présent avant le PUT suivant.
+  protectSyncCopy(local,'Avant fusion · base locale',remote.sha);
  }
  // Upload first, with GitHub SHA concurrency protection; never apply a merged state that failed to upload.
  if(differsRemote)await cloudWrite(remote.sha,reason,merged);
@@ -1206,14 +1235,15 @@ async function syncNowManual(){
 }
 function exportSyncRecoveries(){
  let copies=[];
- for(let i=0;i<localStorage.length;i++){
-  let k=localStorage.key(i);if(k&&k.startsWith(SYNC_RECOVERY_PREFIX)){
-   let entry=safeParse(localStorage.getItem(k));if(entry)copies.push(entry)
-  }
+ let latest=safeParse(localStorage.getItem(SYNC_RECOVERY_KEY));
+ if(latest)copies.push(latest);
+ // Compatibilité au cas où l'utilisateur exporte avant le nettoyage de démarrage.
+ for(const k of legacySyncRecoveryKeys()){
+  let entry=safeParse(localStorage.getItem(k));if(entry)copies.push(entry)
  }
  copies.sort((a,b)=>String(a.at).localeCompare(String(b.at)));
- if(!copies.length){alert('Aucune copie de sécurité V6.61 sur cet appareil pour le moment.');return}
- let blob=new Blob([JSON.stringify({version:'6.61',copies},null,2)],{type:'application/json'});
+ if(!copies.length){alert('Aucune copie de sécurité V6.62 sur cet appareil pour le moment.');return}
+ let blob=new Blob([JSON.stringify({version:'6.62',copies},null,2)],{type:'application/json'});
  let url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='bahasa_copies_securite_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
 }
 function disableCloudSync(){
@@ -1222,6 +1252,9 @@ function disableCloudSync(){
  localStorage.removeItem(SYNC_CONFIG_KEY);clearTimeout(syncPushTimer);syncUiFromConfig()
 }
 function setupCloudSyncLifecycle(){
+ // Nettoyage V6.61 AVANT toute nouvelle écriture : libère immédiatement les
+ // copies accumulées qui pouvaient saturer le quota de stockage WebKit.
+ cleanupLegacySyncRecoveries();
  ensureSyncDeviceId();syncUiFromConfig();
  if(syncConfigured())setTimeout(()=>pullCloudIfNewer(),700);
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(()=>pullCloudIfNewer(),250)});
@@ -1869,7 +1902,7 @@ function preparePrompt(){
  let targetMeanings=targets.map(id=>`${id} = ${lessonFrench(id)||'sens de la leçon'}`);
 
  let txt=`SESSION BAHASA
-APP: V6.61
+APP: V6.62
 TYPE: DUOLINGO
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 UNITÉ: ${u.title}
@@ -2118,7 +2151,7 @@ function prepareImmersionPrompt(){
  lastPreparedExportIds.immersion=knownSample.slice();
 
  let txt=`SESSION BAHASA
-APP: V6.61
+APP: V6.62
 TYPE: IMMERSION
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 THÈME: ${topic}
@@ -3328,7 +3361,7 @@ function manualGameResult(ok){
 }
 function recordGame(ok){let i=words.indexOf(gameWord);if(i<0)return;if(ok){words[i].gameRight=Number(words[i].gameRight||0)+1;applySuccess(words[i],'game')}else{words[i].gameWrong=Number(words[i].gameWrong||0)+1;applyFailure(words[i],'game')}saveWords()}
 
-function exportJSON(){let payload={version:'6.61',words,progress,state:captureSyncState(),exportedAt:new Date().toISOString()};let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));a.download='bahasa_v6_61_backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+function exportJSON(){let payload={version:'6.62',words,progress,state:captureSyncState(),exportedAt:new Date().toISOString()};let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));a.download='bahasa_v6_62_backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
 function importBase(e){
  let f=e.target.files[0];if(!f)return;let r=new FileReader();
  r.onload=()=>{
