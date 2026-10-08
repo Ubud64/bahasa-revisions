@@ -1072,6 +1072,9 @@ function progressRank(p){return (Number(p.s)||0)*10000+(Number(p.u)||0)*100+(Num
 function chooseProgress(local,remote){
  let l=safeParse(local,null),r=safeParse(remote,null);
  if(!l)return remote;if(!r)return local;
+ // La dernière sélection explicite gagne, même si elle revient en arrière.
+ let lt=Number(l.selectedAt||0),rt=Number(r.selectedAt||0);
+ if(lt!==rt)return JSON.stringify(lt>rt?l:r);
  return JSON.stringify(progressRank(l)>=progressRank(r)?l:r)
 }
 function mergeWord(local,remote,base){
@@ -1145,7 +1148,7 @@ function applySyncState(state){
   progress=safeParse(localStorage.getItem(PROGRESS_KEY),null)||{...DEFAULT_PROGRESS};
   normalize();
   grammarState=safeParse(localStorage.getItem('bahasa_grammar_v1'),{})||{};
-  initSelectors();ensureAccessibleWords();loadSessionSettings();loadImmersionSettings();renderAll();
+  initSelectors();loadSessionSettings();loadImmersionSettings();renderAll();
  }finally{syncApplyingRemote=false}
 }
 function utf8ToBase64(str){
@@ -1494,10 +1497,12 @@ function saveWords(){
  markSyncDirty();
  renderAll()
 }
-function saveProgress(){
+function saveProgress(advance=false){
+ // Sélectionner une leçon ne valide pas les mots des leçons futures.
+ progress.selectedAt=Date.now();
  localStorage.setItem(PROGRESS_KEY,JSON.stringify(progress));
  localStorage.setItem(PROGRESS_LOCK_KEY,JSON.stringify(progress));
- ensureAccessibleWords();
+ if(advance)ensureAccessibleWords();
  markSyncDirty();
  renderAll()
 }
@@ -1539,7 +1544,7 @@ function nextLesson(){
   if(idx<CURRICULUM.length-1){let n=CURRICULUM[idx+1];progress={s:n.s,u:n.u,l:1};setCourseComplete(false)}
   else setCourseComplete(true);
  }
- saveProgress();initSelectors();dataHealth();renderAll()
+ saveProgress(true);initSelectors();dataHealth();renderAll()
 }
 
 function stats(){let a=accessibleWords();sAccessible.textContent=a.length;sWorked.textContent=a.filter(w=>w.times>0).length;sFragile.textContent=a.filter(w=>w.status==='fragile').length;sTarget.textContent=targetSet().size}
@@ -3463,7 +3468,7 @@ document.addEventListener('visibilitychange',()=>{
 window.addEventListener('pageshow',()=>setTimeout(returnFromChatIfNeeded,150));
 window.addEventListener('focus',()=>setTimeout(returnFromChatIfNeeded,180));
 
-initSelectors();ensureAccessibleWords();loadSessionSettings();loadImmersionSettings();renderAll();
+initSelectors();loadSessionSettings();loadImmersionSettings();renderAll();
 setTimeout(resumePendingSessionOnLaunch,220);
 
 setupCloudSyncLifecycle();
