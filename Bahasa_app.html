@@ -637,6 +637,17 @@ body{
   </div>
 
 
+  <div style="margin-top:12px">
+   <label class="small" for="previewWords">Anticiper les 3 prochaines leçons</label>
+   <select id="previewWords" onchange="saveSessionSettings()">
+    <option value="0">Aucun mot nouveau</option>
+    <option value="1" selected>Doucement · 1 mot par séance</option>
+    <option value="2">Progressif · 2 mots par séance</option>
+    <option value="3">Intensif · 3 mots par séance</option>
+   </select>
+   <p class="note">Uniquement des mots des 3 prochaines leçons Duolingo, sans les débloquer ni les marquer acquis.</p>
+  </div>
+
   <div id="difficultyPerPhrase" class="focusBox" style="margin:12px 0 0">
    <b>1–2 mots difficiles / phrase</b>
    <div class="small">Charge normale · 80/20</div>
@@ -1723,7 +1734,7 @@ function updateDifficultyPerPhrase(){
 }
 
 function saveSessionSettings(){
- let d={pool:(document.getElementById('poolSize')||{}).value||'250',mode:(document.getElementById('sessionMode')||{}).value||'duo',load:(document.getElementById('sessionLoad')||{}).value||'normal',minutes:(document.getElementById('sessionMinutes')||{}).value||'free'};
+ let d={pool:(document.getElementById('poolSize')||{}).value||'250',mode:(document.getElementById('sessionMode')||{}).value||'duo',load:(document.getElementById('sessionLoad')||{}).value||'normal',minutes:(document.getElementById('sessionMinutes')||{}).value||'free',preview:(document.getElementById('previewWords')||{}).value||'1'};
  localStorage.setItem(SESSION_SETTINGS_KEY,JSON.stringify(d));markSyncDirty()
 }
 function loadSessionSettings(){
@@ -1731,7 +1742,8 @@ function loadSessionSettings(){
  if(d.pool&&document.getElementById('poolSize'))poolSize.value=d.pool;
  if(d.mode&&document.getElementById('sessionMode'))sessionMode.value=d.mode;
  if(d.load&&document.getElementById('sessionLoad'))sessionLoad.value=d.load;
- if(d.minutes&&document.getElementById('sessionMinutes'))sessionMinutes.value=d.minutes
+ if(d.minutes&&document.getElementById('sessionMinutes'))sessionMinutes.value=d.minutes;
+ if(d.preview!==undefined&&document.getElementById('previewWords'))previewWords.value=d.preview
  updateDifficultyPerPhrase();
 }
 
@@ -1879,6 +1891,34 @@ Règles du bloc :
 - Ne mets aucun commentaire à l’intérieur du bloc BILAN BAHASA.`;
 }
 
+// Anticipation pédagogique : lecture seule du curriculum, sans toucher aux mots ni à la progression.
+function nextThreeLessonPreview(limit){
+ limit=Math.max(0,Math.min(3,Number(limit)||0));
+ if(!limit)return [];
+ const start=CURRICULUM.findIndex(u=>u.s===progress.s&&u.u===progress.u);
+ if(start<0)return [];
+ const already=new Set();
+ for(let i=0;i<=start;i++){
+  const u=CURRICULUM[i],last=i===start?vocabBucketForActualLesson(u,progress.l):u.lessons.length;
+  for(let j=0;j<last;j++)for(const id of u.lessons[j]||[])already.add(clean(id));
+ }
+ const candidates=[],used=new Set();
+ let ui=start,li=progress.l+1,steps=0;
+ while(ui<CURRICULUM.length&&steps<3){
+  const u=CURRICULUM[ui],count=realLessonCount(u);
+  if(li>count){ui++;li=1;continue}
+  const bucket=vocabBucketForActualLesson(u,li);
+  for(const id of u.lessons[bucket-1]||[]){
+   const key=clean(id);
+   if(!key||already.has(key)||used.has(key))continue;
+   used.add(key);candidates.push({id:key,fr:frenchFor(key),s:u.s,u:u.u,l:li});
+  }
+  li++;steps++;
+ }
+ // Les mêmes mots restent prioritaires d'une séance à l'autre, jusqu'à l'avancement Duolingo.
+ return candidates.slice(0,limit);
+}
+
 function preparePrompt(){
  saveSessionSettings();
  let poolEl=document.getElementById('poolSize'),
@@ -1893,7 +1933,8 @@ function preparePrompt(){
      targets=[...targetSet()],
      frag=fragileWords().map(w=>clean(w.id)),
      due=pool.filter(w=>w.times>0&&isDue(w)).map(w=>clean(w.id)),
-     pairs=registerPairsForPool(pool);
+     pairs=registerPairsForPool(pool),
+     preview=nextThreeLessonPreview((document.getElementById('previewWords')||{}).value||'0');
 
  let special=new Set([...targets,...frag]);
  let supports=pool.filter(w=>!special.has(clean(w.id))).sort(rotationCompare);
@@ -1918,6 +1959,7 @@ FRAGILES / À REVOIR: ${[...new Set([...frag,...due.slice(0,20)])].join(', ')||'
 BRASSAGE PRIORITAIRE: ${rotationIds.join(', ')||'aucun'}
 SUPPORTS DU JOUR: ${supportIds.join(', ')}
 STANDARD ↔ ORAL: ${pairs.length?pairs.slice(0,16).join(' ; '):'aucun couple nécessaire'}
+ANTICIPATION (3 PROCHAINES LEÇONS): ${preview.length?preview.map(x=>`${x.id} = ${x.fr||'sens à vérifier'} (S${x.s} U${x.u} L${x.l})`).join(' ; '):'AUCUNE · aucun mot hors leçons déjà accessibles'}
 
 PROTOCOLE COURT:
 - Une seule phrase ou question à la fois. Corrige brièvement, puis continue.
@@ -1926,7 +1968,8 @@ PROTOCOLE COURT:
 - Après ma réponse, valide la formulation indonésienne naturelle, corrige brièvement si nécessaire, puis propose une NOUVELLE phrase française. Préfère « sudah » à « udah » dans les modèles.
 - Priorité à l’indonésien oral naturel. Accepte une forme correcte hors pool ; indique la forme standard/orale utile sans cours inutile.
 - BRASSAGE RÉEL : varie à chaque tour le sujet, le verbe, les objets, le lieu, la situation et la structure. Alterne famille, maison, vêtements, déplacements, achats, météo, travail et rencontres selon les mots connus ; ne recycle pas les mêmes noms ni le même décor dans plusieurs phrases consécutives.
-- Fais tourner les BRASSAGE PRIORITAIRE et SUPPORTS DU JOUR, sans chercher à les épuiser en une phrase. La difficulté active vient surtout des CIBLES, FRAGILES et de la GRAMMAIRE ACTIVE, pas de mots totalement nouveaux. Au plus un nouveau mot vraiment utile à la fois, occasionnellement. N’empile pas les mots difficiles.
+- Fais tourner les BRASSAGE PRIORITAIRE et SUPPORTS DU JOUR, sans chercher à les épuiser en une phrase. La difficulté active vient surtout des CIBLES, FRAGILES et de la GRAMMAIRE ACTIVE, pas de mots totalement nouveaux. N’empile pas les mots difficiles.
+- ANTICIPATION : ${preview.length?`Tu peux introduire UNIQUEMENT les ${preview.length} mots de la ligne ANTICIPATION, au plus UN mot anticipé par phrase. Réemploie-les dans plusieurs phrases espacées, avec leur sens expliqué brièvement. Ne les considère jamais comme acquis et ne les mets pas dans Révisés s'ils n'ont pas été réellement travaillés.`:'ZÉRO mot nouveau : utilise exclusivement les mots déjà accessibles dans le paquet, y compris pour les exemples et les corrections. Aucun vocabulaire nouveau hors paquet.'} Ne prends jamais un mot d'une leçon plus éloignée ni un mot aléatoire hors Duolingo.
 - Si j’écris uniquement « Fin » : arrête, fais un bilan bref en français puis donne exactement un bloc BILAN BAHASA avec Révisés, Fragiles, Utilisés et Découverts, terminé par FIN BILAN.
 - Dans Révisés, liste uniquement les mots du paquet que J’AI réellement produits, ou que tu m’as explicitement demandé de rappeler/traduire et que nous avons effectivement corrigés. Un mot seulement présent dans ta phrase, dans la consigne ou dans une explication n’est PAS révisé. Exclue les noms propres.
 - Dans Fragiles, mets uniquement des entrées lexicales exactes du paquet. Une difficulté de construction comme « di depan » ou « masuk ke dalam » doit rester dans le bilan pédagogique en français, pas devenir un mot fragile.
