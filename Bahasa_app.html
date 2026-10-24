@@ -628,17 +628,19 @@ body{
   </div>
 
   <div>
-   <label class="small">Charge pédagogique</label>
+   <label class="small" for="sessionLoad">Difficulté des phrases</label>
    <select id="sessionLoad" onchange="saveSessionSettings();updateDifficultyPerPhrase()">
-    <option value="light">Légère · 90/10</option>
-    <option value="normal" selected>Normale · 80/20</option>
+    <option value="light">Facile · 90/10</option>
+    <option value="normal" selected>Équilibrée · 80/20</option>
     <option value="sustained">Soutenue · 70/30</option>
+    <option value="intensive">Intensive · 60/40</option>
    </select>
+   <p class="note">Grammaire, mots fragiles et complexité des phrases. Ce réglage n’ajoute pas de mots nouveaux.</p>
   </div>
 
 
   <div style="margin-top:12px">
-   <label class="small" for="previewWords">Anticiper les 3 prochaines leçons</label>
+   <label class="small" for="previewWords">Découverte des prochaines leçons</label>
    <select id="previewWords" onchange="saveSessionSettings()">
     <option value="0">Aucun mot nouveau</option>
     <option value="1" selected>Doucement · 1 mot par séance</option>
@@ -649,8 +651,8 @@ body{
   </div>
 
   <div id="difficultyPerPhrase" class="focusBox" style="margin:12px 0 0">
-   <b>1–2 mots difficiles / phrase</b>
-   <div class="small">Charge normale · 80/20</div>
+   <b>Difficulté équilibrée · 80/20</b>
+   <div class="small">Grammaire et vocabulaire fragile, sans nouveaux mots automatiques</div>
   </div>
 
   <div class="finReminder">
@@ -1711,9 +1713,10 @@ function registerPairsForPool(pool){
 }
 function loadProfile(){
  let v=(document.getElementById('sessionLoad')||{}).value||'normal';
- if(v==='light')return {key:'light',label:'Légère',comfort:90,challenge:10,shortMax:1,longMax:1};
+ if(v==='light')return {key:'light',label:'Facile',comfort:90,challenge:10,shortMax:1,longMax:1};
  if(v==='sustained')return {key:'sustained',label:'Soutenue',comfort:70,challenge:30,shortMax:2,longMax:3};
- return {key:'normal',label:'Normale',comfort:80,challenge:20,shortMax:1,longMax:2}
+ if(v==='intensive')return {key:'intensive',label:'Intensive',comfort:60,challenge:40,shortMax:3,longMax:4};
+ return {key:'normal',label:'Équilibrée',comfort:80,challenge:20,shortMax:1,longMax:2}
 }
 function sessionDurationProfile(){
  let raw=String((document.getElementById('sessionMinutes')||{}).value||'free');
@@ -1726,11 +1729,8 @@ function sessionDurationProfile(){
 
 function updateDifficultyPerPhrase(){
  let el=document.getElementById('difficultyPerPhrase');if(!el)return;
- let mode=String((document.getElementById('sessionLoad')||{}).value||'normal');
- let title='1–2 mots difficiles / phrase',sub='Charge normale · 80/20';
- if(mode==='light'){title='1 mot difficile max / phrase';sub='Charge légère · 90/10'}
- else if(mode==='sustained'){title='2–3 mots difficiles / phrase';sub='Charge soutenue · 70/30'}
- el.innerHTML=`<b>${title}</b><div class="small">${sub}</div>`;
+ let p=loadProfile();
+ el.innerHTML=`<b>Difficulté ${p.label.toLowerCase()} · ${p.comfort}/${p.challenge}</b><div class="small">Grammaire, mots fragiles et structures de phrases. Les mots anticipés se règlent séparément.</div>`;
 }
 
 function saveSessionSettings(){
@@ -1952,7 +1952,7 @@ APP: V6.62
 TYPE: DUOLINGO
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 UNITÉ: ${u.title}
-CHARGE: ${load.label} · ${load.comfort}/${load.challenge} · ${load.key==='light'?'1 mot difficile max':load.key==='sustained'?'2–3 mots difficiles':'1–2 mots difficiles par phrase'}
+CHARGE: ${load.label} · ${load.comfort}/${load.challenge} · difficulté active (grammaire, fragiles, structures), sans vocabulaire nouveau automatique
 GRAMMAIRE ACTIVE: ${u.grammar||'aucune notion nouvelle'}
 CIBLES: ${targetMeanings.length?targetMeanings.join(' ; '):courseComplete()?'aucune · parcours Duolingo terminé, révision mémoire globale':'aucune'}
 FRAGILES / À REVOIR: ${[...new Set([...frag,...due.slice(0,20)])].join(', ')||'aucun'}
