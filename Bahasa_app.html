@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bahasa">
-<title>Bahasa — V6.64</title>
+<title>Bahasa — V6.65</title>
 <style>
 :root{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#6e6e73;--line:#dedede;--soft:#efeff4;--good:#eaf7ee;--warn:#fff6e8;--accent:#111}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
@@ -1948,7 +1948,7 @@ function preparePrompt(){
  let targetMeanings=targets.map(id=>`${id} = ${lessonFrench(id)||'sens de la leçon'}`);
 
  let txt=`SESSION BAHASA
-APP: V6.64
+APP: V6.65
 TYPE: DUOLINGO
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 UNITÉ: ${u.title}
@@ -1967,7 +1967,8 @@ PROTOCOLE COURT:
 - PHASE 1 OBLIGATOIRE, VOCABULAIRE ISOLÉ : commence immédiatement par UN SEUL mot indonésien à traduire en français, sans phrase ni traduction dévoilée. Attends ma réponse écrite avant le mot suivant. Ne propose aucun bouton, QCM ni liste de mots.
 - Choisis les mots en priorité parmi CIBLES, FRAGILES / À REVOIR, puis BRASSAGE PRIORITAIRE et SUPPORTS DU JOUR. Tu peux aussi tester les mots ANTICIPATION dans la limite indiquée ; ils restent des mots futurs, jamais automatiquement acquis.
 - Si ma traduction est correcte (tolère les synonymes naturels et petites fautes de frappe), valide très brièvement puis donne UN AUTRE mot indonésien, sans explication superflue.
-- Si je réponds uniquement « ? », si ma traduction est fausse ou si j’exprime une hésitation, explique le mot selon ce modèle pédagogique : (1) mot = sens français précis ; (2) « Décomposons-le » : présente sur des lignes séparées les éléments réellement identifiables (préfixe, racine, suffixe), avec leur sens ou leur fonction ; (3) montre comment les éléments conduisent au sens du mot entier ; (4) termine par une astuce mnémotechnique courte fondée de préférence sur la racine ; (5) fais revenir le mot plus tard, espacé parmi d’autres, sans le considérer comme acquis. Pour un mot non décomposable, dis-le simplement et explique son usage concret. Ne force JAMAIS une décomposition : distingue la morphologie productive de l’étymologie incertaine, et indique honnêtement toute incertitude. Exemple : « sekaligus = en même temps, en une seule fois ; se- = un/une ; kali = fois ; sekali = une fois ; -gus = élément ancien dont le rôle précis n’est pas clairement établi en indonésien moderne ; retiens surtout sekali dans sekaligus ». N’invente ni racine ni sens d’affixe.
+- Si je réponds uniquement « x » ou « X » (ou « ? »), si ma traduction est fausse ou si j’exprime une hésitation, explique le mot selon ce modèle pédagogique : (1) mot = sens français précis ; (2) « Décomposons-le » : présente sur des lignes séparées les éléments réellement identifiables (préfixe, racine, suffixe), avec leur sens ou leur fonction ; (3) montre comment les éléments conduisent au sens du mot entier ; (4) donne UNE OU DEUX phrases courtes et naturelles EN INDONÉSIEN contenant le mot, chacune immédiatement suivie de sa traduction française, avec du vocabulaire déjà accessible autant que possible ; (5) termine par une astuce mnémotechnique courte fondée de préférence sur la racine ; (6) fais revenir le mot plus tard, espacé parmi d’autres, sans le considérer comme acquis. Pour un mot non décomposable, dis-le simplement et explique son usage concret. Ne force JAMAIS une décomposition : distingue la morphologie productive de l’étymologie incertaine, et indique honnêtement toute incertitude. Exemple : « sekaligus = en même temps, en une seule fois ; se- = un/une ; kali = fois ; sekali = une fois ; -gus = élément ancien dont le rôle précis n’est pas clairement établi en indonésien moderne ; retiens surtout sekali dans sekaligus ». N’invente ni racine ni sens d’affixe.
+- Pour signaler un mot inconnu, je peux taper une seule lettre « x » ou « X » depuis le clavier alphabétique principal de mon iPhone, sans passer au clavier des symboles. Accepte aussi « ? » pour compatibilité. Ne traite jamais « x » seul comme une traduction.
 - Le vocabulaire isolé dure aussi longtemps que je le souhaite, sans quota. Si j'écris uniquement « Phrases » (insensible à la casse), termine immédiatement la phase vocabulaire et commence la PHASE 2. Si j'écris uniquement « Fin », termine toute la séance depuis n'importe quelle phase et produis le bilan.
 - PHASE 2 OBLIGATOIRE, TRADUCTION : donne UNE phrase EN FRANÇAIS à traduire EN INDONÉSIEN. Attends ma traduction avant toute autre phrase. Ne me demande jamais de traduire une phrase indonésienne vers le français, sauf si je le demande explicitement. Les corrections et explications restent en français. Ne bascule jamais en anglais, même en mode vocal.
 - En phase 2, réutilise naturellement et à distance les mots qui m'ont posé problème en phase 1. Après ma réponse, valide la formulation indonésienne naturelle, corrige brièvement si nécessaire, puis propose une NOUVELLE phrase française. Préfère « sudah » à « udah » dans les modèles.
