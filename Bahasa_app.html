@@ -656,7 +656,7 @@ body{
   </div>
 
   <div class="finReminder">
-   💡 Pour terminer la séance, écris simplement <b>« Fin »</b> dans ChatGPT. Le bilan à importer dans Bahasa sera alors généré.
+   🧠 La séance commence par des mots isolés : écris leur traduction, ou simplement <b>« ? »</b> si tu ne sais pas. Écris <b>« Phrases »</b> pour passer aux traductions de phrases, puis <b>« Fin »</b> pour terminer et recevoir le bilan.
   </div>
 
   <div class="flowActions">
@@ -1948,7 +1948,7 @@ function preparePrompt(){
  let targetMeanings=targets.map(id=>`${id} = ${lessonFrench(id)||'sens de la leçon'}`);
 
  let txt=`SESSION BAHASA
-APP: V6.62
+APP: V6.63
 TYPE: DUOLINGO
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 UNITÉ: ${u.title}
@@ -1964,18 +1964,23 @@ ANTICIPATION (3 PROCHAINES LEÇONS): ${preview.length?preview.map(x=>`${x.id} = 
 PROTOCOLE COURT:
 - Une seule phrase ou question à la fois. Corrige brièvement, puis continue.
 - Le ${load.comfort}/${load.challenge} Duolingo = terrain familier / difficulté active surtout CIBLES + FRAGILES + GRAMMAIRE, PAS ${load.challenge}% de mots nouveaux.
-- EXERCICE OBLIGATOIRE : donne UNE phrase EN FRANÇAIS à traduire EN INDONÉSIEN. Attends ma traduction avant toute autre phrase. Ne me demande jamais de traduire de l’indonésien vers le français, sauf si je le demande explicitement. Les corrections et explications restent en français. Ne bascule jamais en anglais, même en mode vocal.
-- Après ma réponse, valide la formulation indonésienne naturelle, corrige brièvement si nécessaire, puis propose une NOUVELLE phrase française. Préfère « sudah » à « udah » dans les modèles.
+- PHASE 1 OBLIGATOIRE, VOCABULAIRE ISOLÉ : commence immédiatement par UN SEUL mot indonésien à traduire en français, sans phrase ni traduction dévoilée. Attends ma réponse écrite avant le mot suivant. Ne propose aucun bouton, QCM ni liste de mots.
+- Choisis les mots en priorité parmi CIBLES, FRAGILES / À REVOIR, puis BRASSAGE PRIORITAIRE et SUPPORTS DU JOUR. Tu peux aussi tester les mots ANTICIPATION dans la limite indiquée ; ils restent des mots futurs, jamais automatiquement acquis.
+- Si ma traduction est correcte (tolère les synonymes naturels et petites fautes de frappe), valide très brièvement puis donne UN AUTRE mot indonésien, sans explication superflue.
+- Si je réponds uniquement « ? », si ma traduction est fausse ou si j'exprime une hésitation, donne le sens français, explique brièvement la racine et la construction morphologique SEULEMENT si elles sont fiables, puis donne une astuce mnémotechnique simple et utile. Fais revenir ce mot plus tard, espacé parmi d'autres, sans le présenter comme maîtrisé. N'invente ni étymologie ni racine.
+- Le vocabulaire isolé dure aussi longtemps que je le souhaite, sans quota. Si j'écris uniquement « Phrases » (insensible à la casse), termine immédiatement la phase vocabulaire et commence la PHASE 2. Si j'écris uniquement « Fin », termine toute la séance depuis n'importe quelle phase et produis le bilan.
+- PHASE 2 OBLIGATOIRE, TRADUCTION : donne UNE phrase EN FRANÇAIS à traduire EN INDONÉSIEN. Attends ma traduction avant toute autre phrase. Ne me demande jamais de traduire une phrase indonésienne vers le français, sauf si je le demande explicitement. Les corrections et explications restent en français. Ne bascule jamais en anglais, même en mode vocal.
+- En phase 2, réutilise naturellement et à distance les mots qui m'ont posé problème en phase 1. Après ma réponse, valide la formulation indonésienne naturelle, corrige brièvement si nécessaire, puis propose une NOUVELLE phrase française. Préfère « sudah » à « udah » dans les modèles.
 - Priorité à l’indonésien oral naturel. Accepte une forme correcte hors pool ; indique la forme standard/orale utile sans cours inutile.
 - BRASSAGE RÉEL : varie à chaque tour le sujet, le verbe, les objets, le lieu, la situation et la structure. Alterne famille, maison, vêtements, déplacements, achats, météo, travail et rencontres selon les mots connus ; ne recycle pas les mêmes noms ni le même décor dans plusieurs phrases consécutives.
 - Fais tourner les BRASSAGE PRIORITAIRE et SUPPORTS DU JOUR, sans chercher à les épuiser en une phrase. La difficulté active vient surtout des CIBLES, FRAGILES et de la GRAMMAIRE ACTIVE, pas de mots totalement nouveaux. N’empile pas les mots difficiles.
 - ANTICIPATION : ${preview.length?`Tu peux introduire UNIQUEMENT les ${preview.length} mots de la ligne ANTICIPATION, au plus UN mot anticipé par phrase. Réemploie-les dans plusieurs phrases espacées, avec leur sens expliqué brièvement. Ne les considère jamais comme acquis et ne les mets pas dans Révisés s'ils n'ont pas été réellement travaillés.`:'ZÉRO mot nouveau : utilise exclusivement les mots déjà accessibles dans le paquet, y compris pour les exemples et les corrections. Aucun vocabulaire nouveau hors paquet.'} Ne prends jamais un mot d'une leçon plus éloignée ni un mot aléatoire hors Duolingo.
 - Si j’écris uniquement « Fin » : arrête, fais un bilan bref en français puis donne exactement un bloc BILAN BAHASA avec Révisés, Fragiles, Utilisés et Découverts, terminé par FIN BILAN.
-- Dans Révisés, liste uniquement les mots du paquet que J’AI réellement produits, ou que tu m’as explicitement demandé de rappeler/traduire et que nous avons effectivement corrigés. Un mot seulement présent dans ta phrase, dans la consigne ou dans une explication n’est PAS révisé. Exclue les noms propres.
+- Dans Révisés, inclus les mots réellement testés et correctement rappelés en phase vocabulaire, ainsi que les mots du paquet que J’AI réellement produits en phase phrases ; n'inclus pas les mots seulement expliqués après « ? » comme acquis. Un mot seulement présent dans ta phrase, dans la consigne ou dans une explication n’est PAS révisé. Exclue les noms propres.
 - Dans Fragiles, mets uniquement des entrées lexicales exactes du paquet. Une difficulté de construction comme « di depan » ou « masuk ke dalam » doit rester dans le bilan pédagogique en français, pas devenir un mot fragile.
 - Dans Utilisés, compte toutes les occurrences des mots indonésiens que J’AI réellement produits, y compris les SUPPORTS et les petits mots grammaticaux, pas seulement les cibles.
 - Dans Découverts, mets seulement les mots utiles hors paquet réellement employés ou introduits, avec sens français + origine + nombre. Un mot seulement utilisé par ChatGPT est une exposition, pas une acquisition. Tout mot hors paquet que J’AI produit et qui figure dans Utilisés doit aussi figurer dans Découverts avec origine Utilisateur ou Les deux.
-ACTION: Commence maintenant.
+ACTION: Commence maintenant par le PREMIER mot indonésien isolé, sans donner son sens.
 FIN SESSION`;
 
  if(outEl)outEl.value=txt;
