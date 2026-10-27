@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bahasa">
-<title>Bahasa — V6.66</title>
+<title>Bahasa — V6.68</title>
 <style>
 :root{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#6e6e73;--line:#dedede;--soft:#efeff4;--good:#eaf7ee;--warn:#fff6e8;--accent:#111}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
@@ -772,7 +772,8 @@ body{
      <span class="small">90 %</span>
      <span id="immersionRatioBadge" class="ratioBadge">80 / 20</span>
     </div>
-    <div id="immersionRatioExplain" class="ratioExplain">80 % connu · 20 % de vocabulaire nouveau, fréquent et utile dans la vraie vie.</div>
+    <div class="small" style="margin-top:7px">Le réglage « Aucun mot nouveau » de Révision Duolingo s’applique aussi à l’immersion et impose 100 % de vocabulaire déjà accessible.</div>
+   <div id="immersionRatioExplain" class="ratioExplain">80 % connu · 20 % de vocabulaire nouveau, fréquent et utile dans la vraie vie.</div>
    </div>
   </div>
 
@@ -1923,6 +1924,23 @@ function nextThreeLessonPreview(limit){
  return candidates.slice(0,limit);
 }
 
+// V6.68 : lexique autorisé, construit depuis les leçons réellement atteintes.
+// Les entrées du dictionnaire général ne donnent aucun droit d'accès.
+function verifiedSessionVocabulary(){
+ const allowed=new Set();
+ CURRICULUM.forEach(unit=>{
+  if(unit.s>progress.s||(unit.s===progress.s&&unit.u>progress.u))return;
+  const last=(unit.s===progress.s&&unit.u===progress.u)
+   ?vocabBucketForActualLesson(unit,progress.l):unit.lessons.length;
+  unit.lessons.slice(0,last).forEach(lesson=>lesson.forEach(id=>{if(clean(id))allowed.add(clean(id))}));
+ });
+ // Mots personnels réellement travaillés, jamais les entrées simplement importées.
+ words.forEach(w=>{
+  const id=clean(w.id);
+  if(id&&!CINDEX.has(id)&&w.source!=='duolingo'&&Number(w.times||0)>0)allowed.add(id);
+ });
+ return [...allowed];
+}
 function preparePrompt(){
  saveSessionSettings();
  let poolEl=document.getElementById('poolSize'),
@@ -1940,6 +1958,32 @@ function preparePrompt(){
      pairs=registerPairsForPool(pool),
      preview=nextThreeLessonPreview((document.getElementById('previewWords')||{}).value||'0');
 
+ // V6.68 : sélection fermée, effectuée exclusivement par Bahasa.
+ // Chaque mot est vérifié dans les leçons du curriculum déjà atteintes.
+ // Les listes libres et le dictionnaire ne peuvent pas alimenter cette file.
+ const verifiedQueue=[];
+ const queueSeen=new Set();
+ function queueWord(id){
+  const key=clean(id);
+  if(!key||queueSeen.has(key)||!isAccessibleCurriculum(key))return;
+  // Vérification indépendante : présence littérale dans une leçon atteinte.
+  const found=CURRICULUM.some(unit=>{
+   if(unit.s>progress.s||(unit.s===progress.s&&unit.u>progress.u))return false;
+   const maxBucket=(unit.s===progress.s&&unit.u===progress.u)
+    ?vocabBucketForActualLesson(unit,progress.l):unit.lessons.length;
+   return unit.lessons.slice(0,maxBucket).some(lesson=>lesson.some(word=>clean(word)===key));
+  });
+  if(!found)return;
+  queueSeen.add(key);
+  verifiedQueue.push(key);
+ }
+ // Cibles, fragiles, puis rotation de mots vérifiés, dans cet ordre fixe.
+ targets.forEach(queueWord);
+ frag.forEach(queueWord);
+ pool.filter(w=>w.status==='fragile').forEach(w=>queueWord(w.id));
+ pool.filter(w=>!queueSeen.has(clean(w.id))).sort(rotationCompare).forEach(w=>queueWord(w.id));
+ const fixedQueue=verifiedQueue.slice(0,Math.max(80,n));
+ const allowedVocabulary=verifiedSessionVocabulary();
  let special=new Set([...targets,...frag]);
  let supports=pool.filter(w=>!special.has(clean(w.id))).sort(rotationCompare);
  // Un petit noyau doit réellement tourner d'une séance à l'autre.
@@ -1952,7 +1996,7 @@ function preparePrompt(){
  let targetMeanings=targets.map(id=>`${id} = ${lessonFrench(id)||'sens de la leçon'}`);
 
  let txt=`SESSION BAHASA
-APP: V6.66
+APP: V6.68
 TYPE: DUOLINGO
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 UNITÉ: ${u.title}
@@ -1960,6 +2004,8 @@ CHARGE: ${load.label} · ${load.comfort}/${load.challenge} · difficulté active
 GRAMMAIRE ACTIVE: ${u.grammar||'aucune notion nouvelle'}
 CIBLES: ${targetMeanings.length?targetMeanings.join(' ; '):courseComplete()?'aucune · parcours Duolingo terminé, révision mémoire globale':'aucune'}
 FRAGILES / À REVOIR: ${[...new Set([...frag,...due.slice(0,20)])].join(', ')||'aucun'}
+FILE FERMÉE DE RÉVISION (ordre imposé, générée par Bahasa, mots Duolingo vérifiés) : ${fixedQueue.map((id,i)=>`${i+1}. ${id}`).join(' ; ')||'aucun mot vérifié'}
+LEXIQUE AUTORISÉ POUR PHRASES, EXEMPLES ET CORRECTIONS (leçons atteintes + mots personnels déjà travaillés) : ${allowedVocabulary.join(', ')||'aucun'}
 BRASSAGE PRIORITAIRE: ${rotationIds.join(', ')||'aucun'}
 SUPPORTS DU JOUR: ${supportIds.join(', ')}
 STANDARD ↔ ORAL: ${pairs.length?pairs.slice(0,16).join(' ; '):'aucun couple nécessaire'}
@@ -1969,11 +2015,12 @@ PROTOCOLE COURT:
 - Une seule phrase ou question à la fois. Corrige brièvement, puis continue.
 - Le ${load.comfort}/${load.challenge} Duolingo = terrain familier / difficulté active surtout CIBLES + FRAGILES + GRAMMAIRE, PAS ${load.challenge}% de mots nouveaux.
 - PHASE 1 OBLIGATOIRE, VOCABULAIRE ISOLÉ : commence immédiatement par UN SEUL mot indonésien à traduire en français, sans phrase ni traduction dévoilée. Attends ma réponse écrite avant le mot suivant. Ne propose aucun bouton, QCM ni liste de mots.
-- Choisis les mots en priorité parmi CIBLES, FRAGILES / À REVOIR, puis BRASSAGE PRIORITAIRE et SUPPORTS DU JOUR. Tous ces mots doivent appartenir à des leçons Duolingo déjà atteintes ou être des mots personnels réellement travaillés ; leur seule présence dans le dictionnaire ne suffit pas. Tu peux aussi tester les mots ANTICIPATION dans la limite indiquée ; ils restent des mots futurs, jamais automatiquement acquis.
-- Si ma traduction est correcte (tolère les synonymes naturels et petites fautes de frappe), valide très brièvement puis donne UN AUTRE mot indonésien, sans explication superflue.
-- Si je réponds uniquement « x » ou « X » (ou « ? »), si ma traduction est fausse ou si j’exprime une hésitation, explique le mot selon ce modèle pédagogique : (1) mot = sens français précis ; (2) « Décomposons-le » : présente sur des lignes séparées les éléments réellement identifiables (préfixe, racine, suffixe), avec leur sens ou leur fonction ; (3) montre comment les éléments conduisent au sens du mot entier ; (4) donne UNE OU DEUX phrases courtes et naturelles EN INDONÉSIEN contenant le mot, chacune immédiatement suivie de sa traduction française, avec du vocabulaire déjà accessible autant que possible ; (5) termine par une astuce mnémotechnique courte fondée de préférence sur la racine ; (6) fais revenir le mot plus tard, espacé parmi d’autres, sans le considérer comme acquis. Pour un mot non décomposable, dis-le simplement et explique son usage concret. Ne force JAMAIS une décomposition : distingue la morphologie productive de l’étymologie incertaine, et indique honnêtement toute incertitude. Exemple : « sekaligus = en même temps, en une seule fois ; se- = un/une ; kali = fois ; sekali = une fois ; -gus = élément ancien dont le rôle précis n’est pas clairement établi en indonésien moderne ; retiens surtout sekali dans sekaligus ». N’invente ni racine ni sens d’affixe.
+- RÈGLE ABSOLUE PHASE 1 : Bahasa a DÉJÀ choisi et vérifié tous les mots dans la FILE FERMÉE DE RÉVISION. Tu ne choisis AUCUN mot. Présente exclusivement le mot n°1, puis le n°2, puis le n°3, etc., en recopiant son orthographe à l’identique. Ne propose jamais un mot tiré des autres rubriques, de ta mémoire ou de tes connaissances. Ne raccourcis jamais un mot. Si la file est épuisée, demande un nouveau paquet Bahasa. Si la file est vide, ne propose aucun mot. Les mots ANTICIPATION sont réservés à la phase phrases.
+- Si ma traduction est correcte (tolère les synonymes naturels et petites fautes de frappe), valide très brièvement puis donne UNIQUEMENT le mot suivant dans la FILE FERMÉE, sans explication superflue.
+- Si je réponds uniquement « x » ou « X » (ou « ? »), si ma traduction est fausse ou si j’exprime une hésitation, explique le mot selon ce modèle pédagogique : (1) mot = sens français précis ; (2) « Décomposons-le » : présente sur des lignes séparées les éléments réellement identifiables (préfixe, racine, suffixe), avec leur sens ou leur fonction ; (3) montre comment les éléments conduisent au sens du mot entier ; (4) donne UNE OU DEUX phrases courtes et naturelles EN INDONÉSIEN contenant le mot, chacune immédiatement suivie de sa traduction française, avec du vocabulaire déjà accessible autant que possible ; (5) termine par une astuce mnémotechnique courte fondée de préférence sur la racine ; (6) note sa fragilité pour la phase phrases, sans modifier ni réordonner la FILE FERMÉE. Pour un mot non décomposable, dis-le simplement et explique son usage concret. Ne force JAMAIS une décomposition : distingue la morphologie productive de l’étymologie incertaine, et indique honnêtement toute incertitude. Exemple : « sekaligus = en même temps, en une seule fois ; se- = un/une ; kali = fois ; sekali = une fois ; -gus = élément ancien dont le rôle précis n’est pas clairement établi en indonésien moderne ; retiens surtout sekali dans sekaligus ». N’invente ni racine ni sens d’affixe.
 - Pour signaler un mot inconnu, je peux taper une seule lettre « x » ou « X » depuis le clavier alphabétique principal de mon iPhone, sans passer au clavier des symboles. Accepte aussi « ? » pour compatibilité. Ne traite jamais « x » seul comme une traduction.
 - Le vocabulaire isolé dure aussi longtemps que je le souhaite, sans quota. Si j'écris uniquement « Phrases » (insensible à la casse), termine immédiatement la phase vocabulaire et commence la PHASE 2. Si j'écris uniquement « Fin », termine toute la séance depuis n'importe quelle phase et produis le bilan.
+- RÈGLE GLOBALE : si ANTICIPATION indique AUCUNE, aucun mot indonésien nouveau dans AUCUN exercice, exemple, correction ou phrase. Pour les phrases, puise le vocabulaire lexical UNIQUEMENT dans LEXIQUE AUTORISÉ ; ne complète jamais à partir du dictionnaire général. Pour les mots-outils grammaticaux, utilise seulement ceux déjà attestés dans ce lexique ou les constructions grammaticales déjà étudiées. Si une idée exige un mot absent, reformule plus simplement. Ne fabrique jamais de mot.
 - PHASE 2 OBLIGATOIRE, TRADUCTION : donne UNE phrase EN FRANÇAIS à traduire EN INDONÉSIEN. Attends ma traduction avant toute autre phrase. Ne me demande jamais de traduire une phrase indonésienne vers le français, sauf si je le demande explicitement. Les corrections et explications restent en français. Ne bascule jamais en anglais, même en mode vocal.
 - En phase 2, réutilise naturellement et à distance les mots qui m'ont posé problème en phase 1. Après ma réponse, valide la formulation indonésienne naturelle, corrige brièvement si nécessaire, puis propose une NOUVELLE phrase française. Préfère « sudah » à « udah » dans les modèles.
 - Priorité à l’indonésien oral naturel. Accepte une forme correcte hors pool ; indique la forme standard/orale utile sans cours inutile.
@@ -2197,9 +2244,13 @@ function prepareImmersionPrompt(){
      minutes=Number((document.getElementById('immersionMinutes')||{}).value||1),
      questions=Number((document.getElementById('immersionQuestions')||{}).value||3),
      knownPct=Number((document.getElementById('immersionKnownRatio')||{}).value||80),
-     newPct=100-knownPct,
-     known=immersionKnownVocabulary(),
-     frag=pool.filter(w=>w.status==='fragile').map(w=>clean(w.id)),
+     noNewWords=String((document.getElementById('previewWords')||{}).value||'0')==='0',
+     effectiveKnownPct=noNewWords?100:knownPct,
+     newPct=100-effectiveKnownPct,
+     allowedVocabulary=verifiedSessionVocabulary(),
+     allowedSet=new Set(allowedVocabulary),
+     known=immersionKnownVocabulary().filter(w=>allowedSet.has(clean(w.id))),
+     frag=known.filter(w=>w.status==='fragile').map(w=>clean(w.id)),
      u=currentUnit();
 
  let knownSorted=[...known].sort(rotationCompare),
@@ -2209,20 +2260,23 @@ function prepareImmersionPrompt(){
  lastPreparedExportIds.immersion=knownSample.slice();
 
  let txt=`SESSION BAHASA
-APP: V6.62
+APP: V6.68
 TYPE: IMMERSION
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 THÈME: ${topic}
 LECTURE: environ ${minutes} minutes
 QUESTIONS: ${questions}
-RATIO LEXICAL: ${knownPct}% connu / ${newPct}% nouveau
+RATIO LEXICAL: ${effectiveKnownPct}% connu / ${newPct}% nouveau
+RÉGLAGE GLOBAL « AUCUN MOT NOUVEAU » : ${noNewWords?'ACTIF, PRIORITAIRE SUR LE RATIO IMMERSION':'INACTIF'}
+LEXIQUE AUTORISÉ (leçons déjà atteintes + mots personnels travaillés) : ${allowedVocabulary.join(', ')||'aucun'}
 BRASSAGE PRIORITAIRE: ${immersionFocusIds.join(', ')||'aucun'}
 VOCABULAIRE CONNU À PRIVILÉGIER: ${knownSample.join(', ')}
 FRAGILES À RÉINJECTER DISCRÈTEMENT: ${frag.length?frag.join(', '):'aucun'}
 
 PROTOCOLE COURT:
-- Crée d’abord un texte naturel adapté au niveau et à la durée. Le ratio ${knownPct}/${newPct} est ici un vrai ratio connu/nouveau.
-- Les nouveautés doivent être fréquentes, utiles au quotidien et dispersées, jamais empilées.
+- Crée d’abord un texte naturel adapté au niveau et à la durée. Le ratio ${effectiveKnownPct}/${newPct} est ici un vrai ratio connu/nouveau.
+- RÈGLE ABSOLUE : quand « AUCUN MOT NOUVEAU » est ACTIF, texte, questions, conversation, exemples et corrections doivent employer exclusivement le LEXIQUE AUTORISÉ et les constructions déjà étudiées. Ne pioche aucun mot dans la liste générale, ne fabrique aucun mot, ne complète pas librement. Si nécessaire, simplifie les phrases. Cette règle prime sur le thème, la longueur et le ratio affiché dans le curseur.
+- Les nouveautés, uniquement lorsque le réglage global les autorise, doivent être fréquentes, utiles au quotidien et dispersées, jamais empilées.
 - LANGUE : reste en indonésien pour le texte, les questions et la conversation, et en français pour les corrections/explications. Ne bascule jamais en anglais, même en mode vocal. Si le vocal dévie vers un autre sujet, reprends immédiatement la séance Bahasa au point en cours.
 - MODE VOCAL : après l’envoi de cette consigne, j’active moi-même le bouton voix bleu de ChatGPT. Une fois en vocal, lis/écoute et poursuis oralement. Le volume seul n’active pas le vocal.
 - BRASSAGE : fais apparaître naturellement un maximum de mots de « BRASSAGE PRIORITAIRE » dans le texte puis dans les questions/conversation, sans les empiler artificiellement.
