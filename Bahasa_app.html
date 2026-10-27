@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bahasa">
-<title>Bahasa — V6.70</title>
+<title>Bahasa — V6.71</title>
 <style>
 :root{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#6e6e73;--line:#dedede;--soft:#efeff4;--good:#eaf7ee;--warn:#fff6e8;--accent:#111}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
@@ -1890,7 +1890,9 @@ Règles du bloc :
 - N’ajoute ni fautes, ni coquilles, ni formes incorrectes, ni noms propres sans intérêt.
 - Pour un mot dérivé (ex. arahnya), donne un sens lexical de base aussi propre que possible, pas seulement la traduction très contextuelle de la phrase.
 - Si rien n’existe dans une rubrique, écris « aucun ».
-- Ne mets aucun commentaire à l’intérieur du bloc BILAN BAHASA.`;
+- Ne mets aucun commentaire à l’intérieur du bloc BILAN BAHASA.
+- OBLIGATOIRE : affiche ce bloc comme du TEXTE ÉCRIT dans un unique bloc de code Markdown délimité par trois accents graves, même si la séance se déroule en mode vocal. Ne dicte pas le bilan comme une phrase orale.
+- Conserve EXACTEMENT les quatre libellés, les deux lignes BILAN BAHASA et FIN BILAN, les séparateurs « ; » et les compteurs « × 1 ». Ne remplace jamais les compteurs par une simple liste de mots. Ne produis ni second bilan ni version corrigée après le bloc.`;
 }
 
 // Anticipation pédagogique : lecture seule du curriculum, sans toucher aux mots ni à la progression.
@@ -1921,7 +1923,7 @@ function nextThreeLessonPreview(limit){
  return candidates.slice(0,limit);
 }
 
-// V6.70 : lexique autorisé, construit depuis les leçons réellement atteintes.
+// V6.71 : lexique autorisé, construit depuis les leçons réellement atteintes.
 // Les entrées du dictionnaire général ne donnent aucun droit d'accès.
 function verifiedSessionVocabulary(){
  const allowed=new Set();
@@ -1955,7 +1957,7 @@ function preparePrompt(){
      pairs=registerPairsForPool(pool),
      preview=nextThreeLessonPreview((document.getElementById('previewWords')||{}).value||'0');
 
- // V6.70 : sélection fermée, effectuée exclusivement par Bahasa.
+ // V6.71 : sélection fermée, effectuée exclusivement par Bahasa.
  // Chaque mot est vérifié dans les leçons du curriculum déjà atteintes.
  // Les listes libres et le dictionnaire ne peuvent pas alimenter cette file.
  const verifiedQueue=[];
@@ -1993,7 +1995,7 @@ function preparePrompt(){
  let targetMeanings=targets.map(id=>`${id} = ${lessonFrench(id)||'sens de la leçon'}`);
 
  let txt=`SESSION BAHASA
-APP: V6.70
+APP: V6.71
 TYPE: DUOLINGO
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 UNITÉ: ${u.title}
@@ -2257,7 +2259,7 @@ function prepareImmersionPrompt(){
  lastPreparedExportIds.immersion=knownSample.slice();
 
  let txt=`SESSION BAHASA
-APP: V6.70
+APP: V6.71
 TYPE: IMMERSION
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 THÈME: ${topic}
@@ -2279,12 +2281,13 @@ PROTOCOLE COURT:
 - BRASSAGE : fais apparaître naturellement les mots de « BRASSAGE PRIORITAIRE » dans le texte puis la conversation, sans les empiler artificiellement.
 - Après ma lecture : ne lance PAS de questions de compréhension ni de quiz. Attends mon passage au mode vocal, puis engage une vraie conversation en indonésien, UNE question à la fois. Départ : ${conversation==='libre'?'conversation libre sur le sujet de mon choix':'conversation naturelle à partir du texte'}. Je peux à tout moment dire « conversation libre » ou « parler du texte » pour changer de mode sans recommencer. Corrige très brièvement les erreurs importantes sans interrompre le dialogue. Ne prétends pas entendre des détails phonétiques non vérifiables.
 - Priorité à l’oral courant ; accepte mes formulations naturelles correctes.
-- Si j’écris uniquement « Fin » : bilan bref en français puis bloc BILAN BAHASA avec Révisés, Fragiles, Utilisés, Découverts et FIN BILAN.
+- Si je dis ou écris uniquement « Fin » : applique STRICTEMENT le PROTOCOLE DE FIN ci-dessous. Même en mode vocal, le bilan doit apparaître en texte écrit dans un bloc de code Markdown, pas être dicté en prose. N'ajoute aucun commentaire après le bloc.
 - Révisés = mots déjà connus que J’AI réellement produits correctement dans mes réponses, ou explicitement rappelés/testés puis corrigés. Un mot seulement lu dans ton texte n’est pas révisé.
 - Fragiles = uniquement des entrées lexicales exactes du paquet. Les difficultés de construction grammaticale restent dans le bilan pédagogique, pas dans la liste des mots fragiles.
 - Utilisés = uniquement les mots indonésiens que J’AI réellement produits dans mes réponses. Ne compte jamais les mots seulement présents dans ton texte.
 - Découverts = mots utiles hors paquet. Si le mot vient seulement de ChatGPT, indique origine ChatGPT. S’il apparaît dans une de MES réponses, indique origine Utilisateur ou Les deux. Tout mot hors paquet présent dans Utilisés doit aussi être déclaré ici.
 - Un mot nouveau d’origine ChatGPT est seulement rencontré : il ne doit pas être considéré comme acquis. Un mot d’origine Utilisateur ou Les deux peut entrer dans mon vocabulaire actif.
+${friendlyEndProtocol()}
 ACTION: Commence l’immersion maintenant.
 FIN SESSION`;
 
@@ -2362,7 +2365,7 @@ function importSession(rawOverride){
   // Accepte les blocs Markdown, les listes à puces, les accents et les retours à la ligne.
   if(!/BILAN\s+BAHASA/i.test(raw))return null;
   let normalized=raw.replace(/\r/g,'').replace(/```[^\n]*\n?/g,'').replace(/\*\*/g,'').replace(/__+/g,'').replace(/\u00a0/g,' ');
-  let match=normalized.match(/BILAN\s+BAHASA\b([\s\S]*?)(?:FIN\s+BILAN\b|$)/i);
+  let match=normalized.match(/BILAN\s+BAHASA\b\s*[.:]?([\s\S]*?)(?:FIN\s+BILAN\b|$)/i);
   if(!match)return null;
   let body=match[1],lines=body.split('\n'),fields={},last='';
   let aliases={'revises':'reviewed','reviewed':'reviewed','fragiles':'fragile','fragile':'fragile','utilises':'used','used':'used','decouverts':'discovered','nouveaux':'discovered','discovered':'discovered'};
@@ -2382,6 +2385,10 @@ function importSession(rawOverride){
     let p=part.trim(),m=p.match(/^(.+?)\s*[×x*]\s*(\d+)\s*\.?$/i);
     if(!m)m=p.match(/^(.+?)\s*\(\s*(\d+)\s*\)\s*\.?$/i);
     if(m){let k=clean(m[1]);if(k)used[k]=(used[k]||0)+Number(m[2]||1)}
+    else if(p&&!/^(aucun|néant|neant)$/i.test(p)){
+     // Compatibilité avec les bilans vocaux qui énumèrent les mots sans × nombre.
+     p.split(/\s*,\s*/).forEach(item=>{let k=clean(item);if(k)used[k]=(used[k]||0)+1})
+    }
    })
   }
   let discText=fields.discovered||'';
