@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bahasa">
-<title>Bahasa — V6.69</title>
+<title>Bahasa — V6.70</title>
 <style>
 :root{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#6e6e73;--line:#dedede;--soft:#efeff4;--good:#eaf7ee;--warn:#fff6e8;--accent:#111}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
@@ -755,11 +755,10 @@ body{
      </select>
     </div>
     <div>
-     <label class="small">❓ Questions</label>
-     <select id="immersionQuestions" onchange="saveImmersionSettings()">
-      <option value="3" selected>3 questions</option>
-      <option value="5">5 questions</option>
-      <option value="7">7 questions</option>
+     <label class="small">🎙️ Après la lecture</label>
+     <select id="immersionConversation" onchange="saveImmersionSettings()">
+      <option value="texte">Parler du texte</option>
+      <option value="libre">Conversation libre</option>
      </select>
     </div>
    </div>
@@ -779,7 +778,7 @@ body{
 
   <div class="voiceModeCallout">
    <b>🎙️ Pour une vraie séance parlée</b>
-   <div>Après avoir collé et envoyé la consigne dans ChatGPT, touche le <b>bouton voix bleu</b>. Le volume de l’iPhone ne suffit pas à activer le mode vocal.</div>
+   <div>Lis d’abord le texte dans ChatGPT. Ensuite, touche le <b>bouton voix</b> pour discuter en indonésien. Tu peux dire « conversation libre » ou « parler du texte » à tout moment.</div>
   </div>
   <div class="immersionActionTitle">Prêt pour la séance ?</div>
   <div class="flowActions">
@@ -795,11 +794,9 @@ body{
  </div>
 
  <div class="card">
-  <h3 style="margin-top:0">🎙️ Une séance en 4 temps</h3>
-  <div class="quickStep"><div class="stepNum">1</div><div><b>Lecture</b><div class="note">Tu lis à voix haute sans interruption.</div></div></div>
-  <div class="quickStep"><div class="stepNum">2</div><div><b>Prononciation</b><div class="note">ChatGPT retient seulement les corrections réellement utiles.</div></div></div>
-  <div class="quickStep"><div class="stepNum">3</div><div><b>Compréhension</b><div class="note">Les questions arrivent une par une, à l’oral ou à l’écrit.</div></div></div>
-  <div class="quickStep"><div class="stepNum">4</div><div><b>Conversation</b><div class="note">La séance se transforme naturellement en discussion autour du thème.</div></div></div>
+  <h3 style="margin-top:0">📖 Puis 🎙️ : une séance en 2 temps</h3>
+  <div class="quickStep"><div class="stepNum">1</div><div><b>Lecture</b><div class="note">ChatGPT crée ton texte. Tu le lis à voix haute, sans questionnaire.</div></div></div>
+  <div class="quickStep"><div class="stepNum">2</div><div><b>Conversation orale</b><div class="note">Discute du texte ou librement. Change de sujet quand tu veux, une question à la fois.</div></div></div>
  </div>
 </section>
 
@@ -1924,7 +1921,7 @@ function nextThreeLessonPreview(limit){
  return candidates.slice(0,limit);
 }
 
-// V6.69 : lexique autorisé, construit depuis les leçons réellement atteintes.
+// V6.70 : lexique autorisé, construit depuis les leçons réellement atteintes.
 // Les entrées du dictionnaire général ne donnent aucun droit d'accès.
 function verifiedSessionVocabulary(){
  const allowed=new Set();
@@ -1958,7 +1955,7 @@ function preparePrompt(){
      pairs=registerPairsForPool(pool),
      preview=nextThreeLessonPreview((document.getElementById('previewWords')||{}).value||'0');
 
- // V6.69 : sélection fermée, effectuée exclusivement par Bahasa.
+ // V6.70 : sélection fermée, effectuée exclusivement par Bahasa.
  // Chaque mot est vérifié dans les leçons du curriculum déjà atteintes.
  // Les listes libres et le dictionnaire ne peuvent pas alimenter cette file.
  const verifiedQueue=[];
@@ -1996,7 +1993,7 @@ function preparePrompt(){
  let targetMeanings=targets.map(id=>`${id} = ${lessonFrench(id)||'sens de la leçon'}`);
 
  let txt=`SESSION BAHASA
-APP: V6.69
+APP: V6.70
 TYPE: DUOLINGO
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 UNITÉ: ${u.title}
@@ -2206,7 +2203,7 @@ function saveImmersionSettings(){
   topic:(document.getElementById('immersionTopic')||{}).value||'Vie quotidienne',
   custom:(document.getElementById('immersionTopicCustom')||{}).value||'',
   minutes:(document.getElementById('immersionMinutes')||{}).value||'1',
-  questions:(document.getElementById('immersionQuestions')||{}).value||'3',
+  conversation:(document.getElementById('immersionConversation')||{}).value||'texte',
   known:(document.getElementById('immersionKnownRatio')||{}).value||'80'
  };
  localStorage.setItem(IMMERSION_SETTINGS_KEY,JSON.stringify(d));markSyncDirty()
@@ -2216,12 +2213,12 @@ function loadImmersionSettings(){
  let topic=document.getElementById('immersionTopic'),
      custom=document.getElementById('immersionTopicCustom'),
      minutes=document.getElementById('immersionMinutes'),
-     questions=document.getElementById('immersionQuestions'),
+     conversation=document.getElementById('immersionConversation'),
      known=document.getElementById('immersionKnownRatio');
  if(topic&&d.topic)topic.value=d.topic;
  if(custom&&d.custom)custom.value=d.custom;
  if(minutes&&d.minutes)minutes.value=d.minutes;
- if(questions&&d.questions)questions.value=d.questions;
+ if(conversation&&d.conversation)conversation.value=d.conversation;
  if(known&&d.known)known.value=d.known;
  updateImmersionTopic();updateImmersionRatio();updateImmersionLevelBadge()
 }
@@ -2242,7 +2239,7 @@ function prepareImmersionPrompt(){
  saveImmersionSettings();
  let topic=immersionTopicValue(),
      minutes=Number((document.getElementById('immersionMinutes')||{}).value||1),
-     questions=Number((document.getElementById('immersionQuestions')||{}).value||3),
+     conversation=(document.getElementById('immersionConversation')||{}).value||'texte',
      knownPct=Number((document.getElementById('immersionKnownRatio')||{}).value||80),
      noNewWords=String((document.getElementById('previewWords')||{}).value||'0')==='0',
      effectiveKnownPct=noNewWords?100:knownPct,
@@ -2260,12 +2257,12 @@ function prepareImmersionPrompt(){
  lastPreparedExportIds.immersion=knownSample.slice();
 
  let txt=`SESSION BAHASA
-APP: V6.69
+APP: V6.70
 TYPE: IMMERSION
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 THÈME: ${topic}
 LECTURE: environ ${minutes} minutes
-QUESTIONS: ${questions}
+CONVERSATION INITIALE: ${conversation==='libre'?'libre':'autour du texte'}
 RATIO LEXICAL: ${effectiveKnownPct}% connu / ${newPct}% nouveau
 RÉGLAGE GLOBAL « AUCUN MOT NOUVEAU » : ${noNewWords?'ACTIF, PRIORITAIRE SUR LE RATIO IMMERSION':'INACTIF'}
 LEXIQUE AUTORISÉ (leçons déjà atteintes + mots personnels travaillés) : ${allowedVocabulary.join(', ')||'aucun'}
@@ -2274,13 +2271,13 @@ VOCABULAIRE CONNU À PRIVILÉGIER: ${knownSample.join(', ')}
 FRAGILES À RÉINJECTER DISCRÈTEMENT: ${frag.length?frag.join(', '):'aucun'}
 
 PROTOCOLE COURT:
-- Crée d’abord un texte naturel adapté au niveau et à la durée. Le ratio ${effectiveKnownPct}/${newPct} est ici un vrai ratio connu/nouveau.
+- Crée d’abord uniquement un texte naturel adapté au niveau et à la durée. Le ratio ${effectiveKnownPct}/${newPct} est ici un vrai ratio connu/nouveau. Ne génère aucun questionnaire.
 - RÈGLE ABSOLUE : quand « AUCUN MOT NOUVEAU » est ACTIF, texte, questions, conversation, exemples et corrections doivent employer exclusivement le LEXIQUE AUTORISÉ et les constructions déjà étudiées. Ne pioche aucun mot dans la liste générale, ne fabrique aucun mot, ne complète pas librement. Si nécessaire, simplifie les phrases. Cette règle prime sur le thème, la longueur et le ratio affiché dans le curseur.
 - Les nouveautés, uniquement lorsque le réglage global les autorise, doivent être fréquentes, utiles au quotidien et dispersées, jamais empilées.
-- LANGUE : reste en indonésien pour le texte, les questions et la conversation, et en français pour les corrections/explications. Ne bascule jamais en anglais, même en mode vocal. Si le vocal dévie vers un autre sujet, reprends immédiatement la séance Bahasa au point en cours.
+- LANGUE : reste en indonésien pour le texte et la conversation, et en français pour les corrections/explications. Ne bascule jamais en anglais, même en mode vocal. Si le vocal dévie vers un autre sujet, reprends immédiatement la séance Bahasa au point en cours.
 - MODE VOCAL : après l’envoi de cette consigne, j’active moi-même le bouton voix bleu de ChatGPT. Une fois en vocal, lis/écoute et poursuis oralement. Le volume seul n’active pas le vocal.
-- BRASSAGE : fais apparaître naturellement un maximum de mots de « BRASSAGE PRIORITAIRE » dans le texte puis dans les questions/conversation, sans les empiler artificiellement.
-- Après ma lecture : seulement quelques remarques de prononciation réellement fiables, puis ${questions} questions de compréhension UNE PAR UNE, puis conversation naturelle.
+- BRASSAGE : fais apparaître naturellement les mots de « BRASSAGE PRIORITAIRE » dans le texte puis la conversation, sans les empiler artificiellement.
+- Après ma lecture : ne lance PAS de questions de compréhension ni de quiz. Attends mon passage au mode vocal, puis engage une vraie conversation en indonésien, UNE question à la fois. Départ : ${conversation==='libre'?'conversation libre sur le sujet de mon choix':'conversation naturelle à partir du texte'}. Je peux à tout moment dire « conversation libre » ou « parler du texte » pour changer de mode sans recommencer. Corrige très brièvement les erreurs importantes sans interrompre le dialogue. Ne prétends pas entendre des détails phonétiques non vérifiables.
 - Priorité à l’oral courant ; accepte mes formulations naturelles correctes.
 - Si j’écris uniquement « Fin » : bilan bref en français puis bloc BILAN BAHASA avec Révisés, Fragiles, Utilisés, Découverts et FIN BILAN.
 - Révisés = mots déjà connus que J’AI réellement produits correctement dans mes réponses, ou explicitement rappelés/testés puis corrigés. Un mot seulement lu dans ton texte n’est pas révisé.
