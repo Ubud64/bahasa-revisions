@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bahasa">
-<title>Bahasa — V6.65</title>
+<title>Bahasa — V6.66</title>
 <style>
 :root{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#6e6e73;--line:#dedede;--soft:#efeff4;--good:#eaf7ee;--warn:#fff6e8;--accent:#111}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
@@ -1792,10 +1792,12 @@ function supportRotationScore(w){
  let times=Number(w.times||0),exports=Number(w.exportCount||0),uses=Number(w.actualUses||0);
  let ageUse=Math.min(daysSince(w.lastUsed),45),ageReview=Math.min(daysSince(w.lastReviewed),30),ageExport=Math.min(daysSince(w.lastExported),45);
  // V6.56 : les mots jamais retravaillés et jamais proposés passent franchement devant.
- return (times===0?120000:0)+(exports===0?30000:0)+ageExport*250+ageUse*90+ageReview*20-times*4500-uses*180-exports*900-recentUsePenalty(w)
+ return (exports===0?3000:0)+ageExport*250+ageUse*90+ageReview*20-times*4500-uses*180-exports*900-recentUsePenalty(w)
 }
 function rotationCompare(a,b){
  let ta=Number(a.times||0),tb=Number(b.times||0);
+ // Ne pas placer systématiquement les mots jamais travaillés en tête.
+ if((ta===0)!==(tb===0))return ta===0?1:-1;
  if(ta!==tb)return ta-tb;
  let ua=Number(a.actualUses||0),ub=Number(b.actualUses||0);
  if(ua!==ub)return ua-ub;
@@ -1825,7 +1827,9 @@ function phraseLoadRule(u){
 }
 
 function sessionPool(n,mode){
- let a=accessibleWords(),t=targetSet();
+ // Duolingo : seules les leçons atteintes et les découvertes personnelles réellement travaillées.
+ // L'anticipation est gérée séparément par nextThreeLessonPreview().
+ let a=accessibleWords().filter(w=>mode!=='duo'||isAccessibleCurriculum(w.id)||(!CINDEX.has(clean(w.id))&&w.source!=='duolingo'&&Number(w.times||0)>0)),t=targetSet();
  let frag=a.filter(w=>w.status==='fragile').sort((x,y)=>priorityScore(y)-priorityScore(x));
  let target=a.filter(w=>t.has(clean(w.id))&&w.status!=='fragile').sort((x,y)=>priorityScore(y)-priorityScore(x));
  let recentSet=new Set(recentCurriculumIds().map(clean));
@@ -1931,7 +1935,7 @@ function preparePrompt(){
      pool=sessionPool(n,mode),
      load=loadProfile(),
      targets=[...targetSet()],
-     frag=fragileWords().map(w=>clean(w.id)),
+     frag=pool.filter(w=>w.status==='fragile').map(w=>clean(w.id)),
      due=pool.filter(w=>w.times>0&&isDue(w)).map(w=>clean(w.id)),
      pairs=registerPairsForPool(pool),
      preview=nextThreeLessonPreview((document.getElementById('previewWords')||{}).value||'0');
@@ -1948,7 +1952,7 @@ function preparePrompt(){
  let targetMeanings=targets.map(id=>`${id} = ${lessonFrench(id)||'sens de la leçon'}`);
 
  let txt=`SESSION BAHASA
-APP: V6.65
+APP: V6.66
 TYPE: DUOLINGO
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 UNITÉ: ${u.title}
@@ -1965,7 +1969,7 @@ PROTOCOLE COURT:
 - Une seule phrase ou question à la fois. Corrige brièvement, puis continue.
 - Le ${load.comfort}/${load.challenge} Duolingo = terrain familier / difficulté active surtout CIBLES + FRAGILES + GRAMMAIRE, PAS ${load.challenge}% de mots nouveaux.
 - PHASE 1 OBLIGATOIRE, VOCABULAIRE ISOLÉ : commence immédiatement par UN SEUL mot indonésien à traduire en français, sans phrase ni traduction dévoilée. Attends ma réponse écrite avant le mot suivant. Ne propose aucun bouton, QCM ni liste de mots.
-- Choisis les mots en priorité parmi CIBLES, FRAGILES / À REVOIR, puis BRASSAGE PRIORITAIRE et SUPPORTS DU JOUR. Tu peux aussi tester les mots ANTICIPATION dans la limite indiquée ; ils restent des mots futurs, jamais automatiquement acquis.
+- Choisis les mots en priorité parmi CIBLES, FRAGILES / À REVOIR, puis BRASSAGE PRIORITAIRE et SUPPORTS DU JOUR. Tous ces mots doivent appartenir à des leçons Duolingo déjà atteintes ou être des mots personnels réellement travaillés ; leur seule présence dans le dictionnaire ne suffit pas. Tu peux aussi tester les mots ANTICIPATION dans la limite indiquée ; ils restent des mots futurs, jamais automatiquement acquis.
 - Si ma traduction est correcte (tolère les synonymes naturels et petites fautes de frappe), valide très brièvement puis donne UN AUTRE mot indonésien, sans explication superflue.
 - Si je réponds uniquement « x » ou « X » (ou « ? »), si ma traduction est fausse ou si j’exprime une hésitation, explique le mot selon ce modèle pédagogique : (1) mot = sens français précis ; (2) « Décomposons-le » : présente sur des lignes séparées les éléments réellement identifiables (préfixe, racine, suffixe), avec leur sens ou leur fonction ; (3) montre comment les éléments conduisent au sens du mot entier ; (4) donne UNE OU DEUX phrases courtes et naturelles EN INDONÉSIEN contenant le mot, chacune immédiatement suivie de sa traduction française, avec du vocabulaire déjà accessible autant que possible ; (5) termine par une astuce mnémotechnique courte fondée de préférence sur la racine ; (6) fais revenir le mot plus tard, espacé parmi d’autres, sans le considérer comme acquis. Pour un mot non décomposable, dis-le simplement et explique son usage concret. Ne force JAMAIS une décomposition : distingue la morphologie productive de l’étymologie incertaine, et indique honnêtement toute incertitude. Exemple : « sekaligus = en même temps, en une seule fois ; se- = un/une ; kali = fois ; sekali = une fois ; -gus = élément ancien dont le rôle précis n’est pas clairement établi en indonésien moderne ; retiens surtout sekali dans sekaligus ». N’invente ni racine ni sens d’affixe.
 - Pour signaler un mot inconnu, je peux taper une seule lettre « x » ou « X » depuis le clavier alphabétique principal de mon iPhone, sans passer au clavier des symboles. Accepte aussi « ? » pour compatibilité. Ne traite jamais « x » seul comme une traduction.
@@ -2195,7 +2199,7 @@ function prepareImmersionPrompt(){
      knownPct=Number((document.getElementById('immersionKnownRatio')||{}).value||80),
      newPct=100-knownPct,
      known=immersionKnownVocabulary(),
-     frag=fragileWords().map(w=>clean(w.id)),
+     frag=pool.filter(w=>w.status==='fragile').map(w=>clean(w.id)),
      u=currentUnit();
 
  let knownSorted=[...known].sort(rotationCompare),
