@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bahasa">
-<title>Bahasa — V6.71</title>
+<title>Bahasa — V6.72</title>
 <style>
 :root{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#6e6e73;--line:#dedede;--soft:#efeff4;--good:#eaf7ee;--warn:#fff6e8;--accent:#111}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
@@ -1995,7 +1995,7 @@ function preparePrompt(){
  let targetMeanings=targets.map(id=>`${id} = ${lessonFrench(id)||'sens de la leçon'}`);
 
  let txt=`SESSION BAHASA
-APP: V6.71
+APP: V6.72
 TYPE: DUOLINGO
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 UNITÉ: ${u.title}
@@ -2259,7 +2259,7 @@ function prepareImmersionPrompt(){
  lastPreparedExportIds.immersion=knownSample.slice();
 
  let txt=`SESSION BAHASA
-APP: V6.71
+APP: V6.72
 TYPE: IMMERSION
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 THÈME: ${topic}
@@ -2277,9 +2277,9 @@ PROTOCOLE COURT:
 - RÈGLE ABSOLUE : quand « AUCUN MOT NOUVEAU » est ACTIF, texte, questions, conversation, exemples et corrections doivent employer exclusivement le LEXIQUE AUTORISÉ et les constructions déjà étudiées. Ne pioche aucun mot dans la liste générale, ne fabrique aucun mot, ne complète pas librement. Si nécessaire, simplifie les phrases. Cette règle prime sur le thème, la longueur et le ratio affiché dans le curseur.
 - Les nouveautés, uniquement lorsque le réglage global les autorise, doivent être fréquentes, utiles au quotidien et dispersées, jamais empilées.
 - LANGUE : reste en indonésien pour le texte et la conversation, et en français pour les corrections/explications. Ne bascule jamais en anglais, même en mode vocal. Si le vocal dévie vers un autre sujet, reprends immédiatement la séance Bahasa au point en cours.
-- MODE VOCAL : après l’envoi de cette consigne, j’active moi-même le bouton voix bleu de ChatGPT. Une fois en vocal, lis/écoute et poursuis oralement. Le volume seul n’active pas le vocal.
+- MODE VOCAL : après la lecture, j’active moi-même le bouton voix de ChatGPT. Dès que le mode vocal commence, PRENDS LA PAROLE EN PREMIER, sans attendre que je parle : pose immédiatement UNE question courte et simple en indonésien, puis attends ma réponse. Ne commence pas par « je suis prêt », une explication ou une demande de confirmation. Parle lentement avec une prononciation indonésienne aussi naturelle que possible, sans accent anglais si possible. Le volume seul n’active pas le vocal. Si l’interface ne te permet pas de commencer spontanément, je peux dire « Mulai » pour déclencher ta première question.
 - BRASSAGE : fais apparaître naturellement les mots de « BRASSAGE PRIORITAIRE » dans le texte puis la conversation, sans les empiler artificiellement.
-- Après ma lecture : ne lance PAS de questions de compréhension ni de quiz. Attends mon passage au mode vocal, puis engage une vraie conversation en indonésien, UNE question à la fois. Départ : ${conversation==='libre'?'conversation libre sur le sujet de mon choix':'conversation naturelle à partir du texte'}. Je peux à tout moment dire « conversation libre » ou « parler du texte » pour changer de mode sans recommencer. Corrige très brièvement les erreurs importantes sans interrompre le dialogue. Ne prétends pas entendre des détails phonétiques non vérifiables.
+- Après ma lecture : ne lance PAS de questions de compréhension ni de quiz. Au démarrage du vocal, pose toi-même immédiatement la PREMIÈRE question en indonésien, sans silence ni invitation à commencer, puis continue UNE question à la fois. Départ : ${conversation==='libre'?'conversation libre sur le sujet de mon choix':'conversation naturelle à partir du texte'}. Je peux à tout moment dire « conversation libre » ou « parler du texte » pour changer de mode sans recommencer. Corrige très brièvement les erreurs importantes sans interrompre le dialogue. Ne prétends pas entendre des détails phonétiques non vérifiables.
 - Priorité à l’oral courant ; accepte mes formulations naturelles correctes.
 - Si je dis ou écris uniquement « Fin » : applique STRICTEMENT le PROTOCOLE DE FIN ci-dessous. Même en mode vocal, le bilan doit apparaître en texte écrit dans un bloc de code Markdown, pas être dicté en prose. N'ajoute aucun commentaire après le bloc.
 - Révisés = mots déjà connus que J’AI réellement produits correctement dans mes réponses, ou explicitement rappelés/testés puis corrigés. Un mot seulement lu dans ton texte n’est pas révisé.
