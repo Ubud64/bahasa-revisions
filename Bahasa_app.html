@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bahasa">
-<title>Bahasa — V6.73</title>
+<title>Bahasa — V6.75</title>
 <style>
 :root{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#6e6e73;--line:#dedede;--soft:#efeff4;--good:#eaf7ee;--warn:#fff6e8;--accent:#111}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
@@ -691,16 +691,24 @@ body{
  <div class="card immersionHero">
   <div class="sectionTag">MODE COURS PARTICULIER</div>
   <h3>🎓 Mon professeur d’indonésien</h3>
-  <p class="note">Comme sur Preply : le professeur commence par discuter avec toi, puis choisit lui-même un texte selon tes réponses et ton niveau.</p>
-  <div class="sessionPath"><span class="pathStep active">① Discussion</span><span class="pathArrow">›</span><span class="pathStep">② Lecture & écoute</span><span class="pathArrow">›</span><span class="pathStep">③ Questions & conversation</span></div>
+  <p class="note">Choisis un sujet, puis ChatGPT prépare immédiatement un petit texte adapté à tes mots appris. Ensuite, place au cours oral : lecture, écoute, compréhension et conversation.</p>
+  <div class="sessionPath"><span class="pathStep active">① Sujet & texte</span><span class="pathArrow">›</span><span class="pathStep">② Lecture & écoute</span><span class="pathArrow">›</span><span class="pathStep">③ Questions & conversation</span></div>
   <div class="immersionSettings">
    <label class="small" for="courseDuration">⏱️ Durée indicative du cours</label>
    <select id="courseDuration" onchange="localStorage.setItem('bahasa_course_duration',this.value)">
     <option value="10">10 minutes</option><option value="15" selected>15 minutes</option><option value="20">20 minutes</option><option value="30">30 minutes</option>
    </select>
-   <p class="note" style="margin-top:12px">Le professeur choisit le sujet après l’échange initial. Explications en français, pratique en indonésien, une question à la fois. Le réglage « Aucun mot nouveau » est respecté.</p>
+   <label class="small" for="courseTopic" style="display:block;margin-top:14px">📰 Sujet du cours</label>
+   <select id="courseTopic" onchange="localStorage.setItem('bahasa_course_topic',this.value)">
+    <option value="choix">Propose-moi 2 sujets récents</option>
+    <option value="quotidien">Vie quotidienne</option>
+    <option value="voyage">Voyages et transports</option>
+    <option value="indonesie">Vie en Indonésie</option>
+    <option value="nature">Nature et environnement</option>
+   </select>
+   <p class="note" style="margin-top:12px">Les sujets d’actualité sont recherchés par ChatGPT si la recherche est disponible ; Bahasa n’affiche pas de fausses actualités. « Aucun mot nouveau » s’applique aussi au texte.</p>
   </div>
-  <div class="voiceModeCallout"><b>🎙️ Démarre en vocal</b><div>Copie la consigne dans ChatGPT → projet Bahasa Coach, puis active la voix. Le professeur doit commencer par une question. Si le mode vocal reste silencieux, dis « Mulai ».</div></div>
+  <div class="voiceModeCallout"><b>📖 Texte d’abord, voix ensuite</b><div>Colle la consigne dans ChatGPT. Choisis le sujet si deux propositions apparaissent, puis lis le texte affiché. Active ensuite la voix : le professeur commence par une question sur ce texte.</div></div>
   <div class="flowActions"><button onclick="copyCoursePrompt()">📋 Copier mon cours</button></div>
   <div id="copyCourseStatus" class="copyOk"></div>
   <details class="advanced"><summary>Voir la consigne générée</summary><textarea id="coursePromptOut" readonly style="margin-top:10px"></textarea></details>
@@ -2268,8 +2276,13 @@ function prepareCoursePrompt(){
  const fragile=known.filter(w=>w.status==='fragile').map(w=>clean(w.id));
  const focus=[...known].sort(rotationCompare).slice(0,35).map(w=>clean(w.id));
  lastPreparedExportIds.course=focus.slice();
+ const topic=String((document.getElementById('courseTopic')||{}).value||'choix');
+ const topics={quotidien:'vie quotidienne',voyage:'voyages et transports',indonesie:'vie en Indonésie',nature:'nature et environnement'};
+ const topicInstruction=topic==='choix'
+ ?'Commence par proposer exactement DEUX sujets simples et différents, inspirés de faits récents vérifiables si tu as accès à la recherche. Donne pour chacun un titre très court en français et une phrase de contexte. Attends uniquement mon choix (1 ou 2), puis affiche immédiatement le texte. Si tu ne peux pas vérifier l’actualité, propose deux thèmes intemporels et ne prétends pas qu’ils sont récents.'
+ :'Sujet choisi : '+topics[topic]+'. Affiche IMMÉDIATEMENT le texte, sans demander de confirmation et sans discussion préalable. Si tu évoques un fait récent, vérifie-le ; sinon, choisis une situation réaliste intemporelle.';
  const txt=`SESSION BAHASA
-APP: V6.74
+APP: V6.75
 TYPE: COURS PARTICULIER
 POSITION: S${u.s} · U${u.u} · Leçon ${progress.l}/${realLessonCount(u)}
 DURÉE INDICATIVE: ${dur} minutes, souple
@@ -2278,24 +2291,23 @@ LEXIQUE AUTORISÉ (progression réelle) : ${allowed.join(', ')||'aucun'}
 MOTS À BRASSER NATURELLEMENT : ${focus.join(', ')||'aucun'}
 FRAGILES : ${fragile.join(', ')||'aucun'}
 
-TU ES MON PROFESSEUR PARTICULIER D’INDONÉSIEN, comme sur Preply. Tu pilotes le cours sans me demander de choisir un sujet.
-DÉROULÉ :
-1. Dès le début de la conversation VOCALE, PRENDS LA PAROLE EN PREMIER : pose UNE question courte en indonésien sur ma journée, mes activités ou mes voyages. Ne commence pas par un long discours. Si l’interface empêche l’initiative, je dirai « Mulai ». Discussion libre pendant environ 2 à 4 minutes, une question à la fois. Évalue mon aisance à partir de mes réponses, pas d’un test formel.
-2. Choisis TOI-MÊME un sujet lié à notre échange et adapté à mon niveau. Prépare alors un texte TRÈS SIMPLE en indonésien, environ 35 à 55 mots pour un cours de 15 min (25 à 40 mots pour 10 min). Le niveau lexical prime toujours sur la longueur : raccourcis davantage si nécessaire. Phrases courtes de 5 à 9 mots, une idée par phrase. Réutilise naturellement des mots familiers, même si le texte devient répétitif. AFFICHE le texte clairement dans le chat pour que je puisse le lire. Ne présente PAS le texte avant l’échauffement. En vocal, si l’affichage du texte n’est pas accessible, explique brièvement en français comment revenir au chat pour le lire, puis reprends le cours quand je suis prêt.
-3. Laisse-moi lire le texte à voix haute EN ENTIER, sans m’interrompre. Puis RELIS le même texte lentement en indonésien pour me le faire écouter. Ne prétends pas avoir entendu des erreurs phonétiques si elles ne sont pas détectables.
-4. Pose 2 à 4 questions de compréhension en indonésien, UNE À LA FOIS. Si je bloque, reformule simplement, puis explique en FRANÇAIS si nécessaire.
-5. Termine par une vraie conversation naturelle autour du thème du texte, une question à la fois. Corrige brièvement les erreurs utiles, sans m’obliger à répéter systématiquement. Ajuste la durée des étapes à mon aisance.
-LANGUES : indonésien oral naturel et lent pour pratiquer, prononciation aussi proche que possible d’un natif indonésien, sans accent anglais si possible ; explications et grammaire en FRANÇAIS, jamais en anglais.
-VOCABULAIRE : utilise d’abord les mots réellement appris, privilégie les fragiles discrètement. ${noNew?'RÈGLE ABSOLUE : le LEXIQUE AUTORISÉ est une LISTE FERMÉE. Avant d’afficher le texte, vérifie silencieusement CHAQUE mot, y compris noms, adjectifs, verbes et dérivés, contre cette liste. Si un mot n’y figure pas, remplace-le par une tournure avec des mots autorisés ou supprime la phrase. Le sujet choisi ne justifie JAMAIS de sortir de la liste. Ne crée pas de mots nouveaux à partir de racines connues. Évite les tournures littéraires, abstraites ou peu naturelles. Si le sujet nécessite trop de mots absents, choisis un sujet plus simple. Applique le même contrôle aux questions et aux exemples. Accepte les mots spontanément apportés par moi.':'Tu peux introduire occasionnellement un seul mot nouveau utile à la fois, en donnant son sens en français.'} Les mots-outils ne sont permis que s’ils figurent dans le lexique autorisé ou sont déjà clairement employés dans notre échange. Ne confonds pas bibliothèque complète et progression actuelle. Si je ne comprends pas un mot, explique en français et simplifie immédiatement, sans défendre le texte.
-FIN : lorsque je dis uniquement « Fin », arrête le cours, donne un bref bilan pédagogique en français, puis affiche exactement « 📦 Bilan à importer dans Bahasa » et UNIQUEMENT le bloc de code Markdown suivant, sans commentaire après :
+TU ES MON PROFESSEUR PARTICULIER D’INDONÉSIEN. Le texte est préparé au DÉBUT du cours, pas après une conversation libre. Ne te perds pas dans les étapes et ne me fais jamais réclamer le texte.
+ÉTAPE 1 - SUJET : ${topicInstruction}
+ÉTAPE 2 - TEXTE : Dès que le sujet est choisi, affiche dans le chat un texte TRÈS SIMPLE en indonésien de 35 à 55 mots maximum (25 à 40 pour 10 minutes), voire plus court si nécessaire. Phrases de 5 à 9 mots, une idée par phrase. Ajoute un titre en français. Ne commence PAS par des questions orales. Le texte doit être visible et stable dans le chat avant que j’active la voix.
+ÉTAPE 3 - COURS ORAL : Quand j’active la voix après avoir vu le texte, PRENDS LA PAROLE EN PREMIER avec UNE question courte en indonésien liée au texte (si le système ne le permet pas, je dirai « Mulai »). Invite-moi à lire le texte entier à voix haute, sans m’interrompre. Ensuite, relis EXACTEMENT le même texte lentement pour me le faire écouter, sans inventer d’erreurs de prononciation.
+ÉTAPE 4 - COMPRÉHENSION : Pose 2 à 4 questions de compréhension en indonésien, UNE À LA FOIS. Si je bloque, reformule simplement et explique en FRANÇAIS si nécessaire.
+ÉTAPE 5 - CONVERSATION : Discute naturellement autour du sujet du texte, une question à la fois, avec quelques questions personnelles adaptées. Corrige brièvement les erreurs utiles sans répétitions imposées. Ajuste les étapes à mon aisance.
+LANGUES : indonésien oral lent et naturel, prononciation aussi proche que possible d’un natif indonésien ; explications en français, jamais en anglais.
+VOCABULAIRE : ${noNew?'LISTE FERMÉE : n’utilise dans le texte, les questions et les exemples QUE des mots du LEXIQUE AUTORISÉ. Vérifie chaque mot avant de répondre, y compris dérivés et mots-outils. Si un sujet exige un mot absent, simplifie ou change de sujet. N’ajoute aucun mot nouveau, même un mot courant.':'Privilégie très fortement le lexique autorisé ; au maximum un nouveau mot utile à la fois, expliqué en français.'} Les mots proposés spontanément par moi sont acceptés. La bibliothèque Duolingo complète n’est PAS la progression acquise.
+FIN : lorsque je dis uniquement « Fin », arrête le cours. Donne un bref bilan en français, puis écris exactement « 📦 Bilan à importer dans Bahasa » et un SEUL bloc de code Markdown, sans texte après, au format :
 BILAN BAHASA
 Révisés : mot1, mot2
 Fragiles : mot3
 Utilisés : mot1 × 2 ; mot2 × 4
 Découverts : nouveau mot = sens français (ChatGPT × 1) ; autre mot = sens français (Utilisateur × 1)
 FIN BILAN
-Révisés = mots réellement travaillés, pas seulement lus dans ton texte. Utilisés = mots que J’AI produits, avec compteurs approximatifs. Fragiles = difficultés encore présentes. Découverts = mots utiles hors paquet avec sens, origine et nombre d’occurrences. Si une rubrique est vide, écris « aucun ». N’invente aucune utilisation.
-ACTION : Commence le cours en prenant la parole avec une première question en indonésien.
+Révisés = mots réellement travaillés ; Fragiles = difficultés persistantes ; Utilisés = occurrences approximatives que J’AI réellement prononcées ; Découverts = mots utiles hors paquet avec traduction, origine et fréquence. Si vide, écris « aucun ». N’invente aucune utilisation.
+ACTION : ${topic==='choix'?'Propose maintenant exactement deux sujets, puis attends mon choix.':'Affiche maintenant directement le texte sur le sujet choisi.'}
 FIN SESSION`;
  const out=document.getElementById('coursePromptOut');if(out)out.value=txt;
  return txt;
@@ -2305,7 +2317,7 @@ async function copyCoursePrompt(){
  try{
   const ok=await copyTextToClipboard(prepareCoursePrompt());
   if(ok){markWordsExported(lastPreparedExportIds.course);savePendingChatSession('course')}
-  if(el){el.className=ok?'copyOk copySuccess':'copyOk copyFail';el.textContent=ok?'✓ Cours copié. Ouvre ChatGPT → Bahasa Coach, colle, puis active la voix.':'⚠️ Copie bloquée : ouvre « Voir la consigne générée » pour copier.'}
+  if(el){el.className=ok?'copyOk copySuccess':'copyOk copyFail';el.textContent=ok?'✓ Cours copié. Colle dans ChatGPT, choisis le sujet et attends le texte avant d’activer la voix.':'⚠️ Copie bloquée : ouvre « Voir la consigne générée » pour copier.'}
   return ok;
  }catch(e){if(el){el.className='copyOk copyFail';el.textContent='⚠️ '+(e.message||'Erreur de préparation')}return false}
 }
@@ -3634,7 +3646,7 @@ function activateTab(name){
  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===name));
  document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===name));
  if(name==='immersion')updateImmersionLevelBadge();
- if(name==='course'){const d=document.getElementById('courseDuration');if(d)d.value=localStorage.getItem('bahasa_course_duration')||'15';}
+ if(name==='course'){const d=document.getElementById('courseDuration');if(d)d.value=localStorage.getItem('bahasa_course_duration')||'15';const t=document.getElementById('courseTopic');if(t)t.value=localStorage.getItem('bahasa_course_topic')||'choix';}
  try{renderAll()}catch(e){console.error('Rendu secondaire:',e)}
  return true
 }
