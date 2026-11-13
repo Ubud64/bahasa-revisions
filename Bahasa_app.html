@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bahasa">
-<title>Bahasa — V6.75</title>
+<title>Bahasa — V6.76 · Mise à jour automatique</title>
+<meta name="bahasa-build" content="20261113.3">
 <style>
 :root{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#6e6e73;--line:#dedede;--soft:#efeff4;--good:#eaf7ee;--warn:#fff6e8;--accent:#111}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
@@ -409,6 +410,19 @@ body.immersionMode .topSubline{display:none}
 
 
 .syncOk{background:#eaf7ee;border:1px solid #b9e3c5}.syncWarn{background:#fff6e8;border:1px solid #f0d19d}.syncErr{background:#fdecec;border:1px solid #efb7b7}.syncMuted{background:#f2f2f4;border:1px solid #dedee3}
+
+/* Bahasa Express · interface sombre, tactile et sans distractions */
+.express-shell{background:linear-gradient(155deg,#101d38,#10182e 75%);color:#f7fbff;border-radius:25px;padding:20px 16px 18px;box-shadow:0 16px 38px #101b3540;max-width:620px;margin:10px auto 30px}
+.express-top,.express-progress,.express-footer{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.express-brand{font-weight:900;font-size:22px;letter-spacing:.8px;color:#f8fcff}.express-subtitle{font-size:11px;letter-spacing:2.1px;color:#8fa9c9;margin-top:2px;font-weight:700}
+.express-direction{background:#213b53;border:1px solid #32556a;color:#77ead3;border-radius:22px;padding:9px 12px;font-size:12px;font-weight:800;white-space:nowrap}
+.express-progress{font-size:12px;color:#b2c6dd;margin-top:26px}.express-bar{height:5px;border-radius:20px;background:#2b405b;overflow:hidden;margin:11px 0 20px}.express-bar>div{height:100%;width:0;background:linear-gradient(90deg,#47c7b2,#84eec9);border-radius:20px;transition:width .2s}
+.express-card{background:linear-gradient(155deg,#1c3252,#1b2946);border:1px solid #38506e;border-radius:22px;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 18px;text-align:center;gap:20px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.express-label{color:#a5bdd9;font-size:11px;letter-spacing:1.7px;font-weight:800}.express-word{font-size:clamp(31px,8vw,49px);line-height:1.16;font-weight:850;overflow-wrap:anywhere}.express-back{font-size:clamp(28px,7vw,43px);font-weight:850;color:#75e9ce;border-top:1px solid #415574;padding-top:22px;width:100%;overflow-wrap:anywhere}.express-hint{font-size:12px;color:#a5bdd9}
+.express-reveal{width:100%;background:#55cdb8;color:#0a2631;border:0;border-radius:15px;padding:17px 10px;font-size:17px;font-weight:850;margin-top:15px;min-height:55px}.express-ratings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:15px}.express-ratings[hidden],.express-back[hidden],.express-reveal[hidden]{display:none!important}
+.express-rating{border:0;border-radius:15px;padding:13px 4px;color:white;font-weight:800;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:7px;min-height:74px}.express-rating span{font-size:23px}.ex-forgot{background:#633246;color:#ffced8}.ex-hard{background:#69502c;color:#ffe5b1}.ex-good{background:#18584d;color:#b4ffdf}
+.express-footer{color:#a5bad5;font-size:11px;margin-top:20px}.express-footer button{border:0;background:transparent;color:#d4e7f6;font-size:24px;padding:4px 12px}.express-note{color:#90a8c6;font-size:11px;line-height:1.5;margin:15px 0 0;text-align:center}
+@media(min-width:700px){.express-shell{padding:26px}.express-card{min-height:350px}}
 </style>
 <link rel="apple-touch-icon" sizes="180x180" href="bahasa_icon.png">
 <link rel="icon" type="image/png" href="bahasa_icon.png">
@@ -879,74 +893,24 @@ body{
 </section>
 
 <section id="games" class="panel">
- <div class="card">
-  <div class="playHeader">
-   <div class="playTitle"><span class="playIcon">⚡</span><span>Vocab Express</span></div>
-   <span class="small">Réflexe & mémoire</span>
+ <div class="express-shell">
+  <div class="express-top"><div><div class="express-brand">✦ BAHASA</div><div class="express-subtitle">RÉVISION EXPRESS</div></div><span id="exDirection" class="express-direction">FR → ID</span></div>
+  <div class="express-progress"><span id="exCount">0 mot révisé</span><span id="exDue">Mémoire active</span></div>
+  <div class="express-bar"><div id="exBar"></div></div>
+  <div id="exCard" class="express-card" onclick="expressReveal()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();expressReveal()}">
+   <div id="exLabel" class="express-label">TRADUIS DE MÉMOIRE</div>
+   <div id="exFront" class="express-word">Prêt à réviser ?</div>
+   <div id="exBack" class="express-back" hidden></div>
+   <div id="exHint" class="express-hint">Touche la carte pour commencer</div>
   </div>
-  <p class="note">Réponds au rythme qui te convient. Bonne réponse : ça enchaîne tout seul. Erreur : on s’arrête et on regarde pourquoi.</p>
-  <div class="grid" style="margin-bottom:10px">
-   <select id="gameMode"><option value="mix" selected>Mixte intelligent</option><option value="target">Leçon actuelle</option><option value="fragile">Fragiles uniquement</option></select>
-   <select id="gameDirection"><option value="fr-id" selected>Français → indonésien</option><option value="id-fr">Indonésien → français</option></select>
+  <button id="exReveal" class="express-reveal" onclick="expressReveal()">▶ Commencer</button>
+  <div id="exRatings" class="express-ratings" hidden>
+   <button class="express-rating ex-forgot" onclick="expressRate('forgot')"><span>↺</span>Oublié</button>
+   <button class="express-rating ex-hard" onclick="expressRate('hard')"><span>◷</span>Hésité</button>
+   <button class="express-rating ex-good" onclick="expressRate('good')"><span>✓</span>Je savais</button>
   </div>
-  <div id="vocabPlayZone" class="gameCard">
-   <div class="gameHud">
-    <span id="gameScoreHud" class="hudChip">🎯 0 / 0</span>
-    <span id="gameStreakHud" class="hudChip">🔥 Série 0</span>
-   </div>
-   <div id="gameMeta" class="small"></div>
-   <div id="gamePrompt" class="gamePrompt">Prêt ?</div>
-   <div id="gameAnswer" class="gameAnswer hidden"></div>
-   <div id="gameChoices" class="choices"></div>
-   <div id="gameStatus" class="gameStatus">Appuie sur Jouer pour commencer.</div>
-  </div>
-  <div class="toolbar" style="justify-content:center;margin-top:12px">
-   <button id="gameStart" class="playPrimary" onclick="newGame()">▶ Jouer</button>
-   <button id="showAnswerBtn" class="secondary" onclick="showGameAnswer()" disabled>Voir la réponse</button>
-   <button id="knewBtn" class="secondary manualEval hidden" onclick="manualGameResult(true)" disabled>Je savais</button>
-   <button id="reviewBtn" class="danger manualEval hidden" onclick="manualGameResult(false)" disabled>À revoir</button>
-  </div>
- </div>
-
- <div class="card">
-  <div class="playHeader">
-   <div class="playTitle"><span class="playIcon">🧩</span><span>Grammaire en action</span></div>
-   <span class="small">Comprendre & produire</span>
-  </div>
-  <p class="note">Pas de récitation de règles. Tu choisis, tu répares, tu produis. Les anciennes notions reviennent naturellement dans le mélange.</p>
-  <div class="grid" style="margin-bottom:10px">
-   <select id="grammarGameMode">
-    <option value="mix" selected>Mixte intelligent</option>
-    <option value="current">Notion actuelle</option>
-    <option value="due">À revoir</option>
-   </select>
-   <select id="grammarGameStage">
-    <option value="all" selected>Toutes les étapes</option>
-    <option value="contrast">Comprendre / distinguer</option>
-    <option value="repair">Réparer</option>
-    <option value="produce">Produire</option>
-   </select>
-  </div>
-  <div id="grammarPlayZone" class="gameCard">
-   <div class="gameHud">
-    <span id="grammarScoreHud" class="hudChip">🎯 0 / 0</span>
-    <span id="grammarStreakHud" class="hudChip">🔥 Série 0</span>
-   </div>
-   <div id="grammarGameMeta" class="small"></div>
-   <div id="grammarGameHint" class="gameHint"></div>
-   <div id="grammarGamePrompt" class="gamePrompt">Prêt ?</div>
-   <div id="grammarGameAnswer" class="gameAnswer hidden"></div>
-   <div id="grammarGameChoices" class="choices"></div>
-   <div id="grammarGameExplain" class="note" style="margin-top:12px"></div>
-   <div id="grammarGameStatus" class="gameStatus">Appuie sur Jouer pour commencer.</div>
-  </div>
-  <div class="toolbar" style="justify-content:center;margin-top:12px">
-   <button id="grammarNextBtn" class="playPrimary" onclick="newGrammarGame()">▶ Jouer</button>
-   <button id="grammarRevealBtn" class="secondary" onclick="revealGrammarAnswer()" disabled>Voir le modèle</button>
-   <button id="grammarKnewBtn" class="secondary manualEval hidden" onclick="manualGrammarResult(true)" disabled>Je savais</button>
-   <button id="grammarReviewBtn" class="danger manualEval hidden" onclick="manualGrammarResult(false)" disabled>À revoir</button>
-  </div>
-  <div id="grammarGameProgress" class="focusBox" style="margin-top:12px"></div>
+  <div class="express-footer"><span id="exStats">0 connus · 0 hésités · 0 oubliés</span><button onclick="expressReset()" title="Recommencer">↻</button></div>
+  <p class="express-note">Sans QCM ni clavier. Les mots fragiles reviennent plus souvent. Français et indonésien alternent automatiquement.</p>
  </div>
 </section>
 
@@ -1403,6 +1367,7 @@ function normalize(){
   let hasStrength=w.strength!==undefined&&w.strength!==null&&Number.isFinite(Number(w.strength));
   let strength=hasStrength?Math.max(0,Math.min(100,Number(w.strength))):legacyInitialStrength(status,times,gr,gw);
   return {
+   ...w,
    fr:frenchFor(w.id)||w.fr||'',id:w.id||'',unit:w.unit||'Acquis',source:w.source||'legacy',
    status,times,lastReviewed:w.lastReviewed||null,lastExported:w.lastExported||null,
    exportCount:Number(w.exportCount||0),gameRight:gr,gameWrong:gw,
@@ -3682,4 +3647,101 @@ initSelectors();loadSessionSettings();loadImmersionSettings();renderAll();
 setTimeout(resumePendingSessionOnLaunch,220);
 
 setupCloudSyncLifecycle();
+
+// Révision express : rappel actif et espacement léger par direction.
+// Les délais ci-dessous sont des heuristiques simples, PAS une implémentation FSRS.
+let exCurrent=null,exRevealed=false,exSeen=[],exRecent=[],exSession={good:0,hard:0,forgot:0,total:0};
+function exEl(id){return document.getElementById(id)}
+function exDirection(n){return n%2===0?'fr-id':'id-fr'}
+function exMemory(w,dir){return (w.exMemory&&w.exMemory[dir])||{level:0,due:0,attempts:0}}
+function exPool(){return accessibleWords().filter(w=>w.id&&(w.fr||frenchFor(w.id))&&!isTrivialGameWord(w))}
+function exChoose(){
+ let pool=exPool();if(!pool.length)return null;
+ let dir=exDirection(exSession.total),now=Date.now(),eligible=pool.filter(w=>!exRecent.includes(clean(w.id)));
+ if(!eligible.length)eligible=pool;
+ // Sélection équilibrée : priorité aux échéances, mots fragiles et cibles, avec rotation.
+ let due=eligible.filter(w=>exMemory(w,dir).due<=now);
+ let candidates=due.length?due:eligible;
+ let t=targetSet();
+ candidates=candidates.map(w=>({w,score:(w.status==='fragile'?3:0)+(t.has(clean(w.id))?1.5:0)+(exMemory(w,dir).attempts===0?1.2:0)+Math.random()*3+(exMemory(w,dir).due<=now?2:0)})).sort((a,b)=>b.score-a.score);
+ return {word:candidates[0].w,dir};
+}
+function exShow(){
+ if(!exEl('exFront'))return;
+ if(!exCurrent){exEl('exFront').textContent='Aucun mot disponible';exEl('exHint').textContent='Vérifie ta progression Duolingo.';exEl('exReveal').hidden=true;return}
+ let w=exCurrent.word,dir=exCurrent.dir;
+ exEl('exDirection').textContent=dir==='fr-id'?'FR → ID':'ID → FR';
+ exEl('exFront').textContent=gameText(w,dir==='fr-id'?'fr':'id');
+ exEl('exBack').textContent=gameText(w,dir==='fr-id'?'id':'fr');
+ exEl('exBack').hidden=!exRevealed;
+ exEl('exLabel').textContent=exRevealed?'LA RÉPONSE':'TRADUIS DE MÉMOIRE';
+ exEl('exHint').textContent=exRevealed?'Évalue ta réponse, puis mot suivant':'Retrouve le mot avant de toucher la carte';
+ exEl('exReveal').hidden=exRevealed;exEl('exReveal').textContent='Voir la réponse';exEl('exRatings').hidden=!exRevealed;
+ exEl('exCount').textContent=exSession.total+' mot'+(exSession.total>1?'s':'')+' révisé'+(exSession.total>1?'s':'');
+ exEl('exDue').textContent='Alternance automatique';
+ exEl('exBar').style.width=(exSession.total%20)*5+'%';
+ exEl('exStats').textContent=`${exSession.good} connus · ${exSession.hard} hésités · ${exSession.forgot} oubliés`;
+}
+function expressReveal(){
+ if(!exEl('exCard'))return;
+ if(!exCurrent){exCurrent=exChoose();exRevealed=false;exShow();return}
+ if(exRevealed)return;exRevealed=true;exShow();
+}
+function expressRate(rating){
+ if(!exCurrent||!exRevealed)return;
+ let w=exCurrent.word,dir=exCurrent.dir,now=Date.now();
+ let mem=exMemory(w,dir),level=Number(mem.level||0);
+ if(rating==='forgot'){level=0;applyFailure(w,'game');w.gameWrong=Number(w.gameWrong||0)+1}
+ else if(rating==='hard'){level=Math.max(0,level-1);w.times=Number(w.times||0)+1;w.lastReviewed=todayISO();w.status='fragile';adjustStrength(w,-3)}
+ else{level=Math.min(9,level+1);applySuccess(w,'game');w.gameRight=Number(w.gameRight||0)+1}
+ let delays=rating==='forgot'?0:rating==='hard'?Math.max(1,Math.min(3,level)):Math.min(120,Math.round(Math.pow(2,level-1)));
+ w.exMemory=w.exMemory||{};
+ w.exMemory[dir]={level,due:now+delays*86400000,attempts:Number(mem.attempts||0)+1,last:now,rating};
+ // Une réussite dans une direction ne supprime pas la fragilité de l'autre.
+ let other=exMemory(w,dir==='fr-id'?'id-fr':'fr-id');
+ if(rating==='good'&&other.attempts>0&&other.rating==='good'&&level>=2&&other.level>=2)w.status='seen';
+ if(rating!=='good')w.status='fragile';
+ exSession[rating]++;exSession.total++;
+ exRecent.push(clean(w.id));if(exRecent.length>Math.min(6,Math.max(2,exPool().length-1)))exRecent.shift();
+ // L'échec reste éligible dès le prochain passage après quelques cartes différentes.
+ exCurrent=exChoose();exRevealed=false;
+ saveWords();exShow();
+}
+function expressReset(){exSession={good:0,hard:0,forgot:0,total:0};exRecent=[];exCurrent=exChoose();exRevealed=false;exShow()}
+setTimeout(expressReset,0);
+
+
+// Bahasa update guard: checks the *same* installed URL with a cache-busting
+// request. No service worker is registered by this file.
+const BAHASA_BUILD='20261113.3';
+let bahasaUpdateBusy=false, bahasaUpdatePending=false;
+async function bahasaCheckUpdate(){
+ if(bahasaUpdateBusy || document.visibilityState==='hidden')return;
+ bahasaUpdateBusy=true;
+ try{
+  const url=new URL(location.href);
+  url.searchParams.set('_bahasa_check',String(Date.now()));
+  const response=await fetch(url.href,{cache:'no-store',headers:{'Cache-Control':'no-cache'}});
+  if(!response.ok)return;
+  const html=await response.text();
+  const found=html.match(/<meta\s+name="bahasa-build"\s+content="([^"]+)"/i);
+  if(!found || found[1]===BAHASA_BUILD)return;
+  // Don't interrupt a card that has already been revealed or evaluated.
+  if(typeof exSession!=='undefined' && exSession.total>0){bahasaUpdatePending=true;return;}
+  const key='bahasa_update_attempt_'+found[1];
+  if(sessionStorage.getItem(key)==='1')return; // prevents redirect loops on CDN lag
+  sessionStorage.setItem(key,'1');
+  const fresh=new URL(location.href);
+  fresh.searchParams.delete('_bahasa_check');
+  fresh.searchParams.set('v',found[1]);
+  location.replace(fresh.href);
+ }catch(e){/* Offline: keep the working app and local progress. */}
+ finally{bahasaUpdateBusy=false}
+}
+window.addEventListener('pageshow',()=>setTimeout(bahasaCheckUpdate,900));
+document.addEventListener('visibilitychange',()=>{
+ if(document.visibilityState==='visible')setTimeout(bahasaCheckUpdate,500);
+});
+setTimeout(bahasaCheckUpdate,1500);
+
 </script></body></html>
